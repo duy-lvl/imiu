@@ -52,7 +52,7 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 			builder.Services.AddScoped<IAccountService, AccountService>();
 			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
-
+			
 
 			var app = builder.Build();
 

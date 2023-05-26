@@ -32,14 +32,23 @@ namespace DAL
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			IConfiguration config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+			IConfiguration config = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
 			string connectionString = config.GetConnectionString("Local");
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			
+			modelBuilder.Entity<Account>()
+				.HasMany(a => a.Plans)
+				.WithOne(p => p.Account)
+				.HasForeignKey(p => p.AccountId);
+        
+			modelBuilder.Entity<Plan>()
+				.HasOne(p => p.AccountType)
+				.WithMany(at => at.Plans)
+				.HasForeignKey(p => p.AccountTypeId);
 		}
 	}
 }

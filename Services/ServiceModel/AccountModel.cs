@@ -21,7 +21,7 @@ namespace Services.ServiceModel
 		[Required(ErrorMessage = "Password is required")]
 		public string Password { get; set; }
 
-		public DateOnly? Dob { get; set; }
+		public DateTime Dob { get; set; }
 
 		public Role Role { get; set; }
 	}

@@ -5,6 +5,14 @@ namespace Services.Service.Interface;
 
 public interface IAccountService
 {
-    void RegisterAccount(AccountModel registerAccountModel);
+
     AccountModel Login(string email, string password);
+    
+    bool RegisterAccount(RegisterAccountModel registerAccountModel);
+
+    void VerifyEmail(RegisterTokenModel token);
+
+    //void SendEmail(Account account, out RegisterTokenModel token);
+    void SendEmail(string email);
+
 }

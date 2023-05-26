@@ -19,7 +19,11 @@ public class Account
     [Required(ErrorMessage = "Password is required")]
     public string Password { get; set; }
     
-    public DateOnly Dob { get; set; }
+    public DateTime Dob { get; set; }
     
     public Role Role { get; set; }
+
+    public AccountStatus Status { get; set; }
+
+    public virtual List<Plan> Plans { get; set; }
 }

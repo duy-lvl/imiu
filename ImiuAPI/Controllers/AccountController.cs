@@ -9,6 +9,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security;
 using System.Text;
+using DAL.Entities;
 
 namespace ImiuAPI.Controllers;
 
@@ -18,10 +19,58 @@ public class AccountsController
 {
 	private readonly IAccountService _accountService;
 
+	public AccountsController(IAccountService accountService)
+	{
+		_accountService = accountService;
+	}
+
+	/// <summary>
+	/// Test function
+	/// </summary>
+	/// <param name="email"></param>
+	/// <returns></returns>
+	[HttpPost("/email")]
+	public string SendEmail([FromBody] string email)
+	{
+		_accountService.SendEmail(email);
+		return "sent";
+	}
+	
+	/// <summary>
+	/// Register
+	/// </summary>
+	/// <param name="registerAccountModel"></param>
+	/// <returns></returns>
     [HttpPost]
-    public void RegisterAccount(AccountModel registerAccountModel)
-    {
-		throw new NotImplementedException();
+	[Route("/register")]
+    public IActionResult RegisterAccount([FromBody] RegisterAccountModel registerAccountModel)
+	{
+		if (_accountService.RegisterAccount(registerAccountModel))
+		{
+			return new JsonResult(new
+			{
+				Status = "CREATED",
+				Message = "Account created"
+			});
+		}
+		else return new JsonResult(new
+		{
+			Status = "BAD REQUEST",
+			Message = "Create fail"
+		});
+	}
+
+	[HttpGet]
+	[Route("/verify-email/{token}&{expiration}")]
+	public void VerifyEmail(string token, string expiration)
+	{
+		RegisterTokenModel registerTokenModel = new RegisterTokenModel()
+		{
+			Token = token,
+			Expiration = DateTime.Parse(expiration)
+		};
+		
+		_accountService.VerifyEmail(registerTokenModel);
 	}
 	/// <summary>
 	/// Login
@@ -114,4 +163,7 @@ public class AccountsController
 		}
 	}
 	#endregion
+
+
+	
 }

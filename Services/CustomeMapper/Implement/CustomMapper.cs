@@ -1,6 +1,4 @@
 ﻿using DAL.Entities;
-using Repository.Entities.Authorization;
-using Repository.Entities.HouseManagement;
 using Services.CustomeMapper.Interface;
 using Services.ServiceModel;
 using System;
@@ -22,7 +20,7 @@ namespace Services.CustomeMapper.Implement
 				Name = accountModel.Name,
 				Email = accountModel.Email,
 				Password = accountModel.Password,
-				Dob = (DateOnly)accountModel.Dob,
+				Dob = accountModel.Dob,
 				Role = accountModel.Role
 			};
 		}

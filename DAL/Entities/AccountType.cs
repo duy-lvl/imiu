@@ -19,6 +19,6 @@ public class AccountType
     
     [Required(ErrorMessage = "Code is required")]
     public string Code { get; set; }
-    
+    public virtual List<Plan> Plans { get; set; }
    
 }

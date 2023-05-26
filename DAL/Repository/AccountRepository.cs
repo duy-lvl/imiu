@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.Enum;
 
 namespace DAL.Repository
 {
@@ -27,6 +29,23 @@ namespace DAL.Repository
 		public List<Account> GetAll()
 		{
 			return _dbSet.ToList();
+		}
+		
+
+		public void SaveAccount(Account account)
+		{
+			_dbSet.Add(account);
+			
+		}
+
+		public void ActivateAccount(Guid accountId)
+		{
+			var account = _dbSet.Find(accountId);
+			if (account != null)
+			{
+				account.Status = AccountStatus.ACTIVE;
+				_dbSet.Update(account);
+			}
 		}
 
 		public Account GetByEmail(string email)
