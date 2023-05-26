@@ -2,5 +2,6 @@
 
 public enum Role
 {
-    ADMIN, CUSTOMER
+    ADMIN, 
+    CUSTOMER
 }
