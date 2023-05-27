@@ -10,20 +10,20 @@ namespace DAL
 {
 	public class ImiuDbContext : DbContext
     {
-		DbSet<Account> accounts { get; set; }
-		DbSet<AccountDetail> accountsDetail { get; set; }
-		DbSet<AccountType> accountTypes { get; set; }
-		DbSet<Direction> directions { get; set; }
-		DbSet<Ingredient> ingredients { get; set; }
-		DbSet<Meal> meals { get; set; }
-		DbSet<MealTag> mealTags { get; set; }
-		DbSet<MealIngredient> mealIngredients { get; set; }
-		DbSet<MealSelection> mealSelection { get; set; }
-		DbSet<MealSelectionItem> mealSelectionItem { get; set; }
-		DbSet<Nutrition> nutritions { get; set; }
-		DbSet<NutritionFact> nutritionFacts { get; set; }
-		DbSet<Plan> plans { get; set; }
-		DbSet<Tag> tags { get; set; }
+		DbSet<Account> Accounts { get; set; }
+		DbSet<Answer> Answers { get; set; }
+		DbSet<Subcription> Subcriptions { get; set; }
+		DbSet<Direction> Directions { get; set; }
+		DbSet<Ingredient> Ingredients { get; set; }
+		DbSet<Meal> Meals { get; set; }
+		DbSet<MealTag> MealTags { get; set; }
+		DbSet<MealIngredient> MealIngredients { get; set; }
+		DbSet<MealSelection> MealSelection { get; set; }
+		DbSet<MealSelectionItem> MealSelectionItem { get; set; }
+		DbSet<Nutrition> Nutritions { get; set; }
+		DbSet<NutritionFact> NutritionFacts { get; set; }
+		DbSet<Plan> Plans { get; set; }
+		DbSet<Tag> Tags { get; set; }
 
 		
         public ImiuDbContext()
@@ -40,15 +40,9 @@ namespace DAL
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Account>()
-				.HasMany(a => a.Plans)
-				.WithOne(p => p.Account)
-				.HasForeignKey(p => p.AccountId);
-        
-			modelBuilder.Entity<Plan>()
-				.HasOne(p => p.AccountType)
-				.WithMany(at => at.Plans)
-				.HasForeignKey(p => p.AccountTypeId);
+			modelBuilder.Entity<MealTag>().HasKey(mt=>new {mt.MealId, mt.TagId});
+
+			
 		}
 	}
 }

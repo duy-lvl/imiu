@@ -5,14 +5,16 @@ namespace DAL.Entities;
 
 public class MealSelection
 {
-    [Key]
+    [Key] 
     public Guid Id { get; set; }
 
     [ForeignKey(nameof(Account))] 
     public Guid AccountId;
 
     [Required(ErrorMessage = "Select date is required")]
-    public DateTime SelectDate;
+    public DateTime SelectDate { get; set; }
+
+    public Account Account { get; set; }
     
-    public Account Account;
+    public List<MealSelectionItem> PlansMealSelectionItems { get; set; }
 }

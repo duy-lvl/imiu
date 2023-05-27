@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ImiuDbContext))]
-    partial class ImiuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527130019_updateMigration")]
+    partial class updateMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +96,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AnswerId")
+                    b.Property<Guid>("Answerid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Value")
@@ -103,7 +106,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("AnswerId");
+                    b.HasIndex("Answerid");
 
                     b.ToTable("CustomerAnswer");
                 });
@@ -203,7 +206,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("MealId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Quantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -221,15 +224,12 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AccountId")
+                    b.Property<Guid?>("AccountId1")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("SelectDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("AccountId1");
 
                     b.ToTable("MealSelection");
                 });
@@ -301,7 +301,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("NutritionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Value")
+                    b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -441,7 +441,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Answer", "Answer")
                         .WithMany()
-                        .HasForeignKey("AnswerId")
+                        .HasForeignKey("Answerid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -482,13 +482,9 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.MealSelection", b =>
                 {
-                    b.HasOne("DAL.Entities.Account", "Account")
+                    b.HasOne("DAL.Entities.Account", null)
                         .WithMany("MealSelections")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
+                        .HasForeignKey("AccountId1");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>

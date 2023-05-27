@@ -10,6 +10,7 @@ public class Direction
 
     [Required(ErrorMessage = "Step number is required")]
     public int StepNumber { get; set; }
+    
     [Required(ErrorMessage = "Instruction is required")]
     public string Instruction { get; set; }
 

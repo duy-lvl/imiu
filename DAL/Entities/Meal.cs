@@ -20,4 +20,10 @@ public class Meal
     public Difficulty Difficulty { get; set; }
     
     public string ImageUrl { get; set; }
+    
+    public List<NutritionFact> NutritionFacts { get; set; }
+    public List<MealTag> MealTags { get; set; }
+    public List<Direction> Directions { get; set; }
+    public List<MealIngredient> MealIngredients { get; set; }
+    
 }

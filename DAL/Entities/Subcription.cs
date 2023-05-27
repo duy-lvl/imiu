@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DAL.Entities;
 
-public class AccountType
+public class Subcription
 {
     [Key]
     public Guid Id { get; set; }
@@ -19,6 +19,8 @@ public class AccountType
     
     [Required(ErrorMessage = "Code is required")]
     public string Code { get; set; }
-    public virtual List<Plan> Plans { get; set; }
+    
+    public List<Plan> Plans { get; set; }
    
+    public List<Account> Accounts { get; set; }
 }

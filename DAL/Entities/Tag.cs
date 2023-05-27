@@ -12,4 +12,7 @@ public class Tag
     
     [Required(ErrorMessage = "Code is required")]
     public string Code { get; set; }
+    
+    public List<MealTag> Plans { get; set; }
+    public List<Answer> Answers { get; set; }
 }
