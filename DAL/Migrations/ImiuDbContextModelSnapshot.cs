@@ -56,7 +56,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SubcriptionId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Answer", b =>
@@ -81,7 +81,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("Answers");
+                    b.ToTable("Answers", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.CustomerAnswer", b =>
@@ -93,7 +93,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AnswerId")
+                    b.Property<Guid>("Answerid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Value")
@@ -103,9 +103,9 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("AnswerId");
+                    b.HasIndex("Answerid");
 
-                    b.ToTable("CustomerAnswer");
+                    b.ToTable("CustomerAnswer", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Direction", b =>
@@ -132,7 +132,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("Directions");
+                    b.ToTable("Directions", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Ingredient", b =>
@@ -155,7 +155,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Meal", b =>
@@ -184,7 +184,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Meals");
+                    b.ToTable("Meals", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.MealIngredient", b =>
@@ -203,7 +203,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("MealId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Quantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -212,7 +212,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("MealIngredients");
+                    b.ToTable("MealIngredients", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelection", b =>
@@ -231,7 +231,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("MealSelection");
+                    b.ToTable("MealSelection", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
@@ -252,7 +252,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealSelectionId");
 
-                    b.ToTable("MealSelectionItem");
+                    b.ToTable("MealSelectionItem", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -267,7 +267,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("MealTags");
+                    b.ToTable("MealTags", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Nutrition", b =>
@@ -286,7 +286,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nutritions");
+                    b.ToTable("Nutritions", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.NutritionFact", b =>
@@ -301,7 +301,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("NutritionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal?>("Value")
+                    b.Property<decimal>("Value")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -310,7 +310,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("NutritionId");
 
-                    b.ToTable("NutritionFacts");
+                    b.ToTable("NutritionFacts", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Plan", b =>
@@ -340,7 +340,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SubcriptionId");
 
-                    b.ToTable("Plans");
+                    b.ToTable("Plans", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Question", b =>
@@ -358,7 +358,7 @@ namespace DAL.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Question");
+                    b.ToTable("Question", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Subcription", b =>
@@ -383,7 +383,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subcriptions");
+                    b.ToTable("Subcriptions", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>
@@ -402,7 +402,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("DAL.Entities.Account", b =>
@@ -441,7 +441,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Answer", "Answer")
                         .WithMany()
-                        .HasForeignKey("AnswerId")
+                        .HasForeignKey("Answerid")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
