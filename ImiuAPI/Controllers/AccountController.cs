@@ -52,15 +52,9 @@ public class AccountsController
 
 	[HttpGet]
 	[Route("/verify-email")]
-	public void VerifyEmail(string token, long expiration)
+	public void VerifyEmail(string token)
 	{
-		RegisterTokenModel registerTokenModel = new RegisterTokenModel()
-		{
-			Token = token,
-			Expiration = DateTime.FromBinary(expiration)
-		};
-		
-		_accountService.VerifyEmail(registerTokenModel);
+		_accountService.VerifyEmail(token);
 	}
 	/// <summary>
 	/// Login

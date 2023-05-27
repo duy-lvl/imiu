@@ -61,18 +61,20 @@ public class AccountService : IAccountService
 		
 	}
 
-	public void VerifyEmail(RegisterTokenModel token)
+	public bool VerifyEmail(string token)
 	{
-		
-		if (token.Expiration > DateTime.UtcNow)
+		var handler = new JwtSecurityTokenHandler();
+	
+		var decodeValue = handler.ReadJwtToken(token);
+		var expiration = DateTime.FromBinary(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value));
+		if (expiration > DateTime.UtcNow)
 		{
-			var handler = new JwtSecurityTokenHandler();
-		
-			var decodeValue = handler.ReadJwtToken(token.Token);
 			var accountId = decodeValue.Claims.FirstOrDefault(c => c.Type == "Id").Value;
 			_accountRepository.ActivateAccount(Guid.Parse(accountId));
+			return true;
 		}
-		
+
+		return false;
 	}
 
 	
@@ -82,7 +84,8 @@ public class AccountService : IAccountService
 		{
 			new Claim(ClaimTypes.Name, account.Name),
 			new Claim(ClaimTypes.Email, account.Email),
-			new Claim("Id", account.Id.ToString())
+			new Claim("Id", account.Id.ToString()),
+			new Claim("Expiration", DateTime.UtcNow.AddMinutes(30).ToBinary().ToString())
 		};
 
 		var token = new JwtSecurityToken(
@@ -114,7 +117,7 @@ public class AccountService : IAccountService
 		message.To.Add(new MailAddress(account.Email));
 		
 		message.Body = "<p>Dear " + account.Name + ",</p>"
-			+ "<p>Please follow this link to activate your account: <a href=\""+webAddress+"?token="+token.Token+"&expiration="+token.Expiration.ToBinary()+"\">Link</a> </p>" +
+			+ "<p>Please follow this link to activate your account: <a href=\""+webAddress+"?token="+token.Token+"\">Link</a> </p>" +
 			"<p>This link will expire after 30 minutes.</p>";
 		message.IsBodyHtml = true;
 		var smtpClient = new SmtpClient("smtp.gmail.com")

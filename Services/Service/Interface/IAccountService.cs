@@ -10,7 +10,7 @@ public interface IAccountService
     
     bool RegisterAccount(RegisterAccountModel registerAccountModel);
 
-    void VerifyEmail(RegisterTokenModel token);
+    bool VerifyEmail(string token);
 
     //void SendEmail(Account account, out RegisterTokenModel token);
  
