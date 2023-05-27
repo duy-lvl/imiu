@@ -106,7 +106,7 @@ public class AccountService : IAccountService
 	
 	{
 		string fromMail = "duylvlse160831@fpt.edu.vn";
-		string fromPassword = "yijunlang1128";
+		string fromPassword = "cttmcfhcjitzmzvf";
 		string webAddress = END_POINT;
 		
 		 
