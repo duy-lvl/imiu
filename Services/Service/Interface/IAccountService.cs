@@ -13,6 +13,6 @@ public interface IAccountService
     void VerifyEmail(RegisterTokenModel token);
 
     //void SendEmail(Account account, out RegisterTokenModel token);
-    void SendEmail(string email);
+ 
 
 }

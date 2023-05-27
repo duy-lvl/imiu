@@ -24,17 +24,7 @@ public class AccountsController
 		_accountService = accountService;
 	}
 
-	/// <summary>
-	/// Test function
-	/// </summary>
-	/// <param name="email"></param>
-	/// <returns></returns>
-	[HttpPost("/email")]
-	public string SendEmail([FromBody] string email)
-	{
-		_accountService.SendEmail(email);
-		return "sent";
-	}
+
 	
 	/// <summary>
 	/// Register
@@ -61,13 +51,13 @@ public class AccountsController
 	}
 
 	[HttpGet]
-	[Route("/verify-email/{token}&{expiration}")]
-	public void VerifyEmail(string token, string expiration)
+	[Route("/verify-email")]
+	public void VerifyEmail(string token, long expiration)
 	{
 		RegisterTokenModel registerTokenModel = new RegisterTokenModel()
 		{
 			Token = token,
-			Expiration = DateTime.Parse(expiration)
+			Expiration = DateTime.FromBinary(expiration)
 		};
 		
 		_accountService.VerifyEmail(registerTokenModel);

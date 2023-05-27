@@ -35,7 +35,7 @@ namespace DAL.Repository
 		public void SaveAccount(Account account)
 		{
 			_dbSet.Add(account);
-			
+			_context.SaveChanges();
 		}
 
 		public void ActivateAccount(Guid accountId)
@@ -45,6 +45,7 @@ namespace DAL.Repository
 			{
 				account.Status = AccountStatus.ACTIVE;
 				_dbSet.Update(account);
+				_context.SaveChanges();
 			}
 		}
 
