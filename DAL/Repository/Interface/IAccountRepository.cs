@@ -19,7 +19,6 @@ namespace DAL.Repository.Interface
         void Update(Account account);
         List<Account> GetAll();
 
-        void SaveAccount(Account account);
         void ActivateAccount(Guid accountId);
     }
 }

@@ -1,6 +1,7 @@
 using DAL;
 using DAL.Repository;
 using DAL.Repository.Interface;
+using DAL.UnitOfWork;
 using Microsoft.OpenApi.Models;
 using Services.CustomeMapper.Implement;
 using Services.CustomeMapper.Interface;
@@ -49,6 +50,7 @@ namespace ImiuAPI
 
 			// Add services to the container.
 			builder.Services.AddDbContext<ImiuDbContext>();
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 			builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 			builder.Services.AddScoped<IAccountService, AccountService>();
 			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
