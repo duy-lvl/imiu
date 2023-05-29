@@ -32,11 +32,7 @@ namespace DAL.Repository
 		}
 		
 
-		public void SaveAccount(Account account)
-		{
-			_dbSet.Add(account);
-			
-		}
+		
 
 		public void ActivateAccount(Guid accountId)
 		{

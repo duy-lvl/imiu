@@ -5,6 +5,7 @@ using System.Security.Claims;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
+using DAL.UnitOfWork;
 using Services.CustomeMapper.Interface;
 using Services.Service.Interface;
 using Services.ServiceModel;
@@ -55,7 +56,7 @@ public class AccountService : IAccountService
 			Role = Role.CUSTOMER,
 			Status = AccountStatus.INACTIVE
 		};
-		_accountRepository.SaveAccount(account);
+		_accountRepository.Create(account);
 		RegisterTokenModel token;
 		SendEmail(account);
 //		VerifyEmail(token);

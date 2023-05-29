@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Security;
 using System.Text;
 using DAL.Entities;
+using DAL.UnitOfWork;
 
 namespace ImiuAPI.Controllers;
 
@@ -18,10 +19,12 @@ namespace ImiuAPI.Controllers;
 public class AccountsController
 {
 	private readonly IAccountService _accountService;
+	private readonly IUnitOfWork _unitOfWork;
 
-	public AccountsController(IAccountService accountService)
+	public AccountsController(IAccountService accountService,IUnitOfWork unitOfWork)
 	{
 		_accountService = accountService;
+		_unitOfWork = unitOfWork;
 	}
 
 	/// <summary>
@@ -47,6 +50,7 @@ public class AccountsController
 	{
 		if (_accountService.RegisterAccount(registerAccountModel))
 		{
+			_unitOfWork.Commit();
 			return new JsonResult(new
 			{
 				Status = "CREATED",
@@ -71,6 +75,7 @@ public class AccountsController
 		};
 		
 		_accountService.VerifyEmail(registerTokenModel);
+		_unitOfWork.Commit();
 	}
 	/// <summary>
 	/// Login
@@ -79,11 +84,10 @@ public class AccountsController
 	/// <param name="password"></param>
 	/// <returns></returns>
 	[HttpPost]
+	[Route("/login")]
 	public IActionResult Login(string email, string password)
 	{
-		AccountModel account = null;
-
-		if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+		if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
 		{
 			return new JsonResult(new
 			{
@@ -91,9 +95,11 @@ public class AccountsController
 				message = "Email or password is empty"
 			});
 		}
+		AccountModel account;
 		try
 		{
-			account = _accountService.Login(email, password);
+			string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+			account = _accountService.Login(email, hashedPassword);
 		}
 		catch (Exception ex)
 		{
