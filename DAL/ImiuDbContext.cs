@@ -25,6 +25,7 @@ namespace DAL
 		DbSet<Plan> Plans { get; set; }
 		DbSet<Tag> Tags { get; set; }
 
+
 		
         public ImiuDbContext()
         {
