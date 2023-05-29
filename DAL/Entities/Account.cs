@@ -25,5 +25,9 @@ public class Account
 
     public AccountStatus Status { get; set; }
 
-    public virtual List<Plan> Plans { get; set; }
+    public List<Plan> Plans { get; set; }
+    
+    public List<MealSelection> MealSelections { get; set; }
+    
+    public List<CustomerAnswer> CustomerAnswers { get; set; }
 }

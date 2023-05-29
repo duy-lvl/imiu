@@ -12,5 +12,8 @@ public class Ingredient
     
     [Required(ErrorMessage = "Unit is required")]
     public string Unit { get; set; }
+    
     public string ImgUrl { get; set; }
+    
+    
 }

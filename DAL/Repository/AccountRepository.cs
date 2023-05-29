@@ -32,7 +32,6 @@ namespace DAL.Repository
 		}
 		
 
-		
 
 		public void ActivateAccount(Guid accountId)
 		{

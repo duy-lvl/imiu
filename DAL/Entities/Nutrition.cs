@@ -10,4 +10,6 @@ public class Nutrition
     public string Name { get; set; }
 
     public string Code { get; set; }
+    
+    public List<NutritionFact> NutritionFacts { get; set; }
 }

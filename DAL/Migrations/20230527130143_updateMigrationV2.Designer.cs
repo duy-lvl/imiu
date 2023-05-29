@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ImiuDbContext))]
-    partial class ImiuDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527130143_updateMigrationV2")]
+    partial class updateMigrationV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +59,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SubcriptionId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("DAL.Entities.Answer", b =>
@@ -81,7 +84,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("Answers", (string)null);
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("DAL.Entities.CustomerAnswer", b =>
@@ -105,7 +108,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("Answerid");
 
-                    b.ToTable("CustomerAnswer", (string)null);
+                    b.ToTable("CustomerAnswer");
                 });
 
             modelBuilder.Entity("DAL.Entities.Direction", b =>
@@ -132,7 +135,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("Directions", (string)null);
+                    b.ToTable("Directions");
                 });
 
             modelBuilder.Entity("DAL.Entities.Ingredient", b =>
@@ -155,7 +158,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ingredients", (string)null);
+                    b.ToTable("Ingredients");
                 });
 
             modelBuilder.Entity("DAL.Entities.Meal", b =>
@@ -184,7 +187,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Meals", (string)null);
+                    b.ToTable("Meals");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealIngredient", b =>
@@ -212,7 +215,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealId");
 
-                    b.ToTable("MealIngredients", (string)null);
+                    b.ToTable("MealIngredients");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelection", b =>
@@ -231,7 +234,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("MealSelection", (string)null);
+                    b.ToTable("MealSelection");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
@@ -252,7 +255,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealSelectionId");
 
-                    b.ToTable("MealSelectionItem", (string)null);
+                    b.ToTable("MealSelectionItem");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -267,7 +270,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("MealTags", (string)null);
+                    b.ToTable("MealTags");
                 });
 
             modelBuilder.Entity("DAL.Entities.Nutrition", b =>
@@ -286,7 +289,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Nutritions", (string)null);
+                    b.ToTable("Nutritions");
                 });
 
             modelBuilder.Entity("DAL.Entities.NutritionFact", b =>
@@ -310,7 +313,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("NutritionId");
 
-                    b.ToTable("NutritionFacts", (string)null);
+                    b.ToTable("NutritionFacts");
                 });
 
             modelBuilder.Entity("DAL.Entities.Plan", b =>
@@ -340,7 +343,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("SubcriptionId");
 
-                    b.ToTable("Plans", (string)null);
+                    b.ToTable("Plans");
                 });
 
             modelBuilder.Entity("DAL.Entities.Question", b =>
@@ -358,7 +361,7 @@ namespace DAL.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Question", (string)null);
+                    b.ToTable("Question");
                 });
 
             modelBuilder.Entity("DAL.Entities.Subcription", b =>
@@ -383,7 +386,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subcriptions", (string)null);
+                    b.ToTable("Subcriptions");
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>
@@ -402,7 +405,7 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags", (string)null);
+                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("DAL.Entities.Account", b =>
