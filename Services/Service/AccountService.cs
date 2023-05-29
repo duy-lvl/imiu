@@ -7,6 +7,7 @@ using DAL.Enum;
 using DAL.Repository.Interface;
 using DAL.UnitOfWork;
 using Services.CustomeMapper.Interface;
+using Services.Encryption;
 using Services.Service.Interface;
 using Services.ServiceModel;
 
@@ -24,7 +25,8 @@ public class AccountService : IAccountService
 	}
 	public AccountModel Login(string email, string password)
 	{
-		var target= _accountRepository.Login(email, password);
+		string encryptedPassword = SHAEncryption.Encrypt(password);
+		var target= _accountRepository.Login(email, encryptedPassword);
 		if (target != null)
 		{
 			return _customMapper.Map(target);
@@ -52,13 +54,13 @@ public class AccountService : IAccountService
 			Name = registerAccountModel.Name,
 			Email = registerAccountModel.Email,
 			Dob = registerAccountModel.Dob,
-			Password = BCrypt.Net.BCrypt.HashPassword(registerAccountModel.Password),
+			Password = SHAEncryption.Encrypt(registerAccountModel.Password),
 			Role = Role.CUSTOMER,
 			Status = AccountStatus.INACTIVE
 		};
 		_accountRepository.Create(account);
-		RegisterTokenModel token;
-		SendEmail(account);
+//		RegisterTokenModel token;
+//		SendEmail(account);
 //		VerifyEmail(token);
 		return true;
 		

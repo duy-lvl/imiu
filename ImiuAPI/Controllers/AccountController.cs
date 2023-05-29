@@ -98,8 +98,7 @@ public class AccountsController
 		AccountModel account;
 		try
 		{
-			string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
-			account = _accountService.Login(email, hashedPassword);
+			account = _accountService.Login(email, password);
 		}
 		catch (Exception ex)
 		{
