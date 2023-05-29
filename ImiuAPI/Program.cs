@@ -18,7 +18,8 @@ namespace ImiuAPI
 
 			// Add services to the container.
 
-			builder.Services.AddControllers();
+			builder.Services.AddControllers().AddNewtonsoftJson(options =>
+	options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen(options =>
@@ -54,6 +55,8 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 			builder.Services.AddScoped<IAccountService, AccountService>();
 			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
+			builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
+			builder.Services.AddScoped<IQuestionService, QuestionService>();
 			
 
 			var app = builder.Build();
