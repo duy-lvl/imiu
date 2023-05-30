@@ -19,7 +19,7 @@ public class AccountService : IAccountService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
-	private readonly String END_POINT = "https://localhost:7137/api/v1/accounts/verify-email";
+	private readonly String END_POINT = "http://localhost:5173/verify/";
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper)
 	{
 		_accountRepository = accountRepository;
@@ -126,7 +126,7 @@ public class AccountService : IAccountService
 		message.To.Add(new MailAddress(account.Email));
 		
 		message.Body = "<p>Dear Customer,</p>"
-			+ "<p>Please follow this link to activate your account: <a href=\""+webAddress+"?token="+token.Token+"\">Link</a> </p>" +
+			+ "<p>Please follow this link to activate your account: <a href=\""+webAddress+token.Token+"\">Link</a> </p>" +
 			"<p>This link will expire after 30 minutes.</p>";
 		message.IsBodyHtml = true;
 		var smtpClient = new SmtpClient("smtp.gmail.com")
