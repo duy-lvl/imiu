@@ -63,11 +63,30 @@ public class AccountsController
 
 	[HttpGet]
 	[Route("verify-email")]
-	public void VerifyEmail(string token)
+	public IActionResult VerifyEmail(string token)
 	{
 
-		_accountService.VerifyEmail(token);
-		_unitOfWork.Commit();
+		if (_accountService.VerifyEmail(token))
+		{
+			_unitOfWork.Commit();
+			
+			var json = new JsonResult(new
+			{
+				Message = "Activated"
+			});
+			json.StatusCode = 201;
+			return json;
+		}
+		else 
+		{
+			var json = new JsonResult(new
+			{
+				Message = "Activate fail"
+			});
+			json.StatusCode = 400;
+			return json;
+		};
+		
 	}
 	/// <summary>
 	/// Login

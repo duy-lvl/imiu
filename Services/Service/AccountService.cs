@@ -73,18 +73,27 @@ public class AccountService : IAccountService
 
 	public bool VerifyEmail(string token)
 	{
-		var handler = new JwtSecurityTokenHandler();
-	
-		var decodeValue = handler.ReadJwtToken(token);
-		var expiration = DateTime.FromBinary(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value));
-		if (expiration > DateTime.UtcNow)
+		try
 		{
-			var accountId = decodeValue.Claims.FirstOrDefault(c => c.Type == "Id").Value;
-			_accountRepository.ActivateAccount(Guid.Parse(accountId));
-			return true;
+			var handler = new JwtSecurityTokenHandler();
+	
+			var decodeValue = handler.ReadJwtToken(token);
+			var expiration = DateTime.FromBinary(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value));
+			if (expiration > DateTime.UtcNow)
+			{
+				var accountId = decodeValue.Claims.FirstOrDefault(c => c.Type == "Id").Value;
+				_accountRepository.ActivateAccount(Guid.Parse(accountId));
+				return true;
+			}
+			return false;
 		}
+		catch
+		{
+			return false;
+		}
+		
 
-		return false;
+		
 	}
 
 	
