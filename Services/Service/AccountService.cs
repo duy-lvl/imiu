@@ -112,7 +112,7 @@ public class AccountService : IAccountService
 		);
 
 		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        
+		jwt = jwt.Replace(".", "/");
 
 		return new RegisterTokenModel()
 		{
