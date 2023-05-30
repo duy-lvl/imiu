@@ -15,7 +15,7 @@ using DAL.UnitOfWork;
 namespace ImiuAPI.Controllers;
 
 [ApiController]
-[Route("/api/[controller]")]
+[Route("/api/v1/accounts")]
 public class AccountsController
 {
 	private readonly IAccountService _accountService;
@@ -35,32 +35,39 @@ public class AccountsController
 	/// <param name="registerAccountModel"></param>
 	/// <returns></returns>
     [HttpPost]
-	[Route("/register")]
+	[Route("register")]
     public IActionResult RegisterAccount([FromBody] RegisterAccountModel registerAccountModel)
 	{
 		if (_accountService.RegisterAccount(registerAccountModel))
 		{
 			_unitOfWork.Commit();
-			return new JsonResult(new
+			var json = new JsonResult(new
 			{
-				Status = "CREATED",
-				Message = "Account created"
+				Message = "Created"
 			});
+			json.StatusCode = 201;
+			return json;
 		}
-		else return new JsonResult(new
+		else 
 		{
-			Status = "BAD REQUEST",
-			Message = "Create fail"
-		});
+			var json = new JsonResult(new
+			{
+				Message = "Create fail"
+			});
+			json.StatusCode = 400;
+			return json;
+		};
+		
+		
 	}
 
 	[HttpGet]
-	[Route("/verify-email")]
+	[Route("verify-email")]
 	public void VerifyEmail(string token)
 	{
 
 		_accountService.VerifyEmail(token);
-
+		_unitOfWork.Commit();
 	}
 	/// <summary>
 	/// Login

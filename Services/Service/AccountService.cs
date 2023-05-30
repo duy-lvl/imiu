@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
@@ -18,7 +19,7 @@ public class AccountService : IAccountService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
-	private readonly String END_POINT = "https://localhost:7137/verify-email";
+	private readonly String END_POINT = "https://localhost:7137/api/v1/accounts/verify-email";
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper)
 	{
 		_accountRepository = accountRepository;
@@ -48,20 +49,26 @@ public class AccountService : IAccountService
 		account = new Account()
 		{
 			Id = new Guid(),
-			Name = registerAccountModel.Name,
+			Name = "",
 			Email = registerAccountModel.Email,
-			Dob = registerAccountModel.Dob,
+			Dob = DateTime.Today,
 			Password = SHAEncryption.Encrypt(registerAccountModel.Password),
 			Role = Role.CUSTOMER,
 			Status = AccountStatus.INACTIVE
 		};
-		_accountRepository.Create(account);
-//		RegisterTokenModel token;
-//		SendEmail(account);
-//		VerifyEmail(token);
-		return true;
-		
-		
+		Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
+		if (regex.IsMatch(registerAccountModel.Password))
+		{
+			_accountRepository.Create(account);
+
+			SendEmail(account);
+			return true;
+		}
+
+		return false;
+
+
+
 	}
 
 	public bool VerifyEmail(string token)
@@ -85,7 +92,6 @@ public class AccountService : IAccountService
 	{
 		List<Claim> claims = new List<Claim>()
 		{
-			new Claim(ClaimTypes.Name, account.Name),
 			new Claim(ClaimTypes.Email, account.Email),
 			new Claim("Id", account.Id.ToString()),
 			new Claim("Expiration", DateTime.UtcNow.AddMinutes(30).ToBinary().ToString())
@@ -119,7 +125,7 @@ public class AccountService : IAccountService
 		message.Subject = "IMiU email verification";
 		message.To.Add(new MailAddress(account.Email));
 		
-		message.Body = "<p>Dear " + account.Name + ",</p>"
+		message.Body = "<p>Dear Customer,</p>"
 			+ "<p>Please follow this link to activate your account: <a href=\""+webAddress+"?token="+token.Token+"\">Link</a> </p>" +
 			"<p>This link will expire after 30 minutes.</p>";
 		message.IsBodyHtml = true;

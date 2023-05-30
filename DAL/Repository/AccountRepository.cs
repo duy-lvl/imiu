@@ -56,7 +56,7 @@ namespace DAL.Repository
 		public Account Login(string email, string password)
 		{
 			Account account = _dbSet.FirstOrDefault(x => x.Email == email && x.Password == password);
-			if (account != null)
+			if (account != null && account.Status == AccountStatus.ACTIVE)
 			{
 				return account;
 			}

@@ -57,10 +57,16 @@ namespace ImiuAPI
 			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
 			builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 			builder.Services.AddScoped<IQuestionService, QuestionService>();
-			
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("MyPolicy",
+					builder => builder.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader());
+			});
 
 			var app = builder.Build();
-
+			
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
