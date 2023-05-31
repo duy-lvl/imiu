@@ -34,19 +34,19 @@ namespace ImiuAPI
 					Name = "Authorization"
 				});
 				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-		{
-			{
-				new OpenApiSecurityScheme
 				{
-					Reference = new OpenApiReference
 					{
-						Type = ReferenceType.SecurityScheme,
-						Id = "Bearer"
+						new OpenApiSecurityScheme
+						{
+							Reference = new OpenApiReference
+							{
+								Type = ReferenceType.SecurityScheme,
+								Id = "Bearer"
+							}
+						},
+						Array.Empty<string>()
 					}
-				},
-				Array.Empty<string>()
-			}
-		});
+				});
 			});
 
 			// Add services to the container.
@@ -57,10 +57,16 @@ namespace ImiuAPI
 			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
 			builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 			builder.Services.AddScoped<IQuestionService, QuestionService>();
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy("MyPolicy",
+					builder => builder.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader());
+			});
 			
-
 			var app = builder.Build();
-
+			app.UseCors("MyPolicy");
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{

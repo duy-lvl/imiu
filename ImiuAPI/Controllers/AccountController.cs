@@ -11,11 +11,12 @@ using System.Security;
 using System.Text;
 using DAL.Entities;
 using DAL.UnitOfWork;
+using Services.JsonResult;
 
 namespace ImiuAPI.Controllers;
 
 [ApiController]
-[Route("/api/[controller]")]
+[Route("/api/v1/accounts")]
 public class AccountsController
 {
 	private readonly IAccountService _accountService;
@@ -26,41 +27,52 @@ public class AccountsController
 		_accountService = accountService;
 		_unitOfWork = unitOfWork;
 	}
-
-
+	/// <summary>
+	/// Login with google use oauthIdToken
+	/// </summary>
+	/// <param name="accessToken"></param>
+	/// <returns></returns>
+	[HttpPost]
+	[Route("/google-login")]
+	public async Task<IActionResult> LoginWithGoogle(string accessToken)
+	{
+		var result = _accountService.LoginGoogle(accessToken);
+		_unitOfWork.Commit();
+		var jsonResult = new JsonResult(result.Result);
+		jsonResult.StatusCode = result.Result.Status;
+		return jsonResult;
+	}
 	
 	/// <summary>
 	/// Register
 	/// </summary>
 	/// <param name="registerAccountModel"></param>
 	/// <returns></returns>
-    [HttpPost]
-	[Route("/register")]
-    public IActionResult RegisterAccount([FromBody] RegisterAccountModel registerAccountModel)
+	[HttpPost]
+	[Route("register")]
+	public IActionResult RegisterAccount([FromBody] RegisterAccountModel registerAccountModel)
 	{
-		if (_accountService.RegisterAccount(registerAccountModel))
-		{
-			_unitOfWork.Commit();
-			return new JsonResult(new
-			{
-				Status = "CREATED",
-				Message = "Account created"
-			});
-		}
-		else return new JsonResult(new
-		{
-			Status = "BAD REQUEST",
-			Message = "Create fail"
-		});
+		var result = _accountService.RegisterAccount(registerAccountModel, false);
+		_unitOfWork.Commit();
+		var jsonResult = new JsonResult(result);
+		jsonResult.StatusCode = result.Status;
+		return jsonResult;
 	}
-
+	
+	/// <summary>
+	/// Verify email
+	/// </summary>
+	/// <param name="token"></param>
+	/// <returns></returns>
 	[HttpGet]
-	[Route("/verify-email")]
-	public void VerifyEmail(string token)
+	[Route("verify-email")]
+	public IActionResult VerifyEmail(string token)
 	{
-
-		_accountService.VerifyEmail(token);
-
+		var result = _accountService.VerifyEmail(token);
+		_unitOfWork.Commit();
+		var jsonResult = new JsonResult(result);
+		jsonResult.StatusCode = result.Status;
+		return jsonResult;
 	}
 	/// <summary>
 	/// Login
@@ -72,88 +84,25 @@ public class AccountsController
 	[Route("/login")]
 	public IActionResult Login(string email, string password)
 	{
-		if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
-		{
-			return new JsonResult(new
-			{
-				status = false,
-				message = "Email or password is empty"
-			});
-		}
-		AccountModel account;
-		try
-		{
-			account = _accountService.Login(email, password);
-		}
-		catch (Exception ex)
-		{
-			return new JsonResult(new
-			{
-				status = false,
-				message = ex.Message
-			});
-		}
-
-		if (account != null)
-		{
-			TokenModel token = GenerateToken(account);
-			return new JsonResult(new
-			{
-				status = true,
-				message = "Login success",
-				token = token.Token,
-				role = account.Role
-			});
-		}
-		else
-		{
-			return new JsonResult(new
-			{
-				status = false,
-				message = "Incorrect Email or Password"
-			});
-		}
+		var result = _accountService.Login(email, password);
+		var jsonResult = new JsonResult(result);
+		jsonResult.StatusCode = result.Status;
+		return jsonResult;
 	}
 
-	#region Token Generation
-	private TokenModel GenerateToken(AccountModel accountModel)
+	/// <summary>
+	/// Send verify email
+	/// </summary>
+	/// <param name="email"></param>
+	/// <returns></returns>
+	[HttpPost]
+	[Route("/email")]
+	public IActionResult SendEmail(string email)
 	{
-		List<Claim> claims = new List<Claim>()
-			{
-				new Claim(ClaimTypes.Name, accountModel.Name),
-				new Claim(ClaimTypes.Email, accountModel.Email),
-				new Claim("AccountID", accountModel.Id.ToString()),
-				new Claim("Role", accountModel.Role.ToString())
-		};
-
-		var token = new JwtSecurityToken(
-				claims: claims,
-				expires: DateTime.Now.AddMinutes(30)
-			);
-
-		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-		var refreshToken = GenerateRefreshToken();
-
-		return new TokenModel
-		{
-			Token = jwt,
-			Expiration = token.ValidTo,
-			RefreshToken = refreshToken
-		};
+		var result = _accountService.SendEmail(email);
+		var jsonResult = new JsonResult(result);
+		jsonResult.StatusCode = result.Status;
+		return jsonResult;
 	}
 
-	private string GenerateRefreshToken()
-	{
-		var random = new byte[32];
-		using (var rng = RandomNumberGenerator.Create())
-		{
-			rng.GetBytes(random);
-
-			return Convert.ToBase64String(random);
-		}
-	}
-	#endregion
-
-
-	
 }

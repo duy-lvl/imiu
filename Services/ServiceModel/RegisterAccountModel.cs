@@ -6,13 +6,12 @@ namespace Services.ServiceModel;
 
 public class RegisterAccountModel
 {
-    public string Name { get; set; }
 
     public string Email { get; set; }
     
     public string Password { get; set; }
 
-    public DateTime Dob { get; set; }
+
     
     
 }
