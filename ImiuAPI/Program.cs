@@ -34,19 +34,19 @@ namespace ImiuAPI
 					Name = "Authorization"
 				});
 				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-		{
-			{
-				new OpenApiSecurityScheme
 				{
-					Reference = new OpenApiReference
 					{
-						Type = ReferenceType.SecurityScheme,
-						Id = "Bearer"
+						new OpenApiSecurityScheme
+						{
+							Reference = new OpenApiReference
+							{
+								Type = ReferenceType.SecurityScheme,
+								Id = "Bearer"
+							}
+						},
+						Array.Empty<string>()
 					}
-				},
-				Array.Empty<string>()
-			}
-		});
+				});
 			});
 
 			// Add services to the container.
