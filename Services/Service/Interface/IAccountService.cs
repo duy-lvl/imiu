@@ -9,7 +9,7 @@ public interface IAccountService
 
 
     
-    ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel);
+    ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle);
 
     ResponseObject VerifyEmail(string token);
 
@@ -19,4 +19,6 @@ public interface IAccountService
     ResponseObject Login(string email, string password);
 
     ResponseObject SendEmail(string email);
+
+    Task<ResponseObject> LoginGoogle(string accessToken);
 }

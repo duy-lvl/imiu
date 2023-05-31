@@ -4,6 +4,7 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using DAL;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
@@ -21,14 +22,63 @@ public class AccountService : IAccountService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
+	private readonly ImiuDbContext _context;
 	private readonly String END_POINT = "http://localhost:5173/verify/";
-	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper)
+	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, ImiuDbContext imiuDbContext)
 	{
 		_accountRepository = accountRepository;
 		_customMapper = customMapper;
+		_context = imiuDbContext;
 	}
-	
 
+	public async Task<ResponseObject> LoginGoogle(string accessToken)
+	{
+		using (var httpClient = new HttpClient())
+		{
+			var response = await httpClient.GetAsync($"https://oauth2.googleapis.com/tokeninfo?id_token={accessToken}");
+			if (response.IsSuccessStatusCode)
+			{
+				var handler = new JwtSecurityTokenHandler();
+	
+				var decodeValue = handler.ReadJwtToken(accessToken);
+
+				var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
+				var account = _accountRepository.GetByEmail(email);
+				if (account == null)
+				{
+					var registerAccountModel = new RegisterAccountModel()
+					{
+						Email = email,
+						Password = ""
+					};
+					RegisterAccount(registerAccountModel, true);
+					
+				}
+				
+				account = _accountRepository.GetByEmail(email);
+				TokenModel token = GenerateToken(_customMapper.Map(account));
+				return new GetRequestResponse<LoginResponseModel>()
+				{
+					Data = new LoginResponseModel()
+					{
+						Message = "Đăng nhập thành công",
+						AccessToken = token.Token,
+						Role = account.Role.ToString(),
+						IsVerify = account.Status == AccountStatus.ACTIVE
+					},
+					Status = 200
+				};
+			}
+			else
+			{
+				return new PostRequestResponse()
+				{
+					Message = "Đăng nhập thất bại",
+					Status = 400
+				};
+			}
+		}
+	}
 	
 	public ResponseObject Login(string email, string password)
 	{
@@ -57,13 +107,17 @@ public class AccountService : IAccountService
 			if (account != null)
 			{
 				TokenModel token = GenerateToken(account);
+				var accountStatus = _accountRepository.GetByEmail(email).Status;
 				var loginResult = new GetRequestResponse<LoginResponseModel>()
 				{
+					
 					Data = new LoginResponseModel()
 					{
 						Message = "Đăng nhập thành công",
-						Token = token.Token,
-						Role = account.Role
+						AccessToken = token.Token,
+						Role = account.Role.ToString(),
+						IsVerify = accountStatus == AccountStatus.ACTIVE
+						
 					},
 					Status = 200
 				};
@@ -76,7 +130,7 @@ public class AccountService : IAccountService
 		result.Status = 400;
 		return result;
 	}
-	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel)
+	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle)
 	{
 		Account account = _accountRepository.GetByEmail(registerAccountModel.Email);
 		var result = new PostRequestResponse();
@@ -97,19 +151,30 @@ public class AccountService : IAccountService
 				Role = Role.CUSTOMER,
 				Status = AccountStatus.INACTIVE
 			};
-			Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
-			if (regex.IsMatch(registerAccountModel.Password))
+			if (isLoginWithGoogle)
 			{
+				account.Status = AccountStatus.ACTIVE;
 				_accountRepository.Create(account);
-				SendEmail(account.Email);
-				result.Message = "Đã kích hoạt tài khoản";
+				result.Message = "Đăng kí tài khoản thành công";
 				result.Status = 201;
 			}
 			else
 			{
-				result.Message = "Mật khẩu phải có ít 8 kí tự kết hợp từ chữ và số.";
-				result.Status = 400;
+				Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
+				if (regex.IsMatch(registerAccountModel.Password))
+				{
+					_accountRepository.Create(account);
+					SendEmail(account.Email);
+					result.Message = "Đăng kí tài khoản thành công";
+					result.Status = 201;
+				}
+				else
+				{
+					result.Message = "Mật khẩu phải có ít 8 kí tự kết hợp từ chữ và số.";
+					result.Status = 400;
+				}
 			}
+			
 		}
 
 		return result;

@@ -24,6 +24,7 @@ namespace DAL.Repository
 		{
 			//Create account
 			_dbSet.Add(account);
+			_context.SaveChanges();
 		}
 
 		public List<Account> GetAll()
