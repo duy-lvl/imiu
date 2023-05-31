@@ -52,9 +52,9 @@ namespace ImiuAPI
 			// Add services to the container.
 			builder.Services.AddDbContext<ImiuDbContext>();
 			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
 			builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 			builder.Services.AddScoped<IAccountService, AccountService>();
-			builder.Services.AddScoped<ICustomMapper, CustomMapper>();
 			builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 			builder.Services.AddScoped<IQuestionService, QuestionService>();
 			builder.Services.AddCors(options =>
