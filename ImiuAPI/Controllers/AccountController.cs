@@ -17,21 +17,7 @@ public class AccountsController
 		_accountService = accountService;
 		_unitOfWork = unitOfWork;
 	}
-	/// <summary>
-	/// Login with google use oauthIdToken
-	/// </summary>
-	/// <param name="accessToken"></param>
-	/// <returns></returns>
-	[HttpPost]
-	[Route("google-login")]
-	public async Task<IActionResult> LoginWithGoogle(string accessToken)
-	{
-		var result = _accountService.LoginGoogle(accessToken);
-		_unitOfWork.Commit();
-		var jsonResult = new JsonResult(result.Result);
-		jsonResult.StatusCode = result.Result.Status;
-		return jsonResult;
-	}
+	
 	
 	/// <summary>
 	/// Register
@@ -64,21 +50,7 @@ public class AccountsController
 		jsonResult.StatusCode = result.Status;
 		return jsonResult;
 	}
-	/// <summary>
-	/// Login
-	/// </summary>
-	/// <param name="email"></param>
-	/// <param name="password"></param>
-	/// <returns></returns>
-	[HttpPost]
-	[Route("login")]
-	public IActionResult Login(string email, string password)
-	{
-		var result = _accountService.Login(email, password);
-		var jsonResult = new JsonResult(result);
-		jsonResult.StatusCode = result.Status;
-		return jsonResult;
-	}
+	
 
 	/// <summary>
 	/// Send verify email
