@@ -23,7 +23,7 @@ public class AccountsController
 	/// <param name="accessToken"></param>
 	/// <returns></returns>
 	[HttpPost]
-	[Route("/google-login")]
+	[Route("google-login")]
 	public async Task<IActionResult> LoginWithGoogle(string accessToken)
 	{
 		var result = _accountService.LoginGoogle(accessToken);
@@ -71,7 +71,7 @@ public class AccountsController
 	/// <param name="password"></param>
 	/// <returns></returns>
 	[HttpPost]
-	[Route("/login")]
+	[Route("login")]
 	public IActionResult Login(string email, string password)
 	{
 		var result = _accountService.Login(email, password);
@@ -86,7 +86,7 @@ public class AccountsController
 	/// <param name="email"></param>
 	/// <returns></returns>
 	[HttpPost]
-	[Route("/email")]
+	[Route("email")]
 	public IActionResult SendEmail(string email)
 	{
 		var result = _accountService.SendEmail(email);
