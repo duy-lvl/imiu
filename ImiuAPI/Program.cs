@@ -1,5 +1,6 @@
 using DAL;
 using DAL.Repository;
+using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using DAL.UnitOfWork;
 using Microsoft.OpenApi.Models;
@@ -57,6 +58,8 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAccountService, AccountService>();
 			builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 			builder.Services.AddScoped<IQuestionService, QuestionService>();
+			builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
+			builder.Services.AddScoped<IAnswerService, AnswerService>();
 			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("MyPolicy",

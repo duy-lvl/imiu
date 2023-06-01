@@ -7,5 +7,8 @@ namespace Services.CustomeMapper.Interface
 	{
 		public Account Map(AccountModel accountModel);
 		public AccountModel Map(Account account);
+		public QuestionModel Map(Question question);
+
+		public AnswerModel Map(Answer answer);
 	}
 }
