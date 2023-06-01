@@ -21,8 +21,11 @@ public class AccountService : IAccountService
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
 	private readonly ImiuDbContext _context;
-	private readonly String VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
-	private readonly String GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+	private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
+	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+	private readonly int MAIL_PORT = 587;
+	private readonly string MAIL_SMTP_CLIENT = "smtp.gmail.com";
+	
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, ImiuDbContext imiuDbContext)
 	{
 		_accountRepository = accountRepository;
@@ -249,6 +252,10 @@ public class AccountService : IAccountService
 		var account = _accountRepository.GetByEmail(email);
 		if (account == null)
 		{
+			account = _accountRepository.GetLocalByEmail(email);
+		}
+		if (account == null)
+		{
 			return new PostRequestResponse()
 			{
 				Message = "Bạn chưa đăng kí tài khoản",
@@ -265,9 +272,9 @@ public class AccountService : IAccountService
 			+ "<p>Xin nhấn vào đường liên kết sau đây để kích hoạt tài khoản của bạn: <a href=\""+webAddress+token.Token+"\">Link</a> </p>" +
 			"<p>Đường dẫn sẽ hết hạn trong 30 phút.</p>";
 		message.IsBodyHtml = true;
-		var smtpClient = new SmtpClient("smtp.gmail.com")
+		var smtpClient = new SmtpClient(MAIL_SMTP_CLIENT)
 		{
-			Port = 587,
+			Port = MAIL_PORT,
 			Credentials = new NetworkCredential(fromMail, fromPassword),
 			EnableSsl = true
 		};
