@@ -56,9 +56,9 @@ public class AuthController : Controller
     /// <returns></returns>
     [HttpPost]
     [Route("email")]
-    public IActionResult SendEmail(string email)
+    public IActionResult SendEmail([FromBody] EmailSendingModel emailSendingModel)
     {
-    	var result = _accountService.SendEmail(email);
+    	var result = _accountService.SendEmail(emailSendingModel.Email);
     	var jsonResult = new JsonResult(result);
     	jsonResult.StatusCode = result.Status;
     	return jsonResult;
@@ -70,9 +70,9 @@ public class AuthController : Controller
     /// <returns></returns>
     [HttpPost]
     [Route("google-login")]
-    public async Task<IActionResult> LoginWithGoogle(string accessToken)
+    public async Task<IActionResult> LoginWithGoogle([FromBody] LoginWithGoogleModel loginWithGoogleModel)
     {
-        var result = await _accountService.LoginGoogle(accessToken);
+        var result = await _accountService.LoginGoogle(loginWithGoogleModel.AccessToken);
         await _unitOfWork.CommitAsync();
         var jsonResult = new JsonResult(result)
         {
@@ -89,9 +89,9 @@ public class AuthController : Controller
     /// <returns></returns>
     [HttpPost]
     [Route("login")]
-    public IActionResult Login(string email, string password)
+    public IActionResult Login([FromBody] LoginModel loginModel)
     {
-        var result = _accountService.Login(email, password);
+        var result = _accountService.Login(loginModel.Email, loginModel.Password);
         var jsonResult = new JsonResult(result)
         {
             StatusCode = result.Status

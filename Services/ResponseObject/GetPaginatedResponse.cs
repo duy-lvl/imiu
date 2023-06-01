@@ -6,7 +6,6 @@ public class GetPaginatedResult<T> : ResponseObject
 {
     public T data { get; set; }
     public MetaData Type { get; set; }
-    public int Status { get; set; }
     public class MetaData
     {
         public string SortBy { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Services.JsonResult;
 
-public interface ResponseObject
+public abstract class ResponseObject
 {
     public int Status { get; set; }
 }
