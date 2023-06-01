@@ -1,17 +1,7 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Service.Interface;
 using Services.ServiceModel;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Security;
-using System.Text;
-using DAL.Entities;
 using DAL.UnitOfWork;
-using Services.JsonResult;
 
 namespace ImiuAPI.Controllers;
 

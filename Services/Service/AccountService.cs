@@ -8,13 +8,11 @@ using DAL;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
-using DAL.UnitOfWork;
 using Services.CustomeMapper.Interface;
 using Services.Encryption;
 using Services.JsonResult;
 using Services.Service.Interface;
 using Services.ServiceModel;
-
 
 namespace Services.Service;
 
@@ -23,7 +21,8 @@ public class AccountService : IAccountService
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
 	private readonly ImiuDbContext _context;
-	private readonly String END_POINT = "http://localhost:5173/verify/";
+	private readonly String VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
+	private readonly String GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://oauth2.googleapis.com/tokeninfo?id_token=";
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, ImiuDbContext imiuDbContext)
 	{
 		_accountRepository = accountRepository;
@@ -35,7 +34,7 @@ public class AccountService : IAccountService
 	{
 		using (var httpClient = new HttpClient())
 		{
-			var response = await httpClient.GetAsync($"https://oauth2.googleapis.com/tokeninfo?id_token={accessToken}");
+			var response = await httpClient.GetAsync(GOOGLE_VERIFY_ACCESS_TOKEN_API + accessToken);
 			if (response.IsSuccessStatusCode)
 			{
 				var handler = new JwtSecurityTokenHandler();
@@ -242,7 +241,7 @@ public class AccountService : IAccountService
 	{
 		string fromMail = "duylvlse160831@fpt.edu.vn";
 		string fromPassword = "ipwaggpctjotqtiy";
-		string webAddress = END_POINT;
+		string webAddress = VERIFY_EMAIL_END_POINT;
 
 		var account = _accountRepository.GetByEmail(email);
 		if (account == null)
