@@ -24,7 +24,6 @@ namespace DAL.Repository
 		{
 			//Create account
 			_dbSet.Add(account);
-			_context.SaveChanges();
 		}
 
 		public List<Account> GetAll()
@@ -42,6 +41,11 @@ namespace DAL.Repository
 				account.Status = AccountStatus.ACTIVE;
 				_dbSet.Update(account);
 			}
+		}
+
+		public Account GetLocalByEmail(string email)
+		{
+			return _dbSet.Local.FirstOrDefault(a => a.Email == email);
 		}
 
 		public Account GetByEmail(string email)

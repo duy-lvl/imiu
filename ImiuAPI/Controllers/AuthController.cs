@@ -72,11 +72,11 @@ public class AuthController : Controller
     [Route("google-login")]
     public async Task<IActionResult> LoginWithGoogle(string accessToken)
     {
-        var result = _accountService.LoginGoogle(accessToken);
-        _unitOfWork.Commit();
-        var jsonResult = new JsonResult(result.Result)
+        var result = await _accountService.LoginGoogle(accessToken);
+        await _unitOfWork.CommitAsync();
+        var jsonResult = new JsonResult(result)
         {
-            StatusCode = result.Result.Status
+            StatusCode = result.Status
         };
         return jsonResult;
     }

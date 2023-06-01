@@ -54,7 +54,7 @@ public class AccountService : IAccountService
 					
 				}
 				
-				account = _accountRepository.GetByEmail(email);
+				account = _accountRepository.GetLocalByEmail(email);
 				TokenModel token = GenerateToken(_customMapper.Map(account));
 				return new GetRequestResponse<LoginResponseModel>()
 				{
@@ -198,9 +198,12 @@ public class AccountService : IAccountService
 				result.Message = "Tài khoản đã được kích hoạt";
 				result.Status = 201;
 			}
-
-			result.Message = "Link đã hết hạn";
-			result.Status = 410;
+			else
+			{
+				result.Message = "Link đã hết hạn";
+				result.Status = 410;
+			}
+			
 		}
 		catch
 		{
