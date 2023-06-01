@@ -1,4 +1,4 @@
-﻿using DAL.Entities;
+﻿using Services.ServiceModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Services.Service.Interface
 {
-    public interface IQuestionService
+    public interface IAnswerService
     {
-        List<Question> GetQuestions();
+        List<AnswerModel> GetAnswersByQuestionID(Guid questionID);
     }
 }
