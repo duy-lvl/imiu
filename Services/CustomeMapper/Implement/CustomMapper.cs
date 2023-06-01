@@ -28,7 +28,9 @@ namespace Services.CustomeMapper.Implement
 				Email = accountModel.Email,
 				Password = accountModel.Password,
 				Dob = accountModel.Dob,
-				Role = accountModel.Role
+				Role = accountModel.Role,
+				Status = accountModel.Status,
+								
 			};
 		}
 
@@ -41,7 +43,9 @@ namespace Services.CustomeMapper.Implement
 				Email = account.Email,
 				Password = account.Password,
 				Dob = account.Dob,
-				Role = account.Role
+				Role = account.Role,
+				Status = account.Status,
+
 			};
 		}
         #region Question

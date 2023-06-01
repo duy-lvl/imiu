@@ -9,12 +9,11 @@ public interface IAccountService
 
 
     
-    ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle);
+    ResponseObject RegisterAccount(AccountModel accountModel, bool isLoginWithGoogle);
 
     ResponseObject VerifyEmail(string token);
 
     //void SendEmail(Account account, out RegisterTokenModel token);
-
 
     ResponseObject Login(string email, string password);
 

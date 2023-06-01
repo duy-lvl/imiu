@@ -49,10 +49,10 @@ public class AccountsController
 	/// <param name="registerAccountModel"></param>
 	/// <returns></returns>
 	[HttpPost]
-	[Route("register")]
-	public IActionResult RegisterAccount([FromBody] RegisterAccountModel registerAccountModel)
+	[Route("/register")]
+	public IActionResult RegisterAccount([FromBody] AccountModel accountModel)
 	{
-		var result = _accountService.RegisterAccount(registerAccountModel, false);
+		var result = _accountService.RegisterAccount(accountModel, false);
 		_unitOfWork.Commit();
 		var jsonResult = new JsonResult(result);
 		jsonResult.StatusCode = result.Status;
@@ -65,7 +65,7 @@ public class AccountsController
 	/// <param name="token"></param>
 	/// <returns></returns>
 	[HttpGet]
-	[Route("verify-email")]
+	[Route("/verify-email")]
 	public IActionResult VerifyEmail(string token)
 	{
 		var result = _accountService.VerifyEmail(token);
@@ -96,7 +96,7 @@ public class AccountsController
 	/// <param name="email"></param>
 	/// <returns></returns>
 	[HttpPost]
-	[Route("/email")]
+	[Route("/send-email")]
 	public IActionResult SendEmail(string email)
 	{
 		var result = _accountService.SendEmail(email);

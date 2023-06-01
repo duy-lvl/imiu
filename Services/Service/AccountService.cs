@@ -22,15 +22,56 @@ public class AccountService : IAccountService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
-	private readonly ImiuDbContext _context;
 	private readonly String END_POINT = "http://localhost:5173/verify/";
-	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, ImiuDbContext imiuDbContext)
+	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper)
 	{
 		_accountRepository = accountRepository;
 		_customMapper = customMapper;
-		_context = imiuDbContext;
 	}
 
+	#region Register
+	public ResponseObject RegisterAccount(AccountModel accountModel, bool isLoginWithGoogle)
+	{
+		var result = new PostRequestResponse();
+		var account = _accountRepository.GetByEmail(accountModel.Email);
+		if (account != null)
+		{
+			result.Message = "Email này đã tồn tại";
+			result.Status = 400;
+		}
+		else
+		{			
+			if (isLoginWithGoogle)
+			{
+				_accountRepository.Create(_customMapper.Map(accountModel));
+				result.Message = "Đăng kí tài khoản thành công";
+				result.Status = 201;
+			}
+			else
+			{
+				Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
+				if (regex.IsMatch(accountModel.Password))
+				{
+					accountModel.Role = Role.CUSTOMER;
+					accountModel.Status = AccountStatus.INACTIVE;
+					accountModel.Password = SHAEncryption.Encrypt(accountModel.Password);
+					_accountRepository.Create(_customMapper.Map(accountModel));
+					SendEmail(accountModel.Email);
+					result.Message = "Đăng kí tài khoản thành công";
+					result.Status = 201;
+				}
+				else
+				{
+					result.Message = "Mật khẩu phải có ít nhất 8 kí tự kết hợp từ chữ và số.";
+					result.Status = 400;
+				}
+			}			
+		}
+		return result;
+	}
+	#endregion
+
+	#region Login Google
 	public async Task<ResponseObject> LoginGoogle(string accessToken)
 	{
 		using (var httpClient = new HttpClient())
@@ -43,19 +84,22 @@ public class AccountService : IAccountService
 				var decodeValue = handler.ReadJwtToken(accessToken);
 
 				var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
+				var name = decodeValue.Claims.FirstOrDefault(c => c.Type == "name").Value;
 				var account = _accountRepository.GetByEmail(email);
 				if (account == null)
 				{
-					var registerAccountModel = new RegisterAccountModel()
+					var accountModel = new AccountModel()
 					{
 						Email = email,
-						Password = ""
+						Name = name,
+						Password = "",
+						Role = Role.CUSTOMER,
+						Status = AccountStatus.ACTIVE,
+						Dob = DateTime.Now,
 					};
-					RegisterAccount(registerAccountModel, true);
-					
+					RegisterAccount(accountModel, true);
 				}
 				
-				account = _accountRepository.GetByEmail(email);
 				TokenModel token = GenerateToken(_customMapper.Map(account));
 				return new GetRequestResponse<LoginResponseModel>()
 				{
@@ -79,7 +123,9 @@ public class AccountService : IAccountService
 			}
 		}
 	}
-	
+	#endregion
+
+	#region Login
 	public ResponseObject Login(string email, string password)
 	{
 		var result = new PostRequestResponse();
@@ -130,58 +176,9 @@ public class AccountService : IAccountService
 		result.Status = 400;
 		return result;
 	}
-	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle)
-	{
-		Account account = _accountRepository.GetByEmail(registerAccountModel.Email);
-		var result = new PostRequestResponse();
-		if (account != null)
-		{
-			result.Message = "Email này đã tồn tại";
-			result.Status = 400;
-		}
-		else
-		{
-			account = new Account()
-			{
-				Id = new Guid(),
-				Name = "",
-				Email = registerAccountModel.Email,
-				Dob = DateTime.Today,
-				Password = SHAEncryption.Encrypt(registerAccountModel.Password),
-				Role = Role.CUSTOMER,
-				Status = AccountStatus.INACTIVE
-			};
-			if (isLoginWithGoogle)
-			{
-				account.Status = AccountStatus.ACTIVE;
-				_accountRepository.Create(account);
-				result.Message = "Đăng kí tài khoản thành công";
-				result.Status = 201;
-			}
-			else
-			{
-				Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
-				if (regex.IsMatch(registerAccountModel.Password))
-				{
-					_accountRepository.Create(account);
-					SendEmail(account.Email);
-					result.Message = "Đăng kí tài khoản thành công";
-					result.Status = 201;
-				}
-				else
-				{
-					result.Message = "Mật khẩu phải có ít 8 kí tự kết hợp từ chữ và số.";
-					result.Status = 400;
-				}
-			}
-			
-		}
+	#endregion
 
-		return result;
-
-
-	}
-
+	#region VerifyEmail
 	public ResponseObject VerifyEmail(string token)
 	{
 		var result = new PostRequestResponse();
@@ -212,31 +209,9 @@ public class AccountService : IAccountService
 		return result;
 
 	}
+	#endregion
 
-	
-	private RegisterTokenModel GenerateToken(Account account)
-	{
-		List<Claim> claims = new List<Claim>()
-		{
-			new Claim(ClaimTypes.Email, account.Email),
-			new Claim("Id", account.Id.ToString()),
-			new Claim("Expiration", DateTime.UtcNow.AddMinutes(30).ToBinary().ToString())
-		};
-
-		var token = new JwtSecurityToken(
-			claims: claims,
-			expires: DateTime.UtcNow.AddMinutes(30)
-		);
-
-		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-		jwt = jwt.Replace(".", "/");
-
-		return new RegisterTokenModel()
-		{
-			Token = jwt,
-			Expiration = token.ValidTo
-		};
-	}
+	#region SendEmail
 	public ResponseObject SendEmail(string email)
 	
 	{
@@ -276,16 +251,33 @@ public class AccountService : IAccountService
 			Status = 201
 		};
 	}
+	#endregion
 
-	
-
-	public List<Account> getAll()
+	#region GenerateToken
+	private RegisterTokenModel GenerateToken(Account account)
 	{
-		return _accountRepository.GetAll();
-	}
+		List<Claim> claims = new List<Claim>()
+		{
+			new Claim(ClaimTypes.Email, account.Email),
+			new Claim("Id", account.Id.ToString()),
+		};
 
+		var token = new JwtSecurityToken(
+			claims: claims,
+			expires: DateTime.UtcNow.AddMinutes(30)
+		);
+
+		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+		jwt = jwt.Replace(".", "/");
+
+		return new RegisterTokenModel()
+		{
+			Token = jwt,
+			Expiration = token.ValidTo
+		};
+	}
 	
-	#region Token Generation
+	
 	private TokenModel GenerateToken(AccountModel accountModel)
 	{
 		List<Claim> claims = new List<Claim>()
