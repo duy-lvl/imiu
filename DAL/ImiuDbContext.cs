@@ -12,7 +12,7 @@ namespace DAL
     {
 		DbSet<Account> Accounts { get; set; }
 		DbSet<Answer> Answers { get; set; }
-		DbSet<Subcription> Subcriptions { get; set; }
+		DbSet<Subscription> Subcriptions { get; set; }
 		DbSet<Direction> Directions { get; set; }
 		DbSet<Ingredient> Ingredients { get; set; }
 		DbSet<Meal> Meals { get; set; }

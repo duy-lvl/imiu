@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using DAL.Enum;
 
 namespace DAL.Entities;
 
-public class Subcription
+public class Subscription
 {
     [Key]
     public Guid Id { get; set; }
@@ -15,7 +16,7 @@ public class Subcription
     public int Value { get; set; }
     
     [Required(ErrorMessage = "Duration is required")]
-    public int Duration { get; set; }
+    public Duration Duration { get; set; }
     
     [Required(ErrorMessage = "Code is required")]
     public string Code { get; set; }
