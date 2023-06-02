@@ -163,8 +163,6 @@ public class AccountService : IAccountService
 		var target= _accountRepository.Login(email, encryptedPassword);
 		if (target != null)
 		{
-			
-
 			var account = _customMapper.Map(target);
 			if (account != null)
 			{
@@ -224,7 +222,7 @@ public class AccountService : IAccountService
 	
 			var decodeValue = handler.ReadJwtToken(token);
 			var expiration = DateTime.FromBinary
-				(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value));
+				(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value)); 
 			if (expiration > DateTime.UtcNow)
 			{
 				var accountId = decodeValue.Claims.FirstOrDefault(c => c.Type == "Id").Value;
@@ -232,9 +230,12 @@ public class AccountService : IAccountService
 				result.Message = "Tài khoản đã được kích hoạt";
 				result.Status = 201;
 			}
-
-			result.Message = "Link đã hết hạn";
-			result.Status = 410;
+			else
+			{
+				result.Message = "Link đã hết hạn";
+				result.Status = 410;
+			}
+			
 		}
 		catch
 		{
@@ -302,6 +303,7 @@ public class AccountService : IAccountService
 		{
 			new Claim(ClaimTypes.Email, account.Email),
 			new Claim("Id", account.Id.ToString()),
+			new Claim("Expiration", DateTime.UtcNow.AddMinutes(30).ToBinary().ToString())
 		};
 
 		var token = new JwtSecurityToken(
