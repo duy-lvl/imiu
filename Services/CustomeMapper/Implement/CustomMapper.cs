@@ -18,7 +18,7 @@ namespace Services.CustomeMapper.Implement
         {
 			_answerRepository = answerRepository;
         }
-
+		#region Account
 		public Account Map(AccountModel accountModel)
 		{
 			return new Account
@@ -48,6 +48,7 @@ namespace Services.CustomeMapper.Implement
 
 			};
 		}
+		#endregion
         #region Question
         public QuestionModel Map(Question question)
         {
@@ -76,6 +77,19 @@ namespace Services.CustomeMapper.Implement
 				Content = answer.Content
 			};
         }
+        #endregion
+
+        #region Subscription
+
+        public LoginResponseModel.SubcriptionModel Map(Subscription subcription)
+        {
+	        return new LoginResponseModel.SubcriptionModel()
+	        {
+		        Code = subcription.Code,
+		        Name = subcription.Name
+	        };
+        }
+
         #endregion
     }
 }

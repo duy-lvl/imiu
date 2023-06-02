@@ -20,5 +20,8 @@ namespace DAL.Repository.Interface
         List<Account> GetAll();
 
         void ActivateAccount(Guid accountId);
+        
+        Account GetLocalByEmail(string email);
+
     }
 }

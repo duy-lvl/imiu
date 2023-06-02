@@ -4,11 +4,9 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using DAL;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
-using DAL.UnitOfWork;
 using Services.CustomeMapper.Interface;
 using Services.Encryption;
 using Services.JsonResult;
@@ -22,41 +20,55 @@ public class AccountService : IAccountService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
-	private readonly String END_POINT = "http://localhost:5173/verify/";
-	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper)
+	private readonly IPlanRepository _planRepository;
+	private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
+	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+	private readonly int MAIL_PORT = 587;
+	private readonly string MAIL_SMTP_CLIENT = "smtp.gmail.com";
+	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository)
 	{
 		_accountRepository = accountRepository;
 		_customMapper = customMapper;
+		_planRepository = planRepository;
 	}
+	
 
 	#region Register
-	public ResponseObject RegisterAccount(AccountModel accountModel, bool isLoginWithGoogle)
+	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle)
 	{
+		Account account = _accountRepository.GetByEmail(registerAccountModel.Email);
 		var result = new PostRequestResponse();
-		var account = _accountRepository.GetByEmail(accountModel.Email);
 		if (account != null)
 		{
 			result.Message = "Email này đã tồn tại";
 			result.Status = 400;
 		}
 		else
-		{			
+		{
+			account = new Account()
+			{
+				Id = new Guid(),
+				Name = "",
+				Email = registerAccountModel.Email,
+				Dob = DateTime.Today,
+				Password = SHAEncryption.Encrypt(registerAccountModel.Password),
+				Role = Role.CUSTOMER,
+				Status = AccountStatus.INACTIVE
+			};
 			if (isLoginWithGoogle)
 			{
-				_accountRepository.Create(_customMapper.Map(accountModel));
+				account.Status = AccountStatus.ACTIVE;
+				_accountRepository.Create(account);
 				result.Message = "Đăng kí tài khoản thành công";
 				result.Status = 201;
 			}
 			else
 			{
 				Regex regex = new Regex(@"^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$");
-				if (regex.IsMatch(accountModel.Password))
+				if (regex.IsMatch(registerAccountModel.Password))
 				{
-					accountModel.Role = Role.CUSTOMER;
-					accountModel.Status = AccountStatus.INACTIVE;
-					accountModel.Password = SHAEncryption.Encrypt(accountModel.Password);
-					_accountRepository.Create(_customMapper.Map(accountModel));
-					SendEmail(accountModel.Email);
+					_accountRepository.Create(account);
+					SendEmail(account.Email);
 					result.Message = "Đăng kí tài khoản thành công";
 					result.Status = 201;
 				}
@@ -65,8 +77,10 @@ public class AccountService : IAccountService
 					result.Message = "Mật khẩu phải có ít nhất 8 kí tự kết hợp từ chữ và số.";
 					result.Status = 400;
 				}
-			}			
+			}
+			
 		}
+
 		return result;
 	}
 	#endregion
@@ -76,7 +90,7 @@ public class AccountService : IAccountService
 	{
 		using (var httpClient = new HttpClient())
 		{
-			var response = await httpClient.GetAsync($"https://oauth2.googleapis.com/tokeninfo?id_token={accessToken}");
+			var response = await httpClient.GetAsync(GOOGLE_VERIFY_ACCESS_TOKEN_API + accessToken);
 			if (response.IsSuccessStatusCode)
 			{
 				var handler = new JwtSecurityTokenHandler();
@@ -84,43 +98,51 @@ public class AccountService : IAccountService
 				var decodeValue = handler.ReadJwtToken(accessToken);
 
 				var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
-				var name = decodeValue.Claims.FirstOrDefault(c => c.Type == "name").Value;
 				var account = _accountRepository.GetByEmail(email);
 				if (account == null)
 				{
-					var accountModel = new AccountModel()
+					var registerAccountModel = new RegisterAccountModel()
 					{
 						Email = email,
-						Name = name,
-						Password = "",
-						Role = Role.CUSTOMER,
-						Status = AccountStatus.ACTIVE,
-						Dob = DateTime.Now,
+						Password = ""
 					};
-					RegisterAccount(accountModel, true);
+					RegisterAccount(registerAccountModel, true);
+					
+					account = _accountRepository.GetLocalByEmail(email);
+					
 				}
-				
+				else _accountRepository.ActivateAccount(account.Id);
 				TokenModel token = GenerateToken(_customMapper.Map(account));
+				LoginResponseModel.SubcriptionModel subscriptionModel;
+				try
+				{
+					var subscription = _planRepository.GetCurrentPlanByCustomerId(account.Id).Subcription;
+					subscriptionModel = _customMapper.Map(subscription);
+				}
+				catch
+				{
+					subscriptionModel = null;
+				}
 				return new GetRequestResponse<LoginResponseModel>()
 				{
 					Data = new LoginResponseModel()
 					{
-						Message = "Đăng nhập thành công",
 						AccessToken = token.Token,
+						RefreshToken = token.RefreshToken,
 						Role = account.Role.ToString(),
-						IsVerify = account.Status == AccountStatus.ACTIVE
+						IsVerify = true,
+						Subcription = subscriptionModel
 					},
+					Message = "Đăng nhập thành công",
 					Status = 200
 				};
 			}
-			else
+			
+			return new PostRequestResponse()
 			{
-				return new PostRequestResponse()
-				{
-					Message = "Đăng nhập thất bại",
-					Status = 400
-				};
-			}
+				Message = "Đăng nhập thất bại",
+				Status = 400
+			};
 		}
 	}
 	#endregion
@@ -141,30 +163,44 @@ public class AccountService : IAccountService
 		var target= _accountRepository.Login(email, encryptedPassword);
 		if (target != null)
 		{
-			if (target.Status == AccountStatus.INACTIVE)
-			{
-				SendEmail(email);
-				result.Message = "Email của bạn chưa được xác thực";
-				result.Status = 401;
-				return result;
-			}
+			
 
 			var account = _customMapper.Map(target);
 			if (account != null)
 			{
 				TokenModel token = GenerateToken(account);
 				var accountStatus = _accountRepository.GetByEmail(email).Status;
+				
+				LoginResponseModel.SubcriptionModel subscriptionModel;
+				try
+				{
+					var subscription = _planRepository.GetCurrentPlanByCustomerId(account.Id).Subcription;
+					subscriptionModel = _customMapper.Map(subscription);
+				}
+				catch
+				{
+					subscriptionModel = null;
+				}
+
+				var isVerify = accountStatus == AccountStatus.ACTIVE;
+				var message = "Tài khoản của bạn chưa được xác thực";
+				if (isVerify)
+				{
+					message = "Đăng nhập thành công";
+				}
 				var loginResult = new GetRequestResponse<LoginResponseModel>()
 				{
 					
 					Data = new LoginResponseModel()
 					{
-						Message = "Đăng nhập thành công",
+						
 						AccessToken = token.Token,
 						Role = account.Role.ToString(),
-						IsVerify = accountStatus == AccountStatus.ACTIVE
-						
+						IsVerify = isVerify,
+						RefreshToken = token.RefreshToken,
+						Subcription = subscriptionModel
 					},
+					Message = message,
 					Status = 200
 				};
 				return loginResult;
@@ -217,9 +253,13 @@ public class AccountService : IAccountService
 	{
 		string fromMail = "duylvlse160831@fpt.edu.vn";
 		string fromPassword = "ipwaggpctjotqtiy";
-		string webAddress = END_POINT;
+		string webAddress = VERIFY_EMAIL_END_POINT;
 
 		var account = _accountRepository.GetByEmail(email);
+		if (account == null)
+		{
+			account = _accountRepository.GetLocalByEmail(email);
+		}
 		if (account == null)
 		{
 			return new PostRequestResponse()
@@ -235,12 +275,12 @@ public class AccountService : IAccountService
 		message.To.Add(new MailAddress(account.Email));
 		
 		message.Body = "<p>Kính chào quý khách,</p>"
-			+ "<p>Xin nhấn vào đường liên kết sau đây để kích hoạt tài khoản của bạn: <a href=\""+webAddress+token.Token+"\">Link</a> </p>" +
-			"<p>Đường dẫn sẽ hết hạn trong 30 phút.</p>";
+		               + "<p>Xin nhấn vào đường liên kết sau đây để kích hoạt tài khoản của bạn: <a href=\""+webAddress+token.Token+"\">Link</a> </p>" +
+		               "<p>Đường dẫn sẽ hết hạn trong 30 phút.</p>";
 		message.IsBodyHtml = true;
-		var smtpClient = new SmtpClient("smtp.gmail.com")
+		var smtpClient = new SmtpClient(MAIL_SMTP_CLIENT)
 		{
-			Port = 587,
+			Port = MAIL_PORT,
 			Credentials = new NetworkCredential(fromMail, fromPassword),
 			EnableSsl = true
 		};
@@ -251,6 +291,8 @@ public class AccountService : IAccountService
 			Status = 201
 		};
 	}
+	
+
 	#endregion
 
 	#region GenerateToken
@@ -315,5 +357,5 @@ public class AccountService : IAccountService
 		}
 	}
 	#endregion
-	
+
 }
