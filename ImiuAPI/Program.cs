@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Services.CustomeMapper.Implement;
 using Services.CustomeMapper.Interface;
 using Services.Service;
+using Services.Service.Implement;
 using Services.Service.Interface;
 
 namespace ImiuAPI
@@ -60,6 +61,8 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IQuestionService, QuestionService>();
 			builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 			builder.Services.AddScoped<IAnswerService, AnswerService>();
+			builder.Services.AddScoped<ICustomerAnswerRepository, CustomerAnswerRepository>();
+			builder.Services.AddScoped<ICustomerAnswerService, CustomerAnswerService>();
 			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 			
 			builder.Services.AddCors(options =>

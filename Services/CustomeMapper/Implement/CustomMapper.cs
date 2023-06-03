@@ -90,6 +90,31 @@ namespace Services.CustomeMapper.Implement
 	        };
         }
 
-        #endregion
-    }
+		#endregion
+
+		#region Customer Answer
+		public CustomerAnswerModel Map(CustomerAnswer customerAnswer)
+		{
+			return new CustomerAnswerModel
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+
+		public CustomerAnswer Map(CustomerAnswerModel customerAnswer)
+		{
+			return new CustomerAnswer
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+		#endregion
+	}
+
 }
