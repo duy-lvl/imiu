@@ -170,15 +170,19 @@ public class AccountService : IAccountService
 				var accountStatus = _accountRepository.GetByEmail(email).Status;
 				
 				LoginResponseModel.SubcriptionModel subscriptionModel;
-				try
+				
+				var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
+				if (plan != null) 
 				{
-					var subscription = _planRepository.GetCurrentPlanByCustomerId(account.Id).Subcription;
-					subscriptionModel = _customMapper.Map(subscription);
-				}
-				catch
+                    var subscription = plan.Subcription;
+                    subscriptionModel = _customMapper.Map(subscription);
+                }
+				else
 				{
-					subscriptionModel = null;
-				}
+                    subscriptionModel = null;
+                }
+				
+				
 
 				var isVerify = accountStatus == AccountStatus.ACTIVE;
 				var message = "Tài khoản của bạn chưa được xác thực";
