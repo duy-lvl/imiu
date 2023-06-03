@@ -114,12 +114,13 @@ public class AccountService : IAccountService
 				else _accountRepository.ActivateAccount(account.Id);
 				TokenModel token = GenerateToken(_customMapper.Map(account));
 				LoginResponseModel.SubcriptionModel subscriptionModel;
-				try
+				var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
+				if (plan != null) 
 				{
-					var subscription = _planRepository.GetCurrentPlanByCustomerId(account.Id).Subcription;
+					var subscription = plan.Subcription;
 					subscriptionModel = _customMapper.Map(subscription);
 				}
-				catch
+				else
 				{
 					subscriptionModel = null;
 				}
