@@ -18,7 +18,7 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpPost]
-        [Route("customeranswer")]
+        [Route("customeranswer/create")]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
             _customerAnswerService.CreateCustomerAnswers(customerAnswers);
@@ -38,7 +38,7 @@ namespace ImiuAPI.Controllers
             });
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("customeranswer/get")]
         public IActionResult GetCustomerAnswersByCustomerID(Guid id)
         {

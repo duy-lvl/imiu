@@ -13,7 +13,7 @@ namespace ImiuAPI.Controllers
         {
             _questionService = questionService;
         }
-        [HttpPost]
+        [HttpGet]
         [Route("question")]
         public IActionResult GetQuestions()
         {
