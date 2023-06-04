@@ -64,7 +64,9 @@ namespace ImiuAPI
 			builder.Services.AddScoped<ICustomerAnswerRepository, CustomerAnswerRepository>();
 			builder.Services.AddScoped<ICustomerAnswerService, CustomerAnswerService>();
 			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
-			
+
+			builder.Services.AddScoped<ITagRepository, TagRepository>();
+
 			builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("MyPolicy",

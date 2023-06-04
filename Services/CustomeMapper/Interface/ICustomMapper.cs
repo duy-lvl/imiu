@@ -13,5 +13,6 @@ namespace Services.CustomeMapper.Interface
 		LoginResponseModel.SubcriptionModel Map(Subscription subcription);
 		public CustomerAnswerModel Map(CustomerAnswer customerAnswer);
 		public CustomerAnswer Map(CustomerAnswerModel customerAnswer);
+		public TagAnswerModel Map(Tag tag);
 	}
 }

@@ -74,7 +74,8 @@ namespace Services.CustomeMapper.Implement
 			return new AnswerModel
 			{
 				Id = answer.Id,
-				Content = answer.Content
+				Content = answer.Content,
+                Tag = answer.Tag != null ? Map(answer.Tag) : null
 			};
         }
         #endregion
@@ -115,6 +116,18 @@ namespace Services.CustomeMapper.Implement
 			};
 		}
 		#endregion
-	}
+
+		#region Tag
+		public TagAnswerModel Map(Tag tag)
+        {
+			return new TagAnswerModel
+			{
+				Id = tag.Id,
+				Name = tag.Name,
+				Code = tag.Code
+			};
+        }
+        #endregion
+    }
 
 }
