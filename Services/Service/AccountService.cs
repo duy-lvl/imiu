@@ -111,7 +111,13 @@ public class AccountService : IAccountService
 					account = _accountRepository.GetLocalByEmail(email);
 					
 				}
-				else _accountRepository.ActivateAccount(account.Id);
+				else
+				{
+					if (account.Status == AccountStatus.INACTIVE)
+					{
+						_accountRepository.ActivateAccount(account.Id);
+					}
+				}
 				TokenModel token = GenerateToken(_customMapper.Map(account));
 				LoginResponseModel.SubcriptionModel subscriptionModel;
 				var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
@@ -124,6 +130,7 @@ public class AccountService : IAccountService
 				{
 					subscriptionModel = null;
 				}
+				
 				return new GetRequestResponse<LoginResponseModel>()
 				{
 					Data = new LoginResponseModel()
@@ -132,7 +139,11 @@ public class AccountService : IAccountService
 						RefreshToken = token.RefreshToken,
 						Role = account.Role.ToString(),
 						IsVerify = true,
-						Subcription = subscriptionModel
+						Subcription = subscriptionModel,
+						AccountId = account.Id.ToString(),
+						Name = account.Name,
+						Email = account.Email, 
+						HasPassword = account.Password != SHAEncryption.Encrypt("")
 					},
 					Message = "Đăng nhập thành công",
 					Status = 200
@@ -201,7 +212,11 @@ public class AccountService : IAccountService
 						Role = account.Role.ToString(),
 						IsVerify = isVerify,
 						RefreshToken = token.RefreshToken,
-						Subcription = subscriptionModel
+						Subcription = subscriptionModel,
+						AccountId = target.Id.ToString(),
+						Name = target.Name,
+						Email = email,
+						HasPassword = target.Password != SHAEncryption.Encrypt("")
 					},
 					Message = message,
 					Status = 200
