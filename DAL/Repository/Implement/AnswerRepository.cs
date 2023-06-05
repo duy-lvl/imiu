@@ -23,7 +23,7 @@ namespace DAL.Repository.Implement
         public List<Answer> GetAnswersByQuestionID(Guid questionID)
         {
             Tag? tag = null;
-            var list =  _dbSet.Where(a => a.QuestionId == questionID).ToList();
+            var list =  _dbSet.Where(a => a.QuestionId == questionID).OrderBy(a => a.Content).ToList();
             foreach (var answer in list)
             {
                 tag = _tagRepository.GetTagByAnswerID(answer.TagId);

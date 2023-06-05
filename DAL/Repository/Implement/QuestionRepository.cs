@@ -20,7 +20,7 @@ namespace DAL.Repository
         }
         public List<Question> GetAllQuestions()
         {
-            return _dbSet.Include(a => a.Answers).ToList();
+            return _dbSet.Include(a => a.Answers).OrderBy(a => a.Index).ToList();
         }
 
     }
