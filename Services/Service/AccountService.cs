@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
+using Newtonsoft.Json.Linq;
 using Services.CustomeMapper.Interface;
 using Services.Encryption;
 using Services.JsonResult;
@@ -111,16 +112,15 @@ public class AccountService : IAccountService
 		using (var httpClient = new HttpClient())
 		{
 			var response = await httpClient.GetAsync(GOOGLE_VERIFY_ACCESS_TOKEN_API + accessToken);
-			if (response.IsSuccessStatusCode)
+			
+            if (response.IsSuccessStatusCode)
 			{
+				var responseContent = JObject.Parse(await response.Content.ReadAsStringAsync());
+				bool isVerifiedEmail = responseContent["verified_email"].Value<bool>();
 				
-				var handler = new JwtSecurityTokenHandler();
-	
-				var decodeValue = handler.ReadJwtToken(accessToken);
-				bool isVerifiedEmail = bool.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "verified_email").Value);
 				if (isVerifiedEmail)
 				{
-					var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
+					var email = responseContent["email"].ToString();
 					var account = _accountRepository.GetByEmail(email);
 					if (account == null)
 					{
