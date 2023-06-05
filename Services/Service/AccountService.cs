@@ -22,9 +22,29 @@ public class AccountService : IAccountService
 	private readonly ICustomMapper _customMapper;
 	private readonly IPlanRepository _planRepository;
 	private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
-	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://oauth2.googleapis.com/tokeninfo?id_token=";
+	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+
+
+	#region Mail trap
+
+	/// <summary>
+	///	Access https://mailtrap.io/inboxes/2256041/messages to see inbox
+	/// </summary>
+	private readonly int MAIL_PORT = 2525;
+	private readonly string MAIL_SMTP_CLIENT = "sandbox.smtp.mailtrap.io";
+	private readonly string SENDER = "imiu.exe201@gmail.com";
+	private readonly string CREDENTIAL_USERNAME = "1c8c65b8e2d6bb";
+	private readonly string CREDENTIAL_PASSWORD = "06defe71cc802a";
+	#endregion
+	
+	
+	/* Real SMTP server
 	private readonly int MAIL_PORT = 587;
-	private readonly string MAIL_SMTP_CLIENT = "smtp.gmail.com";
+	private readonly string MAIL_SMTP_CLIENT = "sandbox.smtp.mailtrap.io";
+	private readonly string SENDER = "imiu.exe201@gmail.com";
+	private readonly string CREDENTIAL_USERNAME = "imiu.exe201@gmail.com";
+	private readonly string CREDENTIAL_PASSWORD = "zmhyhkvvikhxabuc";
+	*/
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository)
 	{
 		_accountRepository = accountRepository;
@@ -93,60 +113,70 @@ public class AccountService : IAccountService
 			var response = await httpClient.GetAsync(GOOGLE_VERIFY_ACCESS_TOKEN_API + accessToken);
 			if (response.IsSuccessStatusCode)
 			{
+				
 				var handler = new JwtSecurityTokenHandler();
 	
 				var decodeValue = handler.ReadJwtToken(accessToken);
-
-				var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
-				var account = _accountRepository.GetByEmail(email);
-				if (account == null)
+				bool isVerifiedEmail = bool.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "verified_email").Value);
+				if (isVerifiedEmail)
 				{
-					var registerAccountModel = new RegisterAccountModel()
+					var email = decodeValue.Claims.FirstOrDefault(c => c.Type == "email").Value;
+					var account = _accountRepository.GetByEmail(email);
+					if (account == null)
 					{
-						Email = email,
-						Password = ""
-					};
-					RegisterAccount(registerAccountModel, true);
+						var registerAccountModel = new RegisterAccountModel()
+						{
+							Email = email,
+							Password = ""
+						};
+						RegisterAccount(registerAccountModel, true);
 					
-					account = _accountRepository.GetLocalByEmail(email);
+						account = _accountRepository.GetLocalByEmail(email);
 					
-				}
-				else
-				{
-					if (account.Status == AccountStatus.INACTIVE)
-					{
-						_accountRepository.ActivateAccount(account.Id);
 					}
-				}
-				TokenModel token = GenerateToken(_customMapper.Map(account));
-				LoginResponseModel.SubcriptionModel subscriptionModel;
-				var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
-				if (plan != null) 
-				{
-					var subscription = plan.Subcription;
-					subscriptionModel = _customMapper.Map(subscription);
-				}
-				else
-				{
-					subscriptionModel = null;
-				}
-				
-				return new GetRequestResponse<LoginResponseModel>()
-				{
-					Data = new LoginResponseModel()
+					else
 					{
-						AccessToken = token.Token,
-						RefreshToken = token.RefreshToken,
-						Role = account.Role.ToString(),
-						IsVerify = true,
-						Subcription = subscriptionModel,
-						AccountId = account.Id.ToString(),
-						Name = account.Name,
-						Email = account.Email, 
-						HasPassword = account.Password != SHAEncryption.Encrypt("")
-					},
-					Message = "Đăng nhập thành công",
-					Status = 200
+						if (account.Status == AccountStatus.INACTIVE)
+						{
+							_accountRepository.ActivateAccount(account.Id);
+						}
+					}
+					TokenModel token = GenerateToken(_customMapper.Map(account));
+					LoginResponseModel.SubcriptionModel subscriptionModel;
+					var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
+					if (plan != null) 
+					{
+						var subscription = plan.Subcription;
+						subscriptionModel = _customMapper.Map(subscription);
+					}
+					else
+					{
+						subscriptionModel = null;
+					}
+				
+					return new GetRequestResponse<LoginResponseModel>()
+					{
+						Data = new LoginResponseModel()
+						{
+							AccessToken = token.Token,
+							RefreshToken = token.RefreshToken,
+							Role = account.Role.ToString(),
+							IsVerify = true,
+							Subcription = subscriptionModel,
+							AccountId = account.Id.ToString(),
+							Name = account.Name,
+							Email = account.Email, 
+							HasPassword = account.Password != SHAEncryption.Encrypt("")
+						},
+						Message = "Đăng nhập thành công",
+						Status = 200
+					};
+				}
+
+				return new PostRequestResponse()
+				{
+					Message = "Tài khoản của bạn chưa được xác thực",
+					Status = 400
 				};
 			}
 			
@@ -194,8 +224,6 @@ public class AccountService : IAccountService
                     subscriptionModel = null;
                 }
 				
-				
-
 				var isVerify = accountStatus == AccountStatus.ACTIVE;
 				var message = "Tài khoản của bạn chưa được xác thực";
 				if (isVerify)
@@ -204,10 +232,8 @@ public class AccountService : IAccountService
 				}
 				var loginResult = new GetRequestResponse<LoginResponseModel>()
 				{
-					
 					Data = new LoginResponseModel()
 					{
-						
 						AccessToken = token.Token,
 						Role = account.Role.ToString(),
 						IsVerify = isVerify,
@@ -270,12 +296,8 @@ public class AccountService : IAccountService
 
 	#region SendEmail
 	public ResponseObject SendEmail(string email)
-	
 	{
-		string fromMail = "duylvlse160831@fpt.edu.vn";
-		string fromPassword = "ipwaggpctjotqtiy";
-		string webAddress = VERIFY_EMAIL_END_POINT;
-
+		
 		var account = _accountRepository.GetByEmail(email);
 		if (account == null)
 		{
@@ -291,21 +313,31 @@ public class AccountService : IAccountService
 		}
 		var token = GenerateToken(account);
 		MailMessage message = new();
-		message.From = new MailAddress(fromMail);
+		message.From = new MailAddress(SENDER);
 		message.Subject = "Email xác nhận tài khoản IMiU";
 		message.To.Add(new MailAddress(account.Email));
 		
 		message.Body = "<p>Kính chào quý khách,</p>"
-		               + "<p>Xin nhấn vào đường liên kết sau đây để kích hoạt tài khoản của bạn: <a href=\""+webAddress+token.Token+"\">Link</a> </p>" +
+		               + "<p>Xin nhấn vào đường liên kết sau đây để kích hoạt tài khoản của bạn: <a href=\""+VERIFY_EMAIL_END_POINT+token.Token+"\">Link</a> </p>" +
 		               "<p>Đường dẫn sẽ hết hạn trong 30 phút.</p>";
 		message.IsBodyHtml = true;
-		var smtpClient = new SmtpClient(MAIL_SMTP_CLIENT)
+		var smtpClient = new SmtpClient(MAIL_SMTP_CLIENT, MAIL_PORT)
 		{
-			Port = MAIL_PORT,
-			Credentials = new NetworkCredential(fromMail, fromPassword),
+			Credentials = new NetworkCredential(CREDENTIAL_USERNAME, CREDENTIAL_PASSWORD),
 			EnableSsl = true
 		};
-		smtpClient.Send(message);
+		try
+		{
+			smtpClient.Send(message);
+		}
+		catch
+		{
+			return new PostRequestResponse()
+			{
+				Message = "Lỗi",
+				Status = 400
+			};
+		}
 		return new PostRequestResponse()
 		{
 			Message = "Email xác thực đã được gửi",
@@ -374,7 +406,6 @@ public class AccountService : IAccountService
 		using (var rng = RandomNumberGenerator.Create())
 		{
 			rng.GetBytes(random);
-
 			return Convert.ToBase64String(random);
 		}
 	}
