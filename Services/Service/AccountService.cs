@@ -269,7 +269,7 @@ public class AccountService : IAccountService
 			var decodeValue = handler.ReadJwtToken(token);
 			var expiration = DateTime.FromBinary
 				(long.Parse(decodeValue.Claims.FirstOrDefault(c => c.Type == "Expiration").Value)); 
-			if (expiration > DateTime.UtcNow)
+			if (expiration > DateTime.Now)
 			{
 				var accountId = decodeValue.Claims.FirstOrDefault(c => c.Type == "Id").Value;
 				_accountRepository.ActivateAccount(Guid.Parse(accountId));
@@ -355,12 +355,12 @@ public class AccountService : IAccountService
 		{
 			new Claim(ClaimTypes.Email, account.Email),
 			new Claim("Id", account.Id.ToString()),
-			new Claim("Expiration", DateTime.UtcNow.AddMinutes(30).ToBinary().ToString())
+			new Claim("Expiration", DateTime.Now.AddMinutes(30).ToBinary().ToString())
 		};
 
 		var token = new JwtSecurityToken(
 			claims: claims,
-			expires: DateTime.UtcNow.AddMinutes(30)
+			expires: DateTime.Now.AddMinutes(30)
 		);
 
 		var jwt = new JwtSecurityTokenHandler().WriteToken(token);

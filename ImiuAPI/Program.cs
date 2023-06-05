@@ -61,6 +61,11 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAnswerRepository, AnswerRepository>();
 			builder.Services.AddScoped<IAnswerService, AnswerService>();
 			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+			builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+			builder.Services.AddScoped<IPaymentService, PaymentService>();
+			builder.Services.AddScoped<IPlanService, PlanService>();
+			builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+			builder.Services.AddScoped<ITransactionService, TransactionService>();
 			
 			builder.Services.AddCors(options =>
 			{

@@ -16,7 +16,7 @@ public class Plan
     public Guid SubcriptionId { get; set; }
 
     public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateTime? EndDate { get; set; }
     public int Total { get; set; }
     public PlanStatus Status { get; set; }
     public Account Account { get; set; }

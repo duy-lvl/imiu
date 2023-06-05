@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DAL
 {
 	public class ImiuDbContext : DbContext
-    {
+	{
 		DbSet<Account> Accounts { get; set; }
 		DbSet<Answer> Answers { get; set; }
 		DbSet<Subscription> Subcriptions { get; set; }
@@ -24,10 +24,10 @@ namespace DAL
 		DbSet<NutritionFact> NutritionFacts { get; set; }
 		DbSet<Plan> Plans { get; set; }
 		DbSet<Tag> Tags { get; set; }
+		DbSet<Transaction> Transactions { get; set; }
 
 
-		
-        public ImiuDbContext()
+		public ImiuDbContext()
         {
             
         }
