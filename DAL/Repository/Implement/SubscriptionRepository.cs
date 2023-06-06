@@ -20,4 +20,9 @@ public class SubscriptionRepository : ISubscriptionRepository
     {
         return _dbSet.FirstOrDefault(s => s.Id == id);
     }
+
+    public List<Subscription> GetAll()
+    {
+        return _dbSet.Include(s=>s.SubscriptionDetails).ToList();
+    }
 }

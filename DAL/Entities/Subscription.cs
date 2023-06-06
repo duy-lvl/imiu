@@ -24,4 +24,6 @@ public class Subscription
     public List<Plan> Plans { get; set; }
    
     public List<Account> Accounts { get; set; }
+
+    public List<SubscriptionDetail> SubscriptionDetails { get; set; }
 }

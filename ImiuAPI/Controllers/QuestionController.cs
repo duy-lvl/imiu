@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.Service.Interface;
 
 namespace ImiuAPI.Controllers
@@ -15,6 +16,7 @@ namespace ImiuAPI.Controllers
         }
         [HttpPost]
         [Route("/question")]
+        
         public IActionResult GetQuestions()
         {
             var questions = _questionService.GetQuestions();

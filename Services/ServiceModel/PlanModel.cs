@@ -15,6 +15,6 @@ namespace Services.ServiceModel
         public int Total { get; set; }
 
         public AccountModel Account { get; set; }
-        public SubcriptionModel Subcription { get; set; }
+        public LoginResponseModel.SubcriptionModel Subcription { get; set; }
     }
 }

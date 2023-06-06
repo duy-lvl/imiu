@@ -1,8 +1,11 @@
+using System.Text;
 using DAL;
 using DAL.Repository;
 using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Services.CustomeMapper.Implement;
 using Services.CustomeMapper.Interface;
@@ -20,7 +23,7 @@ namespace ImiuAPI
 			// Add services to the container.
 
 			builder.Services.AddControllers().AddNewtonsoftJson(options =>
-	options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
+				options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen(options =>
@@ -66,6 +69,9 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IPlanService, PlanService>();
 			builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 			builder.Services.AddScoped<ITransactionService, TransactionService>();
+			builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
+			builder.Services.AddScoped<IAuthService, AuthService>();
+			
 			
 			builder.Services.AddCors(options =>
 			{
@@ -74,7 +80,21 @@ namespace ImiuAPI
 						.AllowAnyMethod()
 						.AllowAnyHeader());
 			});
-			
+			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+			{
+				options.RequireHttpsMetadata = false;
+				options.SaveToken = true;
+				options.TokenValidationParameters = new TokenValidationParameters()
+				{
+					ValidateIssuer = true,
+					ValidateAudience = true,
+					ValidateLifetime = true,
+					ValidAudience = builder.Configuration["Jwt:Audience"],
+					ValidIssuer = builder.Configuration["Jwt:Issuer"],
+					IssuerSigningKey =
+						new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+				};
+			});
 			var app = builder.Build();
 			app.UseCors("MyPolicy");
 			// Configure the HTTP request pipeline.
@@ -87,7 +107,7 @@ namespace ImiuAPI
 			app.UseHttpsRedirection();
 
 			app.UseAuthorization();
-
+			app.UseAuthentication();
 
 			app.MapControllers();
 

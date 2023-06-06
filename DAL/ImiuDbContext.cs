@@ -12,20 +12,23 @@ namespace DAL
 	{
 		DbSet<Account> Accounts { get; set; }
 		DbSet<Answer> Answers { get; set; }
-		DbSet<Subscription> Subcriptions { get; set; }
+		DbSet<CustomerAnswer> CustomerAnswers { get; set; }
 		DbSet<Direction> Directions { get; set; }
 		DbSet<Ingredient> Ingredients { get; set; }
 		DbSet<Meal> Meals { get; set; }
-		DbSet<MealTag> MealTags { get; set; }
 		DbSet<MealIngredient> MealIngredients { get; set; }
-		DbSet<MealSelection> MealSelection { get; set; }
-		DbSet<MealSelectionItem> MealSelectionItem { get; set; }
+		DbSet<MealSelection> MealSelections { get; set; }
+		DbSet<MealSelectionItem> MealSelectionItems { get; set; }
+		DbSet<MealTag> MealTags { get; set; }
 		DbSet<Nutrition> Nutritions { get; set; }
 		DbSet<NutritionFact> NutritionFacts { get; set; }
 		DbSet<Plan> Plans { get; set; }
+		DbSet<Question> Questions { get; set; }
+		DbSet<Subscription> Subscriptions { get; set; }
+		DbSet<SubscriptionDetail> SubscriptionDetails { get; set; }
 		DbSet<Tag> Tags { get; set; }
 		DbSet<Transaction> Transactions { get; set; }
-
+		
 
 		public ImiuDbContext()
         {

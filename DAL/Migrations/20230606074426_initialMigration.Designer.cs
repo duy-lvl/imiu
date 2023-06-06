@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ImiuDbContext))]
-    [Migration("20230527130019_updateMigration")]
-    partial class updateMigration
+    [Migration("20230606074426_initialMigration")]
+    partial class initialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,12 +52,12 @@ namespace DAL.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("SubcriptionId")
+                    b.Property<Guid?>("SubscriptionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SubcriptionId");
+                    b.HasIndex("SubscriptionId");
 
                     b.ToTable("Accounts");
                 });
@@ -96,7 +96,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("Answerid")
+                    b.Property<Guid>("AnswerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Value")
@@ -106,9 +106,9 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.HasIndex("Answerid");
+                    b.HasIndex("AnswerId");
 
-                    b.ToTable("CustomerAnswer");
+                    b.ToTable("CustomerAnswers");
                 });
 
             modelBuilder.Entity("DAL.Entities.Direction", b =>
@@ -224,14 +224,17 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AccountId1")
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("SelectDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId1");
+                    b.HasIndex("AccountId");
 
-                    b.ToTable("MealSelection");
+                    b.ToTable("MealSelections");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
@@ -252,7 +255,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealSelectionId");
 
-                    b.ToTable("MealSelectionItem");
+                    b.ToTable("MealSelectionItems");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -276,11 +279,11 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -322,11 +325,14 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("SubcriptionId")
                         .HasColumnType("uniqueidentifier");
@@ -358,10 +364,10 @@ namespace DAL.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Question");
+                    b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("DAL.Entities.Subcription", b =>
+            modelBuilder.Entity("DAL.Entities.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -383,7 +389,30 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subcriptions");
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("DAL.Entities.SubscriptionDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("SubscriptionDetails");
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>
@@ -405,11 +434,38 @@ namespace DAL.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("DAL.Entities.Transaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TransactionCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Value")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Transactions");
+                });
+
             modelBuilder.Entity("DAL.Entities.Account", b =>
                 {
-                    b.HasOne("DAL.Entities.Subcription", null)
+                    b.HasOne("DAL.Entities.Subscription", null)
                         .WithMany("Accounts")
-                        .HasForeignKey("SubcriptionId");
+                        .HasForeignKey("SubscriptionId");
                 });
 
             modelBuilder.Entity("DAL.Entities.Answer", b =>
@@ -441,7 +497,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Answer", "Answer")
                         .WithMany()
-                        .HasForeignKey("Answerid")
+                        .HasForeignKey("AnswerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -482,9 +538,13 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("DAL.Entities.MealSelection", b =>
                 {
-                    b.HasOne("DAL.Entities.Account", null)
+                    b.HasOne("DAL.Entities.Account", "Account")
                         .WithMany("MealSelections")
-                        .HasForeignKey("AccountId1");
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
@@ -552,7 +612,7 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DAL.Entities.Subcription", "Subcription")
+                    b.HasOne("DAL.Entities.Subscription", "Subcription")
                         .WithMany("Plans")
                         .HasForeignKey("SubcriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -561,6 +621,17 @@ namespace DAL.Migrations
                     b.Navigation("Account");
 
                     b.Navigation("Subcription");
+                });
+
+            modelBuilder.Entity("DAL.Entities.SubscriptionDetail", b =>
+                {
+                    b.HasOne("DAL.Entities.Subscription", "Subscription")
+                        .WithMany("SubscriptionDetails")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
                 });
 
             modelBuilder.Entity("DAL.Entities.Account", b =>
@@ -598,11 +669,13 @@ namespace DAL.Migrations
                     b.Navigation("Answers");
                 });
 
-            modelBuilder.Entity("DAL.Entities.Subcription", b =>
+            modelBuilder.Entity("DAL.Entities.Subscription", b =>
                 {
                     b.Navigation("Accounts");
 
                     b.Navigation("Plans");
+
+                    b.Navigation("SubscriptionDetails");
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.Enum;
 
 namespace Services.CustomeMapper.Implement
 {
@@ -88,6 +89,42 @@ namespace Services.CustomeMapper.Implement
 		        Code = subcription.Code,
 		        Name = subcription.Name
 	        };
+        }
+
+        public List<SubscriptionModel> Map(List<Subscription> subscriptions)
+        {
+	        List<SubscriptionModel> result = new();
+	        foreach (var subscription in subscriptions)
+	        {
+		        var subscriptionDetails = Map(subscription.SubscriptionDetails);
+		        var subscriptionModel = new SubscriptionModel()
+		        {
+			        Duration = subscription.Duration == Duration.MONTHLY ? "1 tháng" : "Vĩnh viễn",
+			        Id = subscription.Id,
+			        Name = subscription.Name,
+			        Value = subscription.Value,
+			        SubscriptionDetails = subscriptionDetails
+		        };
+		        result.Add(subscriptionModel);
+	        }
+
+	        return result;
+        }
+
+        public List<SubscriptionModel.SubscriptionDetailModel> Map(List<SubscriptionDetail> subscriptionDetails)
+        {
+	        List<SubscriptionModel.SubscriptionDetailModel> result = new();
+	        foreach (var subscriptionDetail in subscriptionDetails)
+	        {
+		        var subscriptionDetailModel = new SubscriptionModel.SubscriptionDetailModel()
+		        {
+			        Status = subscriptionDetail.Status,
+			        Detail = subscriptionDetail.Detail
+		        };
+		        result.Add(subscriptionDetailModel);
+	        }
+
+	        return result;
         }
 
         #endregion

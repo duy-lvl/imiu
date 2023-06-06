@@ -11,5 +11,8 @@ namespace Services.CustomeMapper.Interface
 
 		public AnswerModel Map(Answer answer);
 		LoginResponseModel.SubcriptionModel Map(Subscription subcription);
+
+		List<SubscriptionModel> Map(List<Subscription> subscriptions);
+		List<SubscriptionModel.SubscriptionDetailModel> Map(List<SubscriptionDetail> subscriptionDetails);
 	}
 }

@@ -105,7 +105,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("AnswerId");
 
-                    b.ToTable("CustomerAnswer");
+                    b.ToTable("CustomerAnswers");
                 });
 
             modelBuilder.Entity("DAL.Entities.Direction", b =>
@@ -231,7 +231,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("MealSelection");
+                    b.ToTable("MealSelections");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
@@ -252,7 +252,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("MealSelectionId");
 
-                    b.ToTable("MealSelectionItem");
+                    b.ToTable("MealSelectionItems");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -276,11 +276,11 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Code")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Unit")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -361,7 +361,7 @@ namespace DAL.Migrations
 
                     b.HasKey("id");
 
-                    b.ToTable("Question");
+                    b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("DAL.Entities.Subscription", b =>
@@ -386,7 +386,30 @@ namespace DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Subcriptions");
+                    b.ToTable("Subscriptions");
+                });
+
+            modelBuilder.Entity("DAL.Entities.SubscriptionDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Detail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubscriptionId");
+
+                    b.ToTable("SubscriptionDetails");
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>
@@ -597,6 +620,17 @@ namespace DAL.Migrations
                     b.Navigation("Subcription");
                 });
 
+            modelBuilder.Entity("DAL.Entities.SubscriptionDetail", b =>
+                {
+                    b.HasOne("DAL.Entities.Subscription", "Subscription")
+                        .WithMany("SubscriptionDetails")
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subscription");
+                });
+
             modelBuilder.Entity("DAL.Entities.Account", b =>
                 {
                     b.Navigation("CustomerAnswers");
@@ -637,6 +671,8 @@ namespace DAL.Migrations
                     b.Navigation("Accounts");
 
                     b.Navigation("Plans");
+
+                    b.Navigation("SubscriptionDetails");
                 });
 
             modelBuilder.Entity("DAL.Entities.Tag", b =>

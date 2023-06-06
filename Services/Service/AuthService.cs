@@ -3,10 +3,12 @@ using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using DAL.Entities;
 using DAL.Enum;
 using DAL.Repository.Interface;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 using Services.CustomeMapper.Interface;
@@ -15,15 +17,14 @@ using Services.JsonResult;
 using Services.Service.Interface;
 using Services.ServiceModel;
 
-
 namespace Services.Service;
 
-public class AccountService : IAccountService
+public class AuthService : IAuthService
 {
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
 	private readonly IPlanRepository _planRepository;
-	private readonly IAuthService _authService;
+	private readonly IConfiguration _configuration;
 	private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
 	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
@@ -48,14 +49,52 @@ public class AccountService : IAccountService
 	private readonly string CREDENTIAL_USERNAME = "imiu.exe201@gmail.com";
 	private readonly string CREDENTIAL_PASSWORD = "zmhyhkvvikhxabuc";
 	*/
-	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository, IAuthService authService)
-	{
-		_accountRepository = accountRepository;
-		_customMapper = customMapper;
-		_planRepository = planRepository;
-		_authService = authService;
-	}
-	
+    public AuthService(IConfiguration configuration, IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository)
+    {
+        _configuration = configuration;
+        _accountRepository = accountRepository;
+        _customMapper = customMapper;
+        _planRepository = planRepository;
+    }
+    
+
+	#region Generate token
+	public TokenModel GenerateToken(AccountModel accountModel)
+    {
+        List<Claim> claims = new List<Claim>()
+        {
+            new(ClaimTypes.Name, accountModel.Name),
+            new(ClaimTypes.Email, accountModel.Email),
+            new("AccountID", accountModel.Id.ToString()),
+            new("Role", accountModel.Role.ToString())
+        };
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
+        var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"],
+            claims, null, DateTime.Now.AddMinutes(30), credentials);
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+        var refreshToken = GenerateRefreshToken();
+
+        return new TokenModel
+        {
+            Token = jwt,
+            Expiration = token.ValidTo,
+            RefreshToken = refreshToken
+        };
+    }
+
+    private string GenerateRefreshToken()
+    {
+        var random = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(random);
+            return Convert.ToBase64String(random);
+        }
+    }
+    #endregion
+    
+
 
 	#region Register
 	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle)
@@ -144,7 +183,7 @@ public class AccountService : IAccountService
 							_accountRepository.ActivateAccount(account.Id);
 						}
 					}
-					TokenModel token = _authService.GenerateToken(_customMapper.Map(account));
+					TokenModel token = GenerateToken(_customMapper.Map(account));
 					LoginResponseModel.SubcriptionModel subscriptionModel;
 					var plan = _planRepository.GetCurrentPlanByCustomerId(account.Id);
 					if (plan != null) 
@@ -351,7 +390,7 @@ public class AccountService : IAccountService
 
 	#endregion
 
-	#region GenerateToken
+	#region Generate mail token
 	private RegisterTokenModel GenerateToken(Account account)
 	{
 		List<Claim> claims = new List<Claim>()
@@ -375,42 +414,6 @@ public class AccountService : IAccountService
 			Expiration = token.ValidTo
 		};
 	}
-	
-	
-	private TokenModel GenerateToken(AccountModel accountModel)
-	{
-		List<Claim> claims = new List<Claim>()
-		{
-			new Claim(ClaimTypes.Name, accountModel.Name),
-			new Claim(ClaimTypes.Email, accountModel.Email),
-			new Claim("AccountID", accountModel.Id.ToString()),
-			new Claim("Role", accountModel.Role.ToString())
-		};
-		var token = new JwtSecurityToken(
-			claims: claims,
-			expires: DateTime.Now.AddMinutes(30)
-		);
-
-		var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-		var refreshToken = GenerateRefreshToken();
-
-		return new TokenModel
-		{
-			Token = jwt,
-			Expiration = token.ValidTo,
-			RefreshToken = refreshToken
-		};
-	}
-
-	private string GenerateRefreshToken()
-	{
-		var random = new byte[32];
-		using (var rng = RandomNumberGenerator.Create())
-		{
-			rng.GetBytes(random);
-			return Convert.ToBase64String(random);
-		}
-	}
 	#endregion
-
+	
 }
