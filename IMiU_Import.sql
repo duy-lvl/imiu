@@ -1201,11 +1201,11 @@ INSERT INTO [dbo].[MealTags] ([TagId] ,[MealId])
 
 
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
-     VALUES('8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56',N'Gói miễn phí',0,0,'FREE');
+     VALUES('8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56',N'Free',0,0,'FREE');
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
-     VALUES('C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6',N'Gói cơ bản',69000,1,'CLASSIC');
+     VALUES('C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6',N'Classic',69000,1,'CLASSIC');
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
-     VALUES('014D1CDA-C01D-4F39-98C9-866703C74766',N'Gói premium',250000,0,'PREMIUM');
+     VALUES('014D1CDA-C01D-4F39-98C9-866703C74766',N'Premium',250000,0,'PREMIUM');
 GO
 
 

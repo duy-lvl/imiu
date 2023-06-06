@@ -21,13 +21,5 @@ public class PlanController
         _transactionService = transactionService;
     }
 
-    [HttpPost]
-    public IActionResult AddPlan(CreatePlanModel createPlanModel)
-    {
-        var result = _planService.CreatePlan(createPlanModel);
-        _unitOfWork.Commit();
-        var jsonResult = new JsonResult(result);
-        jsonResult.StatusCode = result.Status;
-        return jsonResult;
-    }
+    
 }
