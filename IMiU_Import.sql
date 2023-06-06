@@ -49,23 +49,23 @@ INSERT INTO [dbo].[Tags]([Id],[Name],[Code])
      VALUES ('c415e7fb-8e28-4e35-abf1-c8beebbc50a4',N'Gỏi',N'Gỏi');
 INSERT INTO [dbo].[Tags]([Id],[Name],[Code])
      VALUES ('9c54c31e-86c8-4596-b910-4e07eca18a7e',N'Salad',N'Salad');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('34ca4755-bc14-4fab-ace1-d05e65130fdd',N'Năng lượng' ,'kJ');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('7c6b6ad1-7d5e-4c50-b4bb-16cab115f68e',N'Calories' ,'kcal');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('b1128e18-50e7-414a-90cf-162923794e5e',N'Chất béo' ,'g');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('bf2758db-b306-40a1-b54a-5f4ff066f64c',N'Chất béo bão hoà' ,'g');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('ed7c4476-9a83-4f23-af32-19dbb45712da',N'Đường' ,'g');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('58d7d0b3-2725-4d54-a52d-4b0c1bbe302c',N'Chất xơ' ,'g');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('0a01aca0-c99c-4c9b-9c59-c95719947a96',N'Chất đạm' ,'g');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('6a928c43-1c44-4a25-8e15-dfbec035d2a0',N'Cholesterol' ,'mg');
-INSERT INTO [dbo].[Nutritions]([Id],[Name],[Code])
+INSERT INTO [dbo].[Nutritions]([Id],[Name],[Unit])
      VALUES('31798bfb-7e06-47c4-846d-73b668aab04b',N'Natri' ,'mg');
 INSERT INTO [dbo].[Ingredients]([Id],[Name],[Unit],[ImgUrl])
      VALUES('8350f254-3eef-48a0-820e-f409e2ce9ab4',N'Dầu olive',N'muỗng cà phê','');
@@ -1197,3 +1197,50 @@ INSERT INTO [dbo].[MealTags] ([TagId] ,[MealId])
      VALUES('82c310ad-2de9-4ab1-a8d8-ef4972e230df','6b55cc17-c012-4633-b260-b9e08f19b21b');
 INSERT INTO [dbo].[MealTags] ([TagId] ,[MealId])
      VALUES('6e7a1b47-441b-4a25-984c-e66eaf151d18','6b55cc17-c012-4633-b260-b9e08f19b21b');
+
+
+
+INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
+     VALUES('8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56',N'Gói miễn phí',0,0,'FREE');
+INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
+     VALUES('C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6',N'Gói cơ bản',69000,1,'CLASSIC');
+INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
+     VALUES('014D1CDA-C01D-4F39-98C9-866703C74766',N'Gói premium',250000,0,'PREMIUM');
+GO
+
+
+
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('5D7F43FB-BEA9-4EA0-B165-004F6E14BE92',N'10 món',1,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('E5FAB4DF-7884-4476-9609-00A987600E01',N'Giá trị dinh dưỡng chi tiết của nguyên liệu trong thực đơn',1,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('A7341427-5F01-4356-A5CD-00B7A6063532',N'Cách chế biến món ăn',1,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('0555F0AD-0E42-4EC5-8460-06BCCBFCBE32',N'Cá nhân hoá thực đơn theo tình trạng sức khoẻ',0,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('A8FA3065-62FC-4A4D-A1B9-07193FA8E3D0',N'Cho phép lưu lại các món ăn yêu thích',0,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');
+
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('3701FCFA-E11B-4D59-A556-08B59A3E2634',N'50 món',1,'C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('DB376678-5950-4FD9-8056-0AB3394EF8A9',N'Giá trị dinh dưỡng chi tiết của nguyên liệu trong thực đơn',1,'C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('A2CE3DCD-98AC-4CA5-B08C-0D7501B3B276',N'Cách chế biến món ăn',1,'C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('EC7100B2-E683-4677-B866-0EC600583AA8',N'Cá nhân hoá thực đơn theo tình trạng sức khoẻ',1,'C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('3372E60F-5339-4E80-8162-1046F380E23C',N'Cho phép lưu lại các món ăn yêu thích',1,'C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6');
+
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('2502CBD2-432E-425A-A6F2-111A5BB47F1D',N'Không giới hạn món ăn',1,'014D1CDA-C01D-4F39-98C9-866703C74766');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('38009C09-BF15-40FC-940E-11F6092906F6',N'Giá trị dinh dưỡng chi tiết của nguyên liệu trong thực đơn',1,'014D1CDA-C01D-4F39-98C9-866703C74766');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('2CB89F74-4C9B-4CCD-A973-1398E6F01CCA',N'Cách chế biến món ăn',1,'014D1CDA-C01D-4F39-98C9-866703C74766');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('CFE6E81E-5909-46F1-9301-14134AD0D587',N'Cá nhân hoá thực đơn theo tình trạng sức khoẻ',1,'014D1CDA-C01D-4F39-98C9-866703C74766');
+INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
+     VALUES('31DFA4D1-61AB-458B-B29E-143DE7C22EA4',N'Cho phép lưu lại các món ăn yêu thích',1,'014D1CDA-C01D-4F39-98C9-866703C74766');
+GO
+

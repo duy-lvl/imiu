@@ -5,7 +5,7 @@ using Services.Service.Interface;
 namespace ImiuAPI.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("api/v1/questions")]
 
     public class QuestionController : Controller
     {
@@ -15,8 +15,7 @@ namespace ImiuAPI.Controllers
             _questionService = questionService;
         }
         [HttpPost]
-        [Route("/question")]
-        
+        [Authorize]
         public IActionResult GetQuestions()
         {
             var questions = _questionService.GetQuestions();
