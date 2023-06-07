@@ -13,14 +13,23 @@ namespace DAL.Repository.Implement
     {
         protected readonly ImiuDbContext _context;
         protected readonly DbSet<Answer> _dbSet;
-        public AnswerRepository(ImiuDbContext context)
+        private ITagRepository _tagRepository;
+        public AnswerRepository(ImiuDbContext context, ITagRepository tagRepository)
         {
             _context = context;
             _dbSet = context.Set<Answer>();
+            _tagRepository = tagRepository;
         }
         public List<Answer> GetAnswersByQuestionID(Guid questionID)
         {
-            return _dbSet.Where(a => a.QuestionId == questionID).ToList();
+            Tag? tag = null;
+            var list =  _dbSet.Where(a => a.QuestionId == questionID).OrderBy(a => a.Content).ToList();
+            foreach (var answer in list)
+            {
+                tag = _tagRepository.GetTagByAnswerID(answer.TagId);
+                answer.Tag = tag;
+            }
+            return list;
         }
     }
 }

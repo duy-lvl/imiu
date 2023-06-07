@@ -11,7 +11,7 @@ namespace Services.ServiceModel
         public Guid Id { get; set; }
         public int Value { get; set; }
 
-        public AnswerModel Answer { get; set; }
-        public AccountModel Account { get; set; }
+        public Guid AnswerId { get; set; }
+        public Guid AccountId { get; set; }
     }
 }

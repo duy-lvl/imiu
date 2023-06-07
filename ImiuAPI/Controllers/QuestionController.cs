@@ -14,8 +14,7 @@ namespace ImiuAPI.Controllers
         {
             _questionService = questionService;
         }
-        [HttpPost]
-        [Authorize]
+        [HttpGet]
         public IActionResult GetQuestions()
         {
             var questions = _questionService.GetQuestions();

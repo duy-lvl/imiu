@@ -75,7 +75,8 @@ namespace Services.CustomeMapper.Implement
 			return new AnswerModel
 			{
 				Id = answer.Id,
-				Content = answer.Content
+				Content = answer.Content,
+                Tag = answer.Tag != null ? Map(answer.Tag) : null
 			};
         }
         #endregion
@@ -90,6 +91,32 @@ namespace Services.CustomeMapper.Implement
 		        Name = subcription.Name
 	        };
         }
+
+		#endregion
+
+		#region Customer Answer
+		public CustomerAnswerModel Map(CustomerAnswer customerAnswer)
+		{
+			return new CustomerAnswerModel
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+
+		public CustomerAnswer Map(CustomerAnswerModel customerAnswer)
+		{
+			return new CustomerAnswer
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+		#endregion
 
         public List<SubscriptionModel> Map(List<Subscription> subscriptions)
         {
@@ -129,4 +156,5 @@ namespace Services.CustomeMapper.Implement
 
         #endregion
     }
+
 }
