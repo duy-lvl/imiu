@@ -18,7 +18,7 @@ namespace Services.CustomeMapper.Implement
         {
 			_answerRepository = answerRepository;
         }
-
+		#region Account
 		public Account Map(AccountModel accountModel)
 		{
 			return new Account
@@ -48,6 +48,7 @@ namespace Services.CustomeMapper.Implement
 
 			};
 		}
+		#endregion
         #region Question
         public QuestionModel Map(Question question)
         {
@@ -73,9 +74,60 @@ namespace Services.CustomeMapper.Implement
 			return new AnswerModel
 			{
 				Id = answer.Id,
-				Content = answer.Content
+				Content = answer.Content,
+                Tag = answer.Tag != null ? Map(answer.Tag) : null
+			};
+        }
+        #endregion
+
+        #region Subscription
+
+        public LoginResponseModel.SubcriptionModel Map(Subscription subcription)
+        {
+	        return new LoginResponseModel.SubcriptionModel()
+	        {
+		        Code = subcription.Code,
+		        Name = subcription.Name
+	        };
+        }
+
+		#endregion
+
+		#region Customer Answer
+		public CustomerAnswerModel Map(CustomerAnswer customerAnswer)
+		{
+			return new CustomerAnswerModel
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+
+		public CustomerAnswer Map(CustomerAnswerModel customerAnswer)
+		{
+			return new CustomerAnswer
+			{
+				Id = customerAnswer.Id,
+				Value = customerAnswer.Value,
+				AnswerId = customerAnswer.AnswerId,
+				AccountId = customerAnswer.AccountId
+			};
+		}
+		#endregion
+
+		#region Tag
+		public TagAnswerModel Map(Tag tag)
+        {
+			return new TagAnswerModel
+			{
+				Id = tag.Id,
+				Name = tag.Name,
+				Code = tag.Code
 			};
         }
         #endregion
     }
+
 }

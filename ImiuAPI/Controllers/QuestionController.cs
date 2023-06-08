@@ -4,7 +4,7 @@ using Services.Service.Interface;
 namespace ImiuAPI.Controllers
 {
     [ApiController]
-    [Route("/api/[controller]")]
+    [Route("/api/v1/")]
 
     public class QuestionController : Controller
     {
@@ -13,8 +13,8 @@ namespace ImiuAPI.Controllers
         {
             _questionService = questionService;
         }
-        [HttpPost]
-        [Route("/question")]
+        [HttpGet]
+        [Route("question")]
         public IActionResult GetQuestions()
         {
             var questions = _questionService.GetQuestions();

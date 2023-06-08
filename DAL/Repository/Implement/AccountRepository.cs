@@ -13,14 +13,14 @@ namespace DAL.Repository
 {
     public class AccountRepository : IAccountRepository
 	{
-        protected readonly ImiuDbContext _context;
+		protected readonly ImiuDbContext _context;
 		protected readonly DbSet<Account> _dbSet;
 		public AccountRepository(ImiuDbContext context)
 		{
 			_context = context;
 			_dbSet = context.Set<Account>();
 		}
-        public void Create(Account account)
+		public void Create(Account account)
 		{
 			//Create account
 			_dbSet.Add(account);
@@ -31,8 +31,6 @@ namespace DAL.Repository
 			return _dbSet.ToList();
 		}
 		
-
-
 		public void ActivateAccount(Guid accountId)
 		{
 			var account = _dbSet.Find(accountId);
@@ -43,14 +41,19 @@ namespace DAL.Repository
 			}
 		}
 
+		public Account GetLocalByEmail(string email)
+		{
+			return _dbSet.Local.FirstOrDefault(a => a.Email == email);
+		}
+		
 		public Account GetByEmail(string email)
 		{
-			return _dbSet.FirstOrDefault(x => x.Email == email);
+			return _dbSet.Include(a=>a.Plans).FirstOrDefault(x => x.Email == email);
 		}
 
 		public Account GetByID(Guid userID)
 		{
-			return _dbSet.FirstOrDefault(x => x.Id == userID);
+			return _dbSet.Include(a=>a.Plans).FirstOrDefault(x => x.Id == userID);
 		}
 
 		public Account Login(string email, string password)
@@ -65,7 +68,7 @@ namespace DAL.Repository
 
 		public void Update(Account account)
 		{
-			throw new NotImplementedException();
+			_dbSet.Update(account);
 		}
 	}
 }

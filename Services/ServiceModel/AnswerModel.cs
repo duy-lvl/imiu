@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,6 @@ namespace Services.ServiceModel
 
         public string Content { get; set; }
 
-        public TagModel Tag { get; set; }
+        public TagAnswerModel Tag { get; set; }
     }
 }
