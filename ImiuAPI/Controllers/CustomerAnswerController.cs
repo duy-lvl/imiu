@@ -6,7 +6,7 @@ using Services.ServiceModel;
 namespace ImiuAPI.Controllers
 {
     [ApiController]
-    [Route("/api/v1/")]
+    [Route("/api/v1/customer-answer")]
     public class CustomerAnswerController : Controller
     {
         private readonly ICustomerAnswerService _customerAnswerService;
@@ -18,7 +18,6 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpPost]
-        [Route("customeranswer/create")]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
             _customerAnswerService.CreateCustomerAnswers(customerAnswers);
@@ -39,7 +38,6 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpGet]
-        [Route("customeranswer/get")]
         public IActionResult GetCustomerAnswersByCustomerID(Guid id)
         {
             var list = _customerAnswerService.GetCustomerAnswersByCustomerID(id);
@@ -59,8 +57,7 @@ namespace ImiuAPI.Controllers
             });
         }
 
-        [HttpPost]
-        [Route("customeranswer/update")]
+        [HttpPut]
         public IActionResult UpdateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
                 _customerAnswerService.UpdateCustomerAnswers(customerAnswers);
