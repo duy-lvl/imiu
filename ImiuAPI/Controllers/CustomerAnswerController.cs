@@ -6,7 +6,7 @@ using Services.ServiceModel;
 namespace ImiuAPI.Controllers
 {
     [ApiController]
-    [Route("/api/v1/customer-answer")]
+    [Route("/api/v1/customer-answers")]
     public class CustomerAnswerController : Controller
     {
         private readonly ICustomerAnswerService _customerAnswerService;
@@ -20,6 +20,10 @@ namespace ImiuAPI.Controllers
         [HttpPost]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
+            foreach (var customerAnswer in customerAnswers)
+            {
+                customerAnswer.Id = new Guid();
+            }
             _customerAnswerService.CreateCustomerAnswers(customerAnswers);
             bool success = _unitOfWork.Commit();
             if(success)
