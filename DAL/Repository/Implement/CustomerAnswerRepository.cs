@@ -24,20 +24,16 @@ namespace DAL.Repository.Implement
             _dbSet.Add(customerAnswer);
         }
 
+        public void DeleteCustomerAnswer(CustomerAnswer customerAnswer)
+        {
+            _dbSet.Remove(customerAnswer);
+        }
+
         public List<CustomerAnswer> GetCustomerAnswersByCustomerID(Guid id)
         {
             return _dbSet.Where(cs => cs.AccountId == id).ToList();
         }
 
-        public void UpdateCustomerAnswer(CustomerAnswer customerAnswer)
-        {
-            CustomerAnswer temp = _dbSet.Where(cs => cs.Id == customerAnswer.Id).FirstOrDefault(); ;
-            if (temp != null)
-            {
-                temp.AnswerId = customerAnswer.AnswerId;
-                temp.Value = customerAnswer.Value;
-                _dbSet.Update(temp);
-            }
-        }
+        
     }
 }
