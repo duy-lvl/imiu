@@ -7,6 +7,7 @@ select * from Ingredients
 select * from Directions
 select * from NutritionFacts
 select * from MealIngredients
+select * from MealTags
 
 delete from Nutritions
 delete from NutritionFacts
@@ -15,6 +16,7 @@ delete from Ingredients
 delete from MealIngredients
 delete from meals
 delete from tags
+delete from MealTags
 
 
 GO

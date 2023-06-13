@@ -26,7 +26,9 @@ namespace DAL.Repository.Implement
 
         public List<CustomerAnswer> GetCustomerAnswersByCustomerID(Guid id)
         {
-            return _dbSet.Where(cs => cs.AccountId == id).ToList();
+            return _dbSet.Include(ca=>ca.Answer)
+                .Include(ca => ca.Answer.Tag)
+                .Where(cs => cs.AccountId == id).ToList();
         }
 
         public void UpdateCustomerAnswer(CustomerAnswer customerAnswer)
@@ -38,6 +40,19 @@ namespace DAL.Repository.Implement
                 temp.Value = customerAnswer.Value;
                 _dbSet.Update(temp);
             }
+        }
+
+        public List<Guid> GetCustomerAnswerTagsByCustomerId(Guid id)
+        {
+            var answers = _dbSet.Include(ca => ca.Answer)
+                .Where(ca => ca.AccountId == id).ToList();
+            var tags = new List<Guid>();
+            foreach (var answer in answers)
+            {
+                tags.Add(answer.Answer.TagId);
+            }
+
+            return tags;
         }
     }
 }

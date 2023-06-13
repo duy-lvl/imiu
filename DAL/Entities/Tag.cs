@@ -15,4 +15,5 @@ public class Tag
     
     public List<MealTag> Plans { get; set; }
     public List<Answer> Answers { get; set; }
+    public List<Meal> Meals { get; set; }
 }

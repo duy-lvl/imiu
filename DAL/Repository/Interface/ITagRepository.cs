@@ -10,5 +10,7 @@ namespace DAL.Repository.Interface
     public interface ITagRepository
     {
         Tag GetTagByAnswerID(Guid answerID);
+        List<Tag> GetAllTags();
+        List<Tag> GetAllTagsExceptDiseases();
     }
 }

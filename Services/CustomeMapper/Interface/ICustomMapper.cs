@@ -17,5 +17,10 @@ namespace Services.CustomeMapper.Interface
 
 		List<SubscriptionModel> Map(List<Subscription> subscriptions);
 		List<SubscriptionModel.SubscriptionDetailModel> Map(List<SubscriptionDetail> subscriptionDetails);
+
+		List<TagModel> Map(List<Tag> tags);
+		List<Tag> Map(List<TagModel> tagModels);
+
+		List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags);
 	}
 }

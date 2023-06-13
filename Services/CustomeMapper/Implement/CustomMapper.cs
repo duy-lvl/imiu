@@ -9,16 +9,21 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using DAL.Enum;
+using Services.Service.Interface;
 
 namespace Services.CustomeMapper.Implement
 {
 	public class CustomMapper : ICustomMapper
 	{
 		private IAnswerRepository _answerRepository;
-		public CustomMapper(IAnswerRepository answerRepository)
-        {
+		private ITagRepository _tagRepository;
+
+		public CustomMapper(IAnswerRepository answerRepository, ITagRepository tagRepository)
+		{
 			_answerRepository = answerRepository;
-        }
+			_tagRepository = tagRepository;
+		}
+
 		#region Account
 		public Account Map(AccountModel accountModel)
 		{
@@ -127,6 +132,8 @@ namespace Services.CustomeMapper.Implement
 			return result;
 		}
 
+		
+
 		#endregion
 
 		#region Customer Answer
@@ -163,6 +170,69 @@ namespace Services.CustomeMapper.Implement
 				Code = tag.Code
 			};
 		}
+		
+		public List<TagModel> Map(List<Tag> tags)
+		{
+			List<TagModel> result = new List<TagModel>();
+			foreach (var tag in tags)
+			{
+				result.Add(new TagModel()
+				{
+					Id = tag.Id,
+					Name = tag.Name
+				});
+			}
+
+			return result;
+		}
+
+		public List<Tag> Map(List<TagModel> tagModels)
+		{
+			List<Tag> result = new List<Tag>();
+			foreach (var tag in tagModels)
+			{
+				result.Add(new Tag()
+				{
+					Id = tag.Id,
+					Name = tag.Name
+				});
+			}
+
+			return result;
+		}
+
+		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags)
+		{
+			
+			var mealResponseModels = new List<MealResponseModel>();
+			
+			foreach (var tag in tags)
+			{
+				mealResponseModels.Add(new MealResponseModel()
+				{
+					TagId = tag.Id.ToString(),
+					Tag = tag.Name,
+					Data = new List<MealResponseModel.Meal>()
+				});
+				foreach (var meal in meals)
+				{
+					if (meal.MealTags.FirstOrDefault(mt=>mt.TagId == tag.Id) != null)
+					{
+						mealResponseModels.Last().Data.Add(new()
+						{
+							Name = meal.Name,
+							CookingTime = meal.CookingTime,
+							Difficulty = meal.Difficulty.ToString(),
+							Id = meal.Id,
+							ImageUrl = meal.ImageUrl
+						});
+					}
+				}
+			}
+
+			return mealResponseModels;
+		}
+
 		#endregion
 
 

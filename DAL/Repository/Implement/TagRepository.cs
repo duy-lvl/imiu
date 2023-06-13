@@ -23,5 +23,15 @@ namespace DAL.Repository.Implement
         {
             return _dbSet.FirstOrDefault(t => t.Id == answerID);
         }
+
+        public List<Tag> GetAllTags()
+        {
+            return _dbSet.ToList();
+        }
+
+        public List<Tag> GetAllTagsExceptDiseases()
+        {
+            return _dbSet.Where(t => !t.Code.StartsWith("D-")).ToList();
+        }
     }
 }
