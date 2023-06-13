@@ -236,7 +236,10 @@ namespace Services.CustomeMapper.Implement
 				mealResponse.Data = mealResponse.Data
 					.Skip((pageNumber - 1) * pageSize)
 					.Take(pageSize).ToList();
+				
 			}
+
+			mealResponseModels.RemoveAll(x => x.Data.Count == 0);
 			return mealResponseModels;
 		}
 
