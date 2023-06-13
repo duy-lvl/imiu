@@ -69,7 +69,10 @@ public class MealTagRepository : IMealTagRepository
                 query += "and t.Code = N'Vegie' ";
             }
 
-            query += " and ";
+            if (diseaseTags.Count > 0 || isVegie)
+            {
+                query += " and ";
+            }
         }
         
         if (isBreakfast)
