@@ -17,6 +17,5 @@ namespace Services.ServiceModel
 
         public NutritionModel Nutrition { get; set; }
 
-        public MealModel Meal { get; set; }
     }
 }

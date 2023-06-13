@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace DAL.Repository.Interface
 {
-    public interface ITagRepository
+    public interface IDirectionRepository
     {
-        Tag GetTagByAnswerID(Guid answerID);
-        Tag GetTagBaseOnMealTag(Guid tagID);
+        List<Direction> GetDirectionsByMealID(Guid mealID);
     }
 }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Services.ServiceModel
 {
-    public class TagAnswerModel
+    public class TagModel
     {
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Name is required")]

@@ -13,6 +13,13 @@ namespace Services.CustomeMapper.Interface
 		LoginResponseModel.SubcriptionModel Map(Subscription subcription);
 		public CustomerAnswerModel Map(CustomerAnswer customerAnswer);
 		public CustomerAnswer Map(CustomerAnswerModel customerAnswer);
-		public TagAnswerModel Map(Tag tag);
+		public TagModel Map(Tag tag);
+		public MealModel Map(Meal meal);
+		public NutritionFactModel Map(NutritionFact nutritionFact);
+		public NutritionModel Map(Nutrition nutrition);
+		public DirectionModel Map(Direction direction);
+		public MealTagModel Map(MealTag mealTag);
+		public IngredientModel Map(Ingredient ingredient);
+		public MealIngredientModel Map(MealIngredient mealIngredient);
 	}
 }

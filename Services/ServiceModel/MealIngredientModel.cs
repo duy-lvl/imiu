@@ -13,8 +13,6 @@ namespace Services.ServiceModel
         public decimal Quantity { get; set; }
 
         public string Description { get; set; }
-
-        public MealModel Meal { get; set; }
-        public IngredientModel Ingredient { get; set; }
+        public IngredientModel IngredientModel { get; set; }
     }
 }

@@ -14,6 +14,5 @@ namespace Services.ServiceModel
 
         public string Code { get; set; }
 
-        public List<NutritionFactModel> NutritionFacts { get; set; }
     }
 }
