@@ -11,6 +11,6 @@ namespace Services.Service.Interface
     {
         void CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers);
         List<CustomerAnswerModel> GetCustomerAnswersByCustomerID(Guid id);
-        void UpdateCustomerAnswers(List<CustomerAnswerModel> customerAnswers);
+        void UpdateCustomerAnswers(Guid accountID, List<CustomerAnswerModel> customerAnswers);
     }
 }
