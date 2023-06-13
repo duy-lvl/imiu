@@ -11,7 +11,7 @@ namespace DAL.Repository.Interface
     {
         void CreateCustomerAnswer(CustomerAnswer customerAnswer);
         List<CustomerAnswer> GetCustomerAnswersByCustomerID(Guid id);
-        void UpdateCustomerAnswer(CustomerAnswer customerAnswer);
+        void DeleteCustomerAnswer(CustomerAnswer customerAnswer);
         List<Guid> GetCustomerAnswerTagsByCustomerId(Guid id);
     }
 }

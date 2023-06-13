@@ -25,6 +25,7 @@ namespace Services.Service.Implement
         {
             foreach (var customerAnswer in customerAnswers)
             {
+                customerAnswer.Id = new Guid();
                 _customerAnswerRepository.CreateCustomerAnswer(_mapper.Map(customerAnswer));
             }
             
@@ -41,11 +42,16 @@ namespace Services.Service.Implement
             return result;
         }
 
-        public void UpdateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
+        public void UpdateCustomerAnswers(Guid accountID, List<CustomerAnswerModel> customerAnswers)
         {
-            foreach(var customerAnswer in customerAnswers)
+            var list = _customerAnswerRepository.GetCustomerAnswersByCustomerID(accountID);
+            foreach (var customerAnswer in list)
             {
-                _customerAnswerRepository.UpdateCustomerAnswer(_mapper.Map(customerAnswer));
+                _customerAnswerRepository.DeleteCustomerAnswer(customerAnswer);
+            }
+            foreach (var customerAnswer in customerAnswers)
+            {
+                _customerAnswerRepository.CreateCustomerAnswer(_mapper.Map(customerAnswer));
             }
         }
     }
