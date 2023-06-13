@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Enum;
 using DAL.Repository.Interface;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -29,44 +30,70 @@ public class MealTagRepository : IMealTagRepository
 
     
 
-    public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, string filterValue)
+    public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
+        string filterValue, string difficulty)
     {
-        
-        var customerAnswerDiseases = customerAnswers
-            .Where(ca => ca.Answer.Tag.Code.StartsWith("D-")).ToList();
-        
-        bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
-        bool isBreakfast = filterTags.Where(t => t.Code == "Breakfast").ToList().Count > 0;
 
-        var diseaseTags = customerAnswerDiseases.Select(ca => ca.Answer.Tag).ToList();
+        
+        var isBreakfast = filterTags.FirstOrDefault(t => t.Code == "Breakfast") != null;
+
+        
         string connectionString = _configuration["ConnectionStrings:Local"];
         SqlConnection conn = new SqlConnection(connectionString);
         conn.Open();
         string query =
             "select m.Id " +
             "from MealTags mt join Meals m on mt.MealId = m.Id join Tags t on t.Id = mt.TagId where ";
-        for (int i = 0; i < diseaseTags.Count; i++)
-
+        
+        if (customerAnswers != null)
         {
-            query += "t.Code = N'" + diseaseTags[i].Code + "' ";
-            if (i < diseaseTags.Count - 1)
+            var customerAnswerDiseases = customerAnswers
+                .Where(ca => ca.Answer.Tag.Code.StartsWith("D-")).ToList();
+        
+            bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
+            
+            var diseaseTags = customerAnswerDiseases.Select(ca => ca.Answer.Tag).ToList();
+            
+            for (int i = 0; i < diseaseTags.Count; i++)
+
             {
-                query += " or ";
+                query += "t.Code = N'" + diseaseTags[i].Code + "' ";
+                if (i < diseaseTags.Count - 1)
+                {
+                    query += " or ";
+                }
             }
-        }
 
-        if (isVegie)
-        {
-            query += "and t.Code = N'Vegie' ";
-        }
+            if (isVegie)
+            {
+                query += "and t.Code = N'Vegie' ";
+            }
 
+            query += " and ";
+        }
+        
         if (isBreakfast)
         {
-            query += "and t.Code = N'Breakfast' ";
+            query += " t.Code = N'Breakfast' ";
         }
         else
         {
-            query += "and t.Code <> N'Breakfast' ";
+            query += " t.Code <> N'Breakfast' ";
+        }
+
+        if (!string.IsNullOrEmpty(filterValue))
+        {
+            query += " and m.Name like N'%'+" + filterValue + "'%' ";
+        }
+
+        if (!string.IsNullOrEmpty(difficulty))
+        {
+            try
+            {
+                var diff = int.Parse(difficulty);
+                query += " and m.Difficulty <= " + diff;
+            }
+            catch{}
         }
         query += " group by m.id";
         SqlCommand sqlCommand = new SqlCommand(query, conn);
@@ -79,7 +106,7 @@ public class MealTagRepository : IMealTagRepository
 
         var result = _context.Set<Meal>()
             .Include(m=>m.MealTags)
-            .Where(m => !mealIds.Contains(m.Id))
+            .Where(m => mealIds.Contains(m.Id))
             .ToList();
             
         return result;

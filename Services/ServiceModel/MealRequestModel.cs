@@ -8,4 +8,6 @@ public class MealRequestModel
     public string Name { get; set; }
     public string Difficulty { get; set; }
     public List<TagModel> Tags { get; set; }
+    public int PageNumber { get; set; }
+    public int PageSize { get; set; }
 }

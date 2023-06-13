@@ -1,4 +1,5 @@
 ﻿using DAL.Entities;
+using DAL.Enum;
 
 namespace Services.ServiceModel;
 
@@ -14,7 +15,7 @@ public class MealResponseModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string Difficulty { get; set; }
+        public Difficulty Difficulty { get; set; }
         public int CookingTime { get; set; }
         public string ImageUrl { get; set; }
 

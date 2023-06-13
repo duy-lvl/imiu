@@ -10,14 +10,14 @@ namespace Services.Service;
 public class MealService : IMealService
 {
     private readonly IMealTagRepository _mealTagRepository;
-    private readonly INutritionFactRepository _nutritionFactRepository;
+    private readonly ITagRepository _tagRepository;
     private readonly ICustomerAnswerRepository _customerAnswerRepository;
     private readonly ICustomMapper _customMapper;
 
-    public MealService(IMealTagRepository mealTagRepository, INutritionFactRepository nutritionFactRepository, ICustomerAnswerRepository customerAnswerRepository, ICustomMapper customMapper)
+    public MealService(IMealTagRepository mealTagRepository, ITagRepository tagRepository, ICustomerAnswerRepository customerAnswerRepository, ICustomMapper customMapper)
     {
         _mealTagRepository = mealTagRepository;
-        _nutritionFactRepository = nutritionFactRepository;
+        _tagRepository = tagRepository;
         _customerAnswerRepository = customerAnswerRepository;
         _customMapper = customMapper;
     }
@@ -25,31 +25,53 @@ public class MealService : IMealService
 
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
-        var customerId = Guid.Parse(mealRequestModel.CustomerId);
-        var customerAnswers = _customerAnswerRepository.GetCustomerAnswersByCustomerID(customerId);
+        List<CustomerAnswer> customerAnswers;
         var diseaseTags = new List<Tag>();
         int minCalo = 667, maxCalo = 776;
         bool isVegie = false;
-        foreach (var answer in customerAnswers)
+        if (!string.IsNullOrEmpty(mealRequestModel.CustomerId))
         {
-            diseaseTags.Add(answer.Answer.Tag);
-            if (answer.Value > 0)
+            var customerId = Guid.Parse(mealRequestModel.CustomerId);
+            customerAnswers = _customerAnswerRepository.GetCustomerAnswersByCustomerID(customerId);
+            
+            foreach (var answer in customerAnswers)
             {
-                if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
-                if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
-            }
+                diseaseTags.Add(answer.Answer.Tag);
+                if (answer.Value > 0)
+                {
+                    if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
+                    if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
+                }
 
-            if (answer.Answer.Tag.Code == "Vegie")
+                if (answer.Answer.Tag.Code == "Vegie")
+                {
+                    isVegie = true;
+                }
+            }
+        }
+        else
+        {
+            customerAnswers = null;
+        }
+
+        var filterTags = _customMapper.Map(mealRequestModel.Tags);
+        
+        if (filterTags.Count == 0)
+        {
+            filterTags = _tagRepository.GetAllTagsExceptDiseases();
+            var breakfastTag = filterTags.Find(t => t.Code == "Breakfast");
+            if (breakfastTag != null)
             {
-                isVegie = true;
+                filterTags.Remove(breakfastTag);
             }
         }
 
-        var meals = _mealTagRepository.GetMeal(_customMapper.Map(mealRequestModel.Tags), customerAnswers, mealRequestModel.Name);
-        //meals = _nutritionFactRepository.GetMealsByCaloriesBetween(meals, minCalo, maxCalo);
+        var meals = _mealTagRepository.GetMeal(filterTags, 
+            customerAnswers, mealRequestModel.Name, mealRequestModel.Difficulty);
+        
         return new GetRequestResponse<List<MealResponseModel>>()
         {
-            Data = _customMapper.Map(meals, _customMapper.Map(mealRequestModel.Tags)),
+            Data = _customMapper.Map(meals, filterTags, mealRequestModel.PageSize, mealRequestModel.PageNumber),
             Message = "Thành công",
             Status = 200
         };

@@ -201,7 +201,7 @@ namespace Services.CustomeMapper.Implement
 			return result;
 		}
 
-		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags)
+		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, int pageSize, int pageNumber)
 		{
 			
 			var mealResponseModels = new List<MealResponseModel>();
@@ -218,11 +218,12 @@ namespace Services.CustomeMapper.Implement
 				{
 					if (meal.MealTags.FirstOrDefault(mt=>mt.TagId == tag.Id) != null)
 					{
+						
 						mealResponseModels.Last().Data.Add(new()
 						{
 							Name = meal.Name,
 							CookingTime = meal.CookingTime,
-							Difficulty = meal.Difficulty.ToString(),
+							Difficulty = meal.Difficulty,
 							Id = meal.Id,
 							ImageUrl = meal.ImageUrl
 						});
@@ -230,6 +231,12 @@ namespace Services.CustomeMapper.Implement
 				}
 			}
 
+			foreach (var mealResponse in mealResponseModels)
+			{
+				mealResponse.Data = mealResponse.Data
+					.Skip((pageNumber - 1) * pageSize)
+					.Take(pageSize).ToList();
+			}
 			return mealResponseModels;
 		}
 
