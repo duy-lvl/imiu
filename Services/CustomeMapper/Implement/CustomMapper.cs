@@ -197,13 +197,14 @@ namespace Services.CustomeMapper.Implement
         #region Nutrition Fact
         public NutritionFactModel Map(NutritionFact nutritionFact)
         {
-            var nutrition = _nutritionRepository.GetNutritionBaseOnNutritionFact(nutritionFact.NutritionId);
+            var nutritionModel = Map(_nutritionRepository.GetNutritionBaseOnNutritionFact(nutritionFact.NutritionId));
             return new NutritionFactModel
             {
                 Id = nutritionFact.Id,
                 NutritionId = nutritionFact.NutritionId,
+                Name = nutritionModel.Name,
                 Value = nutritionFact.Value,
-                Nutrition = Map(nutrition)
+                Code = nutritionModel.Code
             };
         }
         #endregion
@@ -236,10 +237,12 @@ namespace Services.CustomeMapper.Implement
         #region Meal Tag
         public MealTagModel Map(MealTag mealTag)
         {
-            Tag tag = _tagRepository.GetTagBaseOnMealTag(mealTag.TagId);
+            var tagModel = Map(_tagRepository.GetTagBaseOnMealTag(mealTag.TagId));
             return new MealTagModel
             {
-                Tag = Map(tag)
+                Id = tagModel.Id,
+                Name = tagModel.Name,
+                Code = tagModel.Code
             };
         }
         #endregion
@@ -260,13 +263,15 @@ namespace Services.CustomeMapper.Implement
         #region Meal Ingredient
         public MealIngredientModel Map(MealIngredient mealIngredient)
         {
-            var ingredient = _ingredientRepository.GetIngredientBaseOnMealIngredient(mealIngredient.IngredidentId);
+            var ingredientModel = Map(_ingredientRepository.GetIngredientBaseOnMealIngredient(mealIngredient.IngredidentId));
             return new MealIngredientModel
             {
                 Id = mealIngredient.Id,
+                Name = ingredientModel.Name,
+                Unit = ingredientModel.Unit,
                 Quantity = mealIngredient.Quantity,
                 Description = mealIngredient.Description,
-                IngredientModel = Map(ingredient)
+                ImgUrl = ingredientModel.ImgUrl
             };
         }
         #endregion

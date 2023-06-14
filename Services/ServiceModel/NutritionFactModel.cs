@@ -12,10 +12,9 @@ namespace Services.ServiceModel
 
         public Guid NutritionId { get; set; }
 
+        public string Name { get; set; }
 
         public decimal Value { get; set; }
-
-        public NutritionModel Nutrition { get; set; }
-
+        public string Code { get; set; }
     }
 }
