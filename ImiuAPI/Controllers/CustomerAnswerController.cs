@@ -18,7 +18,6 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpPost]
-        [Route("create")]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
             foreach (var customerAnswer in customerAnswers)
@@ -43,7 +42,7 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpGet]
-        [Route("get")]
+        
         public IActionResult GetCustomerAnswersByCustomerID(Guid id)
         {
             var list = _customerAnswerService.GetCustomerAnswersByCustomerID(id);
@@ -63,8 +62,7 @@ namespace ImiuAPI.Controllers
             });
         }
 
-        [HttpPost]
-        [Route("update")]
+        [HttpPut]
         public IActionResult UpdateCustomerAnswers(Guid accountID, List<CustomerAnswerModel> customerAnswers)
         {
                 _customerAnswerService.UpdateCustomerAnswers(accountID, customerAnswers);

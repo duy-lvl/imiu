@@ -86,18 +86,22 @@ public class MealTagRepository : IMealTagRepository
 
         if (!string.IsNullOrEmpty(filterValue))
         {
-            query += " and m.Name like N'%" + filterValue + "%' collate SQL_Latin1_General_CP1_CI_AI ";
+            query += " and m.Name like N'%" + filterValue + "%' ";
         }
 
+        if (difficulties.Count > 0)
+        {
+            query += " and (";
+        }
         for (int i = 0; i < difficulties.Count; i++)
         {
-            query += " and (m.Difficulty = " + difficulties[i];
+            query += " m.Difficulty = " + difficulties[i];
             if (i == difficulties.Count - 1)
             {
                 query += ") ";
             }
 
-            if (i > 1 && i < difficulties.Count - 1)
+            if (i>=0 && i < difficulties.Count -1)
             {
                 query += " or ";
             }

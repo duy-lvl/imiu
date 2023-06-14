@@ -76,22 +76,12 @@ public class MealService : IMealService
         var meals = _mealTagRepository.GetMeal(filterTags, 
             customerAnswers, mealRequestModel.Name, mealRequestModel.Difficulty);
         
-        return new GetPaginatedResponse<List<MealResponseModel>>()
+        return new GetRequestResponse<List<MealResponseModel>>()
         {
             Data = _customMapper.Map(meals, filterTags, calories,mealRequestModel.PageSize, mealRequestModel.PageNumber),
             Message = "Thành công",
             Status = 200,
-            metaData = new()
-            {
-                FilterBy = new
-                {
-                    Tag = _customMapper.Map(filterTags),
-                    Difficulty = mealRequestModel.Difficulty
-                },
-                FilterValue = mealRequestModel.Name,
-                SortBy = "",
-                TotalPage = ""
-            }
+            
         };
     }
 }
