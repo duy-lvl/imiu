@@ -20,4 +20,8 @@ public class NutritionRepository : INutritionRepository
     {
         return _dbSet.FirstOrDefault(n => n.Name.Contains(name));
     }
+    public Nutrition GetNutritionBaseOnNutritionFact(Guid nutritionID)
+    {
+        return _dbSet.FirstOrDefault(n => n.Id == nutritionID);
+    }
 }

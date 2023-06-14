@@ -13,6 +13,6 @@ namespace Services.ServiceModel
 
         public string Content { get; set; }
 
-        public TagAnswerModel Tag { get; set; }
+        public TagModel Tag { get; set; }
     }
 }

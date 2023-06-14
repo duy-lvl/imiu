@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using DAL.Entities;
 using DAL.Enum;
+using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using Newtonsoft.Json.Linq;
 using Services.CustomeMapper.Interface;
@@ -12,22 +13,27 @@ namespace Services.Service;
 
 public class MealService : IMealService
 {
+    private readonly IMealRepository _mealRepository;
     private readonly IMealTagRepository _mealTagRepository;
     private readonly ITagRepository _tagRepository;
     private readonly ICustomerAnswerRepository _customerAnswerRepository;
     private readonly INutritionRepository _nutritionRepository;
     private readonly ICustomMapper _customMapper;
 
-    public MealService(IMealTagRepository mealTagRepository, ITagRepository tagRepository, 
+    public MealService(IMealRepository mealRepository, IMealTagRepository mealTagRepository, ITagRepository tagRepository, 
         ICustomerAnswerRepository customerAnswerRepository, INutritionRepository nutritionRepository, ICustomMapper customMapper)
     {
+        _mealRepository = mealRepository;
         _mealTagRepository = mealTagRepository;
         _tagRepository = tagRepository;
         _customerAnswerRepository = customerAnswerRepository;
         _nutritionRepository = nutritionRepository;
         _customMapper = customMapper;
     }
-
+    public MealModel GetMealByMealID(Guid mealID)
+    {
+        return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
+    }
 
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {

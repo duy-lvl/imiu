@@ -66,7 +66,8 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAnswerService, AnswerService>();
 			builder.Services.AddScoped<ICustomerAnswerRepository, CustomerAnswerRepository>();
 			builder.Services.AddScoped<ICustomerAnswerService, CustomerAnswerService>();
-			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+
+			builder.Services.AddScoped<IPlanRepository, PlanRepository>();	
 			builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 			builder.Services.AddScoped<IPaymentService, PaymentService>();
 			builder.Services.AddScoped<IPlanService, PlanService>();
@@ -80,10 +81,11 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IMealTagRepository, MealTagRepository>();
 			builder.Services.AddScoped<IMealRepository, MealRepository>();
 			builder.Services.AddScoped<INutritionFactRepository, NutritionFactRepository>();
-			builder.Services.AddScoped<INutritionRepository, NutritionRepository>();	
-			
-
-			builder.Services.AddScoped<ITagRepository, TagRepository>();
+			builder.Services.AddScoped<INutritionRepository, NutritionRepository>();
+            builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
+            builder.Services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
+            builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 			builder.Services.AddCors(options =>
 			{
