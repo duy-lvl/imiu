@@ -236,9 +236,10 @@ namespace Services.CustomeMapper.Implement
 					}
 				}
 			}
-
+			Random rng = new Random();
 			foreach (var mealResponse in mealResponseModels)
 			{
+				mealResponse.Data = mealResponse.Data.OrderBy(m => rng.Next()).ToList();
 				mealResponse.Data = mealResponse.Data
 					.Skip((pageNumber - 1) * pageSize)
 					.Take(pageSize).ToList();
