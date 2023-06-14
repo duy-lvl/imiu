@@ -12,7 +12,7 @@ namespace Services.ServiceModel
 
         public string Name { get; set; }
 
-        public string Code { get; set; }
+        public string Unit { get; set; }
 
         public List<NutritionFactModel> NutritionFacts { get; set; }
     }
