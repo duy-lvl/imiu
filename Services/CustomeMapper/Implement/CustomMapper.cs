@@ -201,7 +201,7 @@ namespace Services.CustomeMapper.Implement
 			return result;
 		}
 
-		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, int pageSize, int pageNumber)
+		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber)
 		{
 			
 			var mealResponseModels = new List<MealResponseModel>();
@@ -218,13 +218,19 @@ namespace Services.CustomeMapper.Implement
 				{
 					if (meal.MealTags.FirstOrDefault(mt=>mt.TagId == tag.Id) != null)
 					{
-						
+						string calo = "0 kcal";
+						var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+						if (nutritionFact != null)
+						{
+							calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+						}
 						mealResponseModels.Last().Data.Add(new()
 						{
 							Name = meal.Name,
 							CookingTime = meal.CookingTime,
 							Difficulty = meal.Difficulty,
 							Id = meal.Id,
+							Calories = calo,
 							ImageUrl = meal.ImageUrl
 						});
 					}

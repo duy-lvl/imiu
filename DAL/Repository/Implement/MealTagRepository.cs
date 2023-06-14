@@ -31,7 +31,7 @@ public class MealTagRepository : IMealTagRepository
     
 
     public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
-        string filterValue, string difficulty)
+        string filterValue, List<int> difficulties)
     {
 
         
@@ -86,32 +86,47 @@ public class MealTagRepository : IMealTagRepository
 
         if (!string.IsNullOrEmpty(filterValue))
         {
-            query += " and m.Name like N'%'+" + filterValue + "'%' ";
+            query += " and m.Name like N'%" + filterValue + "%' collate SQL_Latin1_General_CP1_CI_AI ";
         }
 
-        if (!string.IsNullOrEmpty(difficulty))
+        for (int i = 0; i < difficulties.Count; i++)
         {
-            try
+            query += " and (m.Difficulty = " + difficulties[i];
+            if (i == difficulties.Count - 1)
             {
-                var diff = int.Parse(difficulty);
-                query += " and m.Difficulty <= " + diff;
+                query += ") ";
             }
-            catch{}
+
+            if (i > 1 && i < difficulties.Count - 1)
+            {
+                query += " or ";
+            }
         }
+       
         query += " group by m.id";
         SqlCommand sqlCommand = new SqlCommand(query, conn);
-        SqlDataReader reader = sqlCommand.ExecuteReader();
-        var mealIds = new List<Guid>();
-        while (reader.Read())
+        try
         {
-            mealIds.Add(Guid.Parse(reader["Id"].ToString()));
-        }
+            SqlDataReader reader = sqlCommand.ExecuteReader();
+            var mealIds = new List<Guid>();
+            while (reader.Read())
+            {
+                mealIds.Add(Guid.Parse(reader["Id"].ToString()));
+            }
 
-        var result = _context.Set<Meal>()
-            .Include(m=>m.MealTags)
-            .Where(m => mealIds.Contains(m.Id))
-            .ToList();
+            var result = _context.Set<Meal>()
+                .Include(m => m.MealTags)
+                .Include(m => m.NutritionFacts)
+
+                .Where(m => mealIds.Contains(m.Id))
+                .ToList();
+            return result;
+        }
+        catch
+        {
+            return new List<Meal>();
+        }
             
-        return result;
+        
     }
 }

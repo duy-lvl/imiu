@@ -17,6 +17,7 @@ public class MealResponseModel
         public string Name { get; set; }
         public Difficulty Difficulty { get; set; }
         public int CookingTime { get; set; }
+        public string Calories { get; set; }
         public string ImageUrl { get; set; }
 
     }
