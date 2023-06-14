@@ -19,6 +19,6 @@ namespace Services.ServiceModel
 
         public string ImgUrl { get; set; }
 
-        
+        public MealModel Meal { get; set; }
     }
 }

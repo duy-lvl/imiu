@@ -7,5 +7,4 @@ public interface IMealRepository
 {
     List<Meal> GetMeal(List<Tag> filterTags, string name, Difficulty difficulty, 
         List<Tag> answerTags, int minCalo, int maxCalo, bool isVegie);
-    Meal GetMealByMealID(Guid mealID);
 }

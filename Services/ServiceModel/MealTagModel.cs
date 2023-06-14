@@ -8,6 +8,7 @@ namespace Services.ServiceModel
 {
     public class MealTagModel
     {
-        public TagModel Tag { get; set; }
+        public MealModel Meal { get; set; }
+        public TagAnswerModel Tag { get; set; }
     }
 }

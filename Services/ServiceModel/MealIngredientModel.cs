@@ -14,9 +14,7 @@ namespace Services.ServiceModel
 
         public string Description { get; set; }
 
-        public IngredientModel IngredientModel
-        {
-            get; set;
-        }
-     }
+        public MealModel Meal { get; set; }
+        public IngredientModel Ingredient { get; set; }
+    }
 }

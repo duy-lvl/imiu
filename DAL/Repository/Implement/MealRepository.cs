@@ -57,9 +57,4 @@ public class MealRepository : IMealRepository
     {
         throw new NotImplementedException();
     }
-    public Meal GetMealByMealID(Guid mealID)
-    {
-        var meal = _dbSet.FirstOrDefault(m => m.Id == mealID);
-        return _dbSet.FirstOrDefault(m => m.Id == mealID);
-    }
 }
