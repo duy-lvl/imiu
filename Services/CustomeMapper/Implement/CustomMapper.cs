@@ -261,7 +261,7 @@ namespace Services.CustomeMapper.Implement
         #endregion
 
         #region Meal
-        public MealModel Map(Meal meal)	
+        public MealModel Map(Meal meal)
         {
             var nutritionFactList = _nutritionfactRepository.GetNutritionFactsByMealID(meal.Id);
             List<NutritionFactModel> nutritionfactModelList = new List<NutritionFactModel>();
@@ -293,7 +293,7 @@ namespace Services.CustomeMapper.Implement
 
             return new MealModel
             {
-               
+                Id = meal.Id,
                 Name = meal.Name,
                 Summary = meal.Summary,
                 CookingTime = meal.CookingTime,
@@ -328,7 +328,7 @@ namespace Services.CustomeMapper.Implement
             return new NutritionModel
             {
                 Id = nutrition.Id,
-                Unit = nutrition.Unit,
+                Code = nutrition.Code,
                 Name = nutrition.Name
             };
         }
