@@ -23,7 +23,7 @@ namespace Services.CustomeMapper.Interface
 
 		List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber);
        
-        public MealModel Map(Meal meal);
+        public MealDetailModel Map(Meal meal);
         public NutritionFactModel Map(NutritionFact nutritionFact);
         public NutritionModel Map(Nutrition nutrition);
         public DirectionModel Map(Direction direction);

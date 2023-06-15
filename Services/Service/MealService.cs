@@ -30,7 +30,7 @@ public class MealService : IMealService
         _nutritionRepository = nutritionRepository;
         _customMapper = customMapper;
     }
-    public MealModel GetMealByMealID(Guid mealID)
+    public MealDetailModel GetMealByMealID(Guid mealID)
     {
         return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
     }
