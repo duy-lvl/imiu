@@ -440,6 +440,21 @@ namespace Services.CustomeMapper.Implement
             };
         }
         #endregion
+
+        #region Transaction
+        public TransactionRequestModel Map(Transaction transaction)
+        {
+            return new TransactionRequestModel
+            {
+                Id = transaction.Id,
+                AccountId = transaction.AccountId,
+                DateTime = transaction.DateTime,
+                Value = transaction.Value,
+                TransactionCode = transaction.TransactionCode,
+                Status = transaction.Status.ToString()
+            };
+        }
+        #endregion
     }
 
 
