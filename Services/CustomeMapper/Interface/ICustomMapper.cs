@@ -22,5 +22,6 @@ namespace Services.CustomeMapper.Interface
 		List<Tag> Map(List<TagModel> tagModels);
 
 		List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber);
+		List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories);
 	}
 }

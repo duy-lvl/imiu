@@ -18,9 +18,19 @@ public class MealController
     }
 
     [HttpPost]
+    [ResponseCache(Duration = 3600)]
     public IActionResult GetMeals([FromBody] MealRequestModel mealRequestModel)
     {
         var result = _mealService.GetMeal(mealRequestModel);
+        var jsonResult = new JsonResult(result);
+        jsonResult.StatusCode = result.Status;
+        return jsonResult;
+    }
+    [HttpGet]
+    [ResponseCache(Duration = 3600)]
+    public IActionResult GetMeals(int pageNumber, int pageSize)
+    {
+        var result = _mealService.GetMeal(pageNumber, pageSize);
         var jsonResult = new JsonResult(result);
         jsonResult.StatusCode = result.Status;
         return jsonResult;
