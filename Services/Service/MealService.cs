@@ -30,6 +30,12 @@ public class MealService : IMealService
         _customMapper = customMapper;
     }
 
+    public MealDetailModel GetMealByMealID(Guid mealID)
+    {
+        return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
+    }
+
+
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
         List<CustomerAnswer> customerAnswers;

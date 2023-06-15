@@ -12,9 +12,13 @@ public class MealController
     private readonly IMealService _mealService;
     
 
-    public MealController(IMealService mealService)
+
+    private readonly IUnitOfWork? _unitOfWork;
+    
+    public MealController(IMealService mealService, IUnitOfWork unitOfWork)
     {
         _mealService = mealService;
+        _unitOfWork = unitOfWork;
     }
 
     [HttpPost]
