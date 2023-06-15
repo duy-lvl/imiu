@@ -20,17 +20,8 @@ namespace Services.CustomeMapper.Interface
 
 		List<TagModel> Map(List<Tag> tags);
 		List<Tag> Map(List<TagModel> tagModels);
-List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories);
+
 		List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber);
-
-       
-        public MealDetailModel Map(Meal meal);
-        public NutritionFactModel Map(NutritionFact nutritionFact);
-        public NutritionModel Map(Nutrition nutrition);
-        public DirectionModel Map(Direction direction);
-        public MealTagModel Map(MealTag mealTag);
-        public IngredientModel Map(Ingredient ingredient);
-        public MealIngredientModel Map(MealIngredient mealIngredient);
-    }
-
+		List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories);
+	}
 }
