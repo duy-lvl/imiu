@@ -2,6 +2,8 @@
 using DAL.Enum;
 using DAL.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using System.Xml.Linq;
 
 namespace DAL.Repository.Implement;
 
@@ -9,57 +11,42 @@ public class MealRepository : IMealRepository
 {
     private readonly DbSet<Meal> _dbSet;
     private readonly ImiuDbContext _context;
-    
-    public MealRepository(ImiuDbContext context)
+    private readonly IMemoryCache _cache;
+
+    public MealRepository(ImiuDbContext context, IMemoryCache cache)
     {
         _context = context;
         _dbSet = _context.Set<Meal>();
+        _cache = cache;
     }
 
 
-    public List<Meal> GetMeal(List<Tag> filterTags, string name, Difficulty difficulty, 
-        List<CustomerAnswer> customerAnswers)
+    
+
+    public List<Meal> GetMeal(int pageNumber, int pageSize)
     {
-        var diseaseTags = new List<Tag>();
-        int minCalo, maxCalo;
-        bool isVegie = false;
-        foreach (var answer in customerAnswers)
-        {
-            if (answer.Answer.Tag.Code.StartsWith("D-"))
-            {
-                diseaseTags.Add(answer.Answer.Tag);    
-            }
-            
-            if (answer.Value > 0)
-            {
-                if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
-                if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
-            }
-
-            if (answer.Answer.Tag.Code == "Vegie")
-            {
-                isVegie = true;
-            }
-        }
-
-        var result = new List<Meal>();
         
-        foreach (var diseaseTag in diseaseTags)
+        Random rand = new Random();
+        string cacheKey = $"randomizedList_{pageSize}";
+        bool hasValue = _cache.TryGetValue(cacheKey, out List<int> orders);
+        if (!hasValue)
         {
-            
+            orders = orders ?? new List<int>();
+            for (int i = 0; i < _dbSet.Count(); i++)
+            {
+                orders.Add(rand.Next());
+            }
+            var cacheEntryOptions = new MemoryCacheEntryOptions()
+               .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600)); // Expire after 60 minutes
+            _cache.Set(cacheKey, orders, cacheEntryOptions);
         }
-
-        return null;
-    }
-
-    public List<Meal> GetMeal(List<Tag> filterTags, string name, Difficulty difficulty, List<Tag> answerTags, int minCalo, int maxCalo,
-        bool isVegie)
-    {
-        throw new NotImplementedException();
-    }
-    public Meal GetMealByMealID(Guid mealID)
-    {
-        var meal = _dbSet.FirstOrDefault(m => m.Id == mealID);
-        return _dbSet.FirstOrDefault(m => m.Id == mealID);
+        int j = 0;
+        return _dbSet
+            .Include(m => m.NutritionFacts)
+            .ToList()
+            .OrderBy(m => orders[j++])
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 }
