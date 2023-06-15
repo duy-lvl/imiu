@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using DAL.Entities;
 using DAL.Enum;
+using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using Newtonsoft.Json.Linq;
 using Services.CustomeMapper.Interface;
@@ -12,29 +13,27 @@ namespace Services.Service;
 
 public class MealService : IMealService
 {
+    private readonly IMealRepository _mealRepository;
     private readonly IMealTagRepository _mealTagRepository;
     private readonly ITagRepository _tagRepository;
     private readonly ICustomerAnswerRepository _customerAnswerRepository;
     private readonly INutritionRepository _nutritionRepository;
-    private readonly IMealRepository _mealRepository;
     private readonly ICustomMapper _customMapper;
 
-    public MealService(IMealTagRepository mealTagRepository, ITagRepository tagRepository, ICustomerAnswerRepository customerAnswerRepository, 
-        INutritionRepository nutritionRepository, IMealRepository mealRepository, ICustomMapper customMapper)
+    public MealService(IMealRepository mealRepository, IMealTagRepository mealTagRepository, ITagRepository tagRepository, 
+        ICustomerAnswerRepository customerAnswerRepository, INutritionRepository nutritionRepository, ICustomMapper customMapper)
     {
+        _mealRepository = mealRepository;
         _mealTagRepository = mealTagRepository;
         _tagRepository = tagRepository;
         _customerAnswerRepository = customerAnswerRepository;
         _nutritionRepository = nutritionRepository;
-        _mealRepository = mealRepository;
         _customMapper = customMapper;
     }
-
     public MealDetailModel GetMealByMealID(Guid mealID)
     {
         return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
     }
-
 
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
@@ -46,7 +45,7 @@ public class MealService : IMealService
         {
             var customerId = Guid.Parse(mealRequestModel.CustomerId);
             customerAnswers = _customerAnswerRepository.GetCustomerAnswersByCustomerID(customerId);
-            
+
             foreach (var answer in customerAnswers)
             {
                 if (answer.Answer != null)
@@ -66,8 +65,8 @@ public class MealService : IMealService
                         isVegie = true;
                     }
                 }
-                
-                
+
+
             }
         }
         else
@@ -76,7 +75,7 @@ public class MealService : IMealService
         }
 
         var filterTags = _customMapper.Map(mealRequestModel.Tags);
-        
+
         if (filterTags.Count == 0)
         {
             filterTags = _tagRepository.GetAllTagsExceptDiseases();
@@ -88,18 +87,17 @@ public class MealService : IMealService
         }
 
         var calories = _nutritionRepository.GetByName("Calories");
-        var meals = _mealTagRepository.GetMeal(filterTags, 
+        var meals = _mealTagRepository.GetMeal(filterTags,
             customerAnswers, mealRequestModel.Name, mealRequestModel.Difficulty);
-        
+
         return new GetRequestResponse<List<MealResponseModel>>()
         {
-            Data = _customMapper.Map(meals, filterTags, calories,mealRequestModel.PageSize, mealRequestModel.PageNumber),
+            Data = _customMapper.Map(meals, filterTags, calories, mealRequestModel.PageSize, mealRequestModel.PageNumber),
             Message = "Thành công",
             Status = 200,
-            
+
         };
     }
-
     public ResponseObject GetMeal(int pageNumber, int pageSize)
     {
         var meals = _mealRepository.GetMeal(pageNumber, pageSize);

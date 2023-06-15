@@ -12,5 +12,6 @@ namespace DAL.Repository.Interface
         Tag GetTagByAnswerID(Guid answerID);
         List<Tag> GetAllTags();
         List<Tag> GetAllTagsExceptDiseases();
+        Tag GetTagBaseOnMealTag(Guid tagID);
     }
 }
