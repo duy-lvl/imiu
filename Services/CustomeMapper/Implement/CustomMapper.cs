@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using DAL.Enum;
 using Services.Service.Interface;
 using DAL.Repository.Implement;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Services.CustomeMapper.Implement
 {
@@ -21,16 +22,15 @@ namespace Services.CustomeMapper.Implement
         private INutritionRepository _nutritionRepository;
         private INutritionFactRepository _nutritionfactRepository;
         private IDirectionRepository _directionRepository;
-        
         private IMealTagRepository _mealTagRepository;
         private IIngredientRepository _ingredientRepository;
         private IMealIngredientRepository _mealIngredientRepository;
-
+        private readonly IMemoryCache _cache;
         public CustomMapper(IAnswerRepository answerRepository, ITagRepository tagRepository, INutritionRepository nutritionRepository, 
 			INutritionFactRepository nutritionFactRepository, IDirectionRepository directionRepository, IMealTagRepository mealTagRepository, 
-			IIngredientRepository ingredientRepository, IMealIngredientRepository mealIngredientRepository)
+			IIngredientRepository ingredientRepository, IMealIngredientRepository mealIngredientRepository, IMemoryCache memoryCache)
 		{
-			
+			_cache = memoryCache;
 			_answerRepository = answerRepository;
 			_tagRepository = tagRepository;
 			_mealTagRepository = mealTagRepository;
@@ -220,54 +220,7 @@ namespace Services.CustomeMapper.Implement
 			return result;
 		}
 
-		public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber)
-		{
-			
-			var mealResponseModels = new List<MealResponseModel>();
-			
-			foreach (var tag in tags)
-			{
-				mealResponseModels.Add(new MealResponseModel()
-				{
-					TagId = tag.Id.ToString(),
-					Tag = tag.Name,
-					Data = new List<MealResponseModel.Meal>()
-				});
-				foreach (var meal in meals)
-				{
-					if (meal.MealTags.FirstOrDefault(mt=>mt.TagId == tag.Id) != null)
-					{
-						string calo = "0 kcal";
-						var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
-						if (nutritionFact != null)
-						{
-							calo = $"{(int)nutritionFact.Value} {calories.Unit}";
-						}
-						mealResponseModels.Last().Data.Add(new()
-						{
-							Name = meal.Name,
-							CookingTime = meal.CookingTime,
-							Difficulty = meal.Difficulty,
-							Id = meal.Id,
-							Calories = calo,
-							ImageUrl = meal.ImageUrl
-						});
-					}
-				}
-			}
-			Random rng = new Random();
-			foreach (var mealResponse in mealResponseModels)
-			{
-				mealResponse.Data = mealResponse.Data.OrderBy(m => rng.Next()).ToList();
-				mealResponse.Data = mealResponse.Data
-					.Skip((pageNumber - 1) * pageSize)
-					.Take(pageSize).ToList();
-				
-			}
 
-			mealResponseModels.RemoveAll(x => x.Data.Count == 0);
-			return mealResponseModels;
-		}
 
         #endregion
 
@@ -301,7 +254,6 @@ namespace Services.CustomeMapper.Implement
             {
                 mealIngredientModelList.Add(Map(mealIngredient));
             }
-
             return new MealDetailModel
             {
                 Id = meal.Id,
@@ -317,6 +269,94 @@ namespace Services.CustomeMapper.Implement
             };
         }
 
+        public List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories)
+        {
+            var mealResponseModels = new List<MealResponseModel.Meal>();
+
+
+            foreach (var meal in meals)
+            {
+
+                string calo = "0 kcal";
+                var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+                if (nutritionFact != null)
+                {
+                    calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+                }
+                mealResponseModels.Add(new()
+                {
+                    Name = meal.Name,
+                    CookingTime = meal.CookingTime,
+                    Difficulty = meal.Difficulty,
+                    Id = meal.Id,
+                    Calories = calo,
+                    ImageUrl = meal.ImageUrl
+                });
+
+            }
+            return mealResponseModels.ToList();
+        }
+        public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories, int pageSize, int pageNumber)
+
+        {
+            Random rng = new Random();
+            string cacheKey = $"randomizedList_{pageSize}";
+            bool hasValue = _cache.TryGetValue(cacheKey, out List<int> orders);
+            if (!hasValue)
+            {
+                orders = orders ?? new List<int>();
+                for (int i = 0; i < meals.Count; i++)
+                {
+                    orders.Add(rng.Next());
+                }
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600)); // Expire after 60 minutes
+                _cache.Set(cacheKey, orders, cacheEntryOptions);
+            }
+            var mealResponseModels = new List<MealResponseModel>();
+
+            foreach (var tag in tags)
+            {
+                mealResponseModels.Add(new MealResponseModel()
+                {
+                    TagId = tag.Id.ToString(),
+                    Tag = tag.Name,
+                    Data = new List<MealResponseModel.Meal>()
+                });
+                foreach (var meal in meals)
+                {
+                    if (meal.MealTags.FirstOrDefault(mt => mt.TagId == tag.Id) != null)
+                    {
+                        string calo = "0 kcal";
+                        var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+                        if (nutritionFact != null)
+                        {
+                            calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+                        }
+                        mealResponseModels.Last().Data.Add(new()
+                        {
+                            Name = meal.Name,
+                            CookingTime = meal.CookingTime,
+                            Difficulty = meal.Difficulty,
+                            Id = meal.Id,
+                            Calories = calo,
+                            ImageUrl = meal.ImageUrl
+                        });
+                    }
+                }
+            }
+            int j = 0;
+            foreach (var mealResponse in mealResponseModels)
+            {
+                mealResponse.Data = mealResponse.Data.OrderBy(m => orders[j++]).ToList();
+                mealResponse.Data = mealResponse.Data
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize).ToList();
+
+            }
+            mealResponseModels.RemoveAll(x => x.Data.Count == 0);
+            return mealResponseModels;
+        }
         #endregion
 
         #region Nutrition Fact

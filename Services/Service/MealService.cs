@@ -45,20 +45,28 @@ public class MealService : IMealService
         {
             var customerId = Guid.Parse(mealRequestModel.CustomerId);
             customerAnswers = _customerAnswerRepository.GetCustomerAnswersByCustomerID(customerId);
-            
+
             foreach (var answer in customerAnswers)
             {
-                diseaseTags.Add(answer.Answer.Tag);
-                if (answer.Value > 0)
+                if (answer.Answer != null)
                 {
-                    if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
-                    if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
+                    if (answer.Answer.Tag != null)
+                    {
+                        diseaseTags.Add(answer.Answer.Tag);
+                    }
+                    if (answer.Value > 0)
+                    {
+                        if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
+                        if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
+                    }
+
+                    if (answer.Answer.Tag.Code == "Vegie")
+                    {
+                        isVegie = true;
+                    }
                 }
 
-                if (answer.Answer.Tag.Code == "Vegie")
-                {
-                    isVegie = true;
-                }
+
             }
         }
         else
@@ -67,7 +75,7 @@ public class MealService : IMealService
         }
 
         var filterTags = _customMapper.Map(mealRequestModel.Tags);
-        
+
         if (filterTags.Count == 0)
         {
             filterTags = _tagRepository.GetAllTagsExceptDiseases();
@@ -79,15 +87,27 @@ public class MealService : IMealService
         }
 
         var calories = _nutritionRepository.GetByName("Calories");
-        var meals = _mealTagRepository.GetMeal(filterTags, 
+        var meals = _mealTagRepository.GetMeal(filterTags,
             customerAnswers, mealRequestModel.Name, mealRequestModel.Difficulty);
-        
+
         return new GetRequestResponse<List<MealResponseModel>>()
         {
-            Data = _customMapper.Map(meals, filterTags, calories,mealRequestModel.PageSize, mealRequestModel.PageNumber),
+            Data = _customMapper.Map(meals, filterTags, calories, mealRequestModel.PageSize, mealRequestModel.PageNumber),
             Message = "Thành công",
             Status = 200,
-            
+
+        };
+    }
+    public ResponseObject GetMeal(int pageNumber, int pageSize)
+    {
+        var meals = _mealRepository.GetMeal(pageNumber, pageSize);
+        var calories = _nutritionRepository.GetByName("Calories");
+        return new GetRequestResponse<List<MealResponseModel.Meal>>()
+        {
+            Data = _customMapper.Map(meals, calories),
+            Message = "Thành công",
+            Status = 200,
+
         };
     }
 }
