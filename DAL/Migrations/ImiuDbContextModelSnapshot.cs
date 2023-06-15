@@ -224,6 +224,12 @@ namespace DAL.Migrations
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsFavourite")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("MealId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("SelectDate")
                         .HasColumnType("datetime2");
 
@@ -231,28 +237,9 @@ namespace DAL.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("MealSelections");
-                });
-
-            modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MealId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MealSelectionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
                     b.HasIndex("MealId");
 
-                    b.HasIndex("MealSelectionId");
-
-                    b.ToTable("MealSelectionItems");
+                    b.ToTable("MealSelections");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -458,6 +445,21 @@ namespace DAL.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("MealTag", b =>
+                {
+                    b.Property<Guid>("MealsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("MealsId", "TagsId");
+
+                    b.HasIndex("TagsId");
+
+                    b.ToTable("MealTag");
+                });
+
             modelBuilder.Entity("DAL.Entities.Account", b =>
                 {
                     b.HasOne("DAL.Entities.Subscription", null)
@@ -541,26 +543,15 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
-                });
-
-            modelBuilder.Entity("DAL.Entities.MealSelectionItem", b =>
-                {
                     b.HasOne("DAL.Entities.Meal", "Meal")
-                        .WithMany()
+                        .WithMany("MealSelections")
                         .HasForeignKey("MealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DAL.Entities.MealSelection", "MealSelection")
-                        .WithMany("PlansMealSelectionItems")
-                        .HasForeignKey("MealSelectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Account");
 
                     b.Navigation("Meal");
-
-                    b.Navigation("MealSelection");
                 });
 
             modelBuilder.Entity("DAL.Entities.MealTag", b =>
@@ -631,6 +622,21 @@ namespace DAL.Migrations
                     b.Navigation("Subscription");
                 });
 
+            modelBuilder.Entity("MealTag", b =>
+                {
+                    b.HasOne("DAL.Entities.Meal", null)
+                        .WithMany()
+                        .HasForeignKey("MealsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DAL.Entities.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DAL.Entities.Account", b =>
                 {
                     b.Navigation("CustomerAnswers");
@@ -646,14 +652,11 @@ namespace DAL.Migrations
 
                     b.Navigation("MealIngredients");
 
+                    b.Navigation("MealSelections");
+
                     b.Navigation("MealTags");
 
                     b.Navigation("NutritionFacts");
-                });
-
-            modelBuilder.Entity("DAL.Entities.MealSelection", b =>
-                {
-                    b.Navigation("PlansMealSelectionItems");
                 });
 
             modelBuilder.Entity("DAL.Entities.Nutrition", b =>

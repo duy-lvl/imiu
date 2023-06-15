@@ -33,7 +33,7 @@ public class MealTagRepository : IMealTagRepository
     public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
         string filterValue, List<int> difficulties)
     {
-
+        
         
         var isBreakfast = filterTags.FirstOrDefault(t => t.Code == "Breakfast") != null;
 
@@ -123,6 +123,7 @@ public class MealTagRepository : IMealTagRepository
                 .Include(m => m.NutritionFacts)
 
                 .Where(m => mealIds.Contains(m.Id))
+                
                 .ToList();
             return result;
         }

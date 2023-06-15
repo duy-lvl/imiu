@@ -21,7 +21,13 @@ namespace Services.CustomeMapper.Interface
 		List<TagModel> Map(List<Tag> tags);
 		List<Tag> Map(List<TagModel> tagModels);
 
-		List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories,int pageSize, int pageNumber);
-		List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories);
-	}
+		List<MealResponseModel> Map(List<MealSelection> favouriteMeals, List<Meal> meals, List<Tag> tags, Nutrition calories,
+			int pageSize, int pageNumber, out int totalPage);
+		List<MealResponseModel.Meal> Map(List<MealSelection> favouriteMeals, List<Meal> meals, Nutrition calories);
+
+		List<MealResponseModel.Meal> Map(List<MealSelection> meals, Nutrition calories, bool isFavourite);
+
+
+
+    }
 }

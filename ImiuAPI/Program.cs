@@ -81,11 +81,12 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IMealRepository, MealRepository>();
 			builder.Services.AddScoped<INutritionFactRepository, NutritionFactRepository>();
 			builder.Services.AddScoped<INutritionRepository, NutritionRepository>();
+            builder.Services.AddScoped<IMealSelectionRepository, MealSelectionRepository>();
+            builder.Services.AddScoped<IMealSelectionService, MealSelectionService>();
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
+            builder.Services.AddMemoryCache();
 
-			builder.Services.AddMemoryCache();
-			builder.Services.AddScoped<ITagRepository, TagRepository>();
-
-			builder.Services.AddCors(options =>
+            builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("MyPolicy",
 					builder => builder.AllowAnyOrigin()

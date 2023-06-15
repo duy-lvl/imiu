@@ -15,6 +15,8 @@ public class MealSelection
     public DateTime SelectDate { get; set; }
 
     public Account Account { get; set; }
-    
-    public List<MealSelectionItem> PlansMealSelectionItems { get; set; }
+    [ForeignKey(nameof(Meal))]
+    public Guid MealId { get; set; }
+    public bool IsFavourite { get; set; }
+    public Meal Meal { get; set; }
 }

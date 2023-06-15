@@ -65,7 +65,7 @@ namespace ImiuAPI.Controllers
         [HttpPut]
         public IActionResult UpdateCustomerAnswers(Guid accountID, List<CustomerAnswerModel> customerAnswers)
         {
-                _customerAnswerService.UpdateCustomerAnswers(accountID, customerAnswers);
+            _customerAnswerService.UpdateCustomerAnswers(accountID, customerAnswers);
             bool success = _unitOfWork.Commit();
             if (success)
             {

@@ -18,7 +18,6 @@ namespace DAL
 		DbSet<Meal> Meals { get; set; }
 		DbSet<MealIngredient> MealIngredients { get; set; }
 		DbSet<MealSelection> MealSelections { get; set; }
-		DbSet<MealSelectionItem> MealSelectionItems { get; set; }
 		DbSet<MealTag> MealTags { get; set; }
 		DbSet<Nutrition> Nutritions { get; set; }
 		DbSet<NutritionFact> NutritionFacts { get; set; }

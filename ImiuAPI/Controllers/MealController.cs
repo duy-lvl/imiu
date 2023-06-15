@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Services.CustomeMapper.Interface;
 using Services.Service.Interface;
 using Services.ServiceModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 
 namespace ImiuAPI.Controllers;
 [ApiController]
@@ -26,13 +28,16 @@ public class MealController
         jsonResult.StatusCode = result.Status;
         return jsonResult;
     }
+
     [HttpGet]
     [ResponseCache(Duration = 3600)]
-    public IActionResult GetMeals(int pageNumber, int pageSize)
+    public IActionResult GetMeals(string? accountId, int pageNumber, int pageSize)
     {
-        var result = _mealService.GetMeal(pageNumber, pageSize);
+        var result = _mealService.GetMeal(accountId, pageNumber, pageSize);
         var jsonResult = new JsonResult(result);
         jsonResult.StatusCode = result.Status;
         return jsonResult;
     }
+
+    
 }

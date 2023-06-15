@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using DAL.Enum;
 using Services.Service.Interface;
 using Microsoft.Extensions.Caching.Memory;
+using static Services.ServiceModel.MealResponseModel;
 
 namespace Services.CustomeMapper.Implement
 {
@@ -210,7 +211,8 @@ namespace Services.CustomeMapper.Implement
         #endregion
 
         #region Meal
-        public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories, int pageSize, int pageNumber)
+        public List<MealResponseModel> Map(List<MealSelection> favouriteMeals, List<DAL.Entities.Meal> meals, List<Tag> tags, 
+			Nutrition calories, int pageSize, int pageNumber, out int totalPage)
         {
             Random rng = new Random();
             string cacheKey = $"randomizedList_{pageSize}";
@@ -246,19 +248,21 @@ namespace Services.CustomeMapper.Implement
                         {
                             calo = $"{(int)nutritionFact.Value} {calories.Unit}";
                         }
-                        mealResponseModels.Last().Data.Add(new()
-                        {
-                            Name = meal.Name,
-                            CookingTime = meal.CookingTime,
-                            Difficulty = meal.Difficulty,
-                            Id = meal.Id,
-                            Calories = calo,
-                            ImageUrl = meal.ImageUrl
-                        });
+						mealResponseModels.Last().Data.Add(new()
+						{
+							Name = meal.Name,
+							CookingTime = meal.CookingTime,
+							Difficulty = meal.Difficulty,
+							Id = meal.Id,
+							Calories = calo,
+							ImageUrl = meal.ImageUrl,
+							IsFavourite = favouriteMeals.FirstOrDefault(ms => ms.MealId == meal.Id && ms.IsFavourite) != null
+						});
                     }
                 }
             }
 			int j = 0;
+			totalPage = (int)(Math.Ceiling(mealResponseModels.OrderBy(m=>m.Data.Count).Last().Data.Count * 1.0 / pageSize));
             foreach (var mealResponse in mealResponseModels)
             {
                 mealResponse.Data = mealResponse.Data.OrderBy(m => orders[j++]).ToList();
@@ -272,7 +276,7 @@ namespace Services.CustomeMapper.Implement
             return mealResponseModels;
         }
 
-        public List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories)
+        public List<MealResponseModel.Meal> Map(List<MealSelection> favouriteMeals, List<DAL.Entities.Meal> meals, Nutrition calories)
         {
             var mealResponseModels = new List<MealResponseModel.Meal>();
 
@@ -293,12 +297,41 @@ namespace Services.CustomeMapper.Implement
                     Difficulty = meal.Difficulty,
                     Id = meal.Id,
                     Calories = calo,
-                    ImageUrl = meal.ImageUrl
+                    ImageUrl = meal.ImageUrl,
+                    IsFavourite = favouriteMeals.FirstOrDefault(ms => ms.MealId == meal.Id && ms.IsFavourite) != null
                 });
                 
             }
             return mealResponseModels.ToList();
         }
+
+        public List<MealResponseModel.Meal> Map(List<MealSelection> mealSelections, Nutrition calories, bool isFavourite)
+        {
+            var mealModels = new List<MealResponseModel.Meal>();
+			
+            foreach (var mealSelection in mealSelections)
+			{
+				var meal = mealSelection.Meal;
+                string calo = "0 kcal";
+                var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+                if (nutritionFact != null)
+                {
+                    calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+                }
+                mealModels.Add(new()
+				{
+					Calories = calo, 
+					CookingTime = meal.CookingTime,
+					Difficulty = meal.Difficulty,
+					Id = meal.Id,
+					ImageUrl = meal.ImageUrl,
+					IsFavourite	= isFavourite, 
+					Name = meal.Name 
+				});
+			}
+			return mealModels;
+        }
+
         #endregion
     }
 
