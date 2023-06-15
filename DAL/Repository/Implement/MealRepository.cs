@@ -2,8 +2,9 @@
 using DAL.Enum;
 using DAL.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Xml.Linq;
 using Microsoft.Extensions.Caching.Memory;
+using System.Xml.Linq;
+
 namespace DAL.Repository.Implement;
 
 public class MealRepository : IMealRepository
@@ -18,9 +19,13 @@ public class MealRepository : IMealRepository
         _dbSet = _context.Set<Meal>();
         _cache = cache;
     }
+
+
+    
+
     public List<Meal> GetMeal(int pageNumber, int pageSize)
     {
-
+        
         Random rand = new Random();
         string cacheKey = $"randomizedList_{pageSize}";
         bool hasValue = _cache.TryGetValue(cacheKey, out List<int> orders);
@@ -43,12 +48,5 @@ public class MealRepository : IMealRepository
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToList();
-    }
-
-    
-    public Meal GetMealByMealID(Guid mealID)
-    {
-        var meal = _dbSet.FirstOrDefault(m => m.Id == mealID);
-        return _dbSet.FirstOrDefault(m => m.Id == mealID);
     }
 }
