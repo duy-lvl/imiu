@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using DAL.Entities;
 using DAL.Enum;
+using DAL.Repository.Implement;
 using DAL.Repository.Interface;
 using Newtonsoft.Json.Linq;
 using Services.CustomeMapper.Interface;
@@ -12,29 +13,27 @@ namespace Services.Service;
 
 public class MealService : IMealService
 {
+    private readonly IMealRepository _mealRepository;
     private readonly IMealTagRepository _mealTagRepository;
     private readonly ITagRepository _tagRepository;
     private readonly ICustomerAnswerRepository _customerAnswerRepository;
     private readonly INutritionRepository _nutritionRepository;
-    private readonly IMealRepository _mealRepository;
     private readonly ICustomMapper _customMapper;
 
-    public MealService(IMealTagRepository mealTagRepository, ITagRepository tagRepository, ICustomerAnswerRepository customerAnswerRepository, 
-        INutritionRepository nutritionRepository, IMealRepository mealRepository, ICustomMapper customMapper)
+    public MealService(IMealRepository mealRepository, IMealTagRepository mealTagRepository, ITagRepository tagRepository, 
+        ICustomerAnswerRepository customerAnswerRepository, INutritionRepository nutritionRepository, ICustomMapper customMapper)
     {
+        _mealRepository = mealRepository;
         _mealTagRepository = mealTagRepository;
         _tagRepository = tagRepository;
         _customerAnswerRepository = customerAnswerRepository;
         _nutritionRepository = nutritionRepository;
-        _mealRepository = mealRepository;
         _customMapper = customMapper;
     }
-
     public MealDetailModel GetMealByMealID(Guid mealID)
     {
         return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
     }
-
 
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
@@ -49,25 +48,17 @@ public class MealService : IMealService
             
             foreach (var answer in customerAnswers)
             {
-                if (answer.Answer != null)
+                diseaseTags.Add(answer.Answer.Tag);
+                if (answer.Value > 0)
                 {
-                    if (answer.Answer.Tag != null)
-                    {
-                        diseaseTags.Add(answer.Answer.Tag);
-                    }
-                    if (answer.Value > 0)
-                    {
-                        if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
-                        if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
-                    }
-
-                    if (answer.Answer.Tag.Code == "Vegie")
-                    {
-                        isVegie = true;
-                    }
+                    if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
+                    if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
                 }
-                
-                
+
+                if (answer.Answer.Tag.Code == "Vegie")
+                {
+                    isVegie = true;
+                }
             }
         }
         else
@@ -97,19 +88,6 @@ public class MealService : IMealService
             Message = "Thành công",
             Status = 200,
             
-        };
-    }
-
-    public ResponseObject GetMeal(int pageNumber, int pageSize)
-    {
-        var meals = _mealRepository.GetMeal(pageNumber, pageSize);
-        var calories = _nutritionRepository.GetByName("Calories");
-        return new GetRequestResponse<List<MealResponseModel.Meal>>()
-        {
-            Data = _customMapper.Map(meals, calories),
-            Message = "Thành công",
-            Status = 200,
-
         };
     }
 }

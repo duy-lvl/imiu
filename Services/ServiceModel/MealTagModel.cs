@@ -9,7 +9,6 @@ namespace Services.ServiceModel
 {
     public class MealTagModel
     {
-
         public Guid Id { get; set; }
         [Required(ErrorMessage = "Name is required")]
 
@@ -17,6 +16,5 @@ namespace Services.ServiceModel
         [Required(ErrorMessage = "Code is required")]
 
         public string Code { get; set; }
-
     }
 }

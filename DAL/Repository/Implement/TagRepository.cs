@@ -18,7 +18,10 @@ namespace DAL.Repository.Implement
             _context = context;
             _dbSet = context.Set<Tag>();
         }
-
+        public Tag GetTagBaseOnMealTag(Guid tagID)
+        {
+            return _dbSet.FirstOrDefault(t => t.Id == tagID);
+        }
         public Tag GetTagByAnswerID(Guid answerID)
         {
             return _dbSet.FirstOrDefault(t => t.Id == answerID);
@@ -33,5 +36,6 @@ namespace DAL.Repository.Implement
         {
             return _dbSet.Where(t => !t.Code.StartsWith("D-")).ToList();
         }
+
     }
 }
