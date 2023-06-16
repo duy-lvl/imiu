@@ -38,9 +38,11 @@ namespace DAL.Repository.Implement
             return _dbSet.Where(ms => ms.AccountId == accountId).ToList();
         }
 
-        public MealSelection Get(Guid accountId, Guid mealId)
+        public MealSelection Get(Guid accountId, Guid mealId, bool isFavourite)
         {
-            return _dbSet.FirstOrDefault(ms => ms.MealId == mealId && ms.AccountId == accountId);
+            return _dbSet.FirstOrDefault(ms => ms.MealId == mealId 
+                                            && ms.AccountId == accountId 
+                                            && ms.IsFavourite == isFavourite);
         }
 
         public List<MealSelection> Get(Guid accountId, bool isFavourite, int pageNumber, int pageSize, out int totalPage)

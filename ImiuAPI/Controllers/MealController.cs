@@ -20,7 +20,7 @@ public class MealController
     }
 
     [HttpPost]
-    [ResponseCache(Duration = 3600)]
+    //[ResponseCache(Duration = 3600)]
     public IActionResult GetMeals([FromBody] MealRequestModel mealRequestModel)
     {
         var result = _mealService.GetMeal(mealRequestModel);
@@ -30,7 +30,7 @@ public class MealController
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 3600)]
+    //[ResponseCache(Duration = 3600)]
     public IActionResult GetMeals(string? accountId, int pageNumber, int pageSize)
     {
         var result = _mealService.GetMeal(accountId, pageNumber, pageSize);

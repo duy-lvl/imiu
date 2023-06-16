@@ -8,9 +8,7 @@ public class GetPaginatedResponse<T> : ResponseObject
     public MetaData metaData { get; set; }
     public class MetaData
     {
-        public string SortBy { get; set; }
-        public object FilterBy { get; set; }
-        public string FilterValue { get; set; }
-        public string TotalPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPage { get; set; }
     }
 }

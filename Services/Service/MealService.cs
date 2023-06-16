@@ -106,7 +106,8 @@ public class MealService : IMealService
             Status = 200,
             metaData = new()
             {
-                TotalPage = totalPage.ToString(),
+                TotalPage = totalPage,
+                CurrentPage = mealRequestModel.PageNumber
             }
         };
     }
@@ -133,8 +134,8 @@ public class MealService : IMealService
             Status = 200,
             metaData = new()
             {
-                TotalPage = totalPage.ToString(),
-                
+                TotalPage = totalPage,
+                CurrentPage = pageNumber
             }
         };
     }

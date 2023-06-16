@@ -12,7 +12,7 @@ namespace DAL.Repository.Interface
         void Add(MealSelection mealSelection);
         List<MealSelection> Get(Guid accountId);
         bool Delete(MealSelection mealSelection);
-        MealSelection Get(Guid accountId, Guid mealId);
+        MealSelection Get(Guid accountId, Guid mealId, bool isFavourite);
 
         List<MealSelection> Get(Guid accountId, bool isFavourite, int pageNumber, int pageSize, out int totalPage);
     }

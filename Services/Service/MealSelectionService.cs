@@ -39,7 +39,7 @@ namespace Services.Service
                 {
                     var mealId = Guid.Parse(mealSelectionRequestModel.MealId);
                     
-                    var mealSelection = _mealSelectionRepository.Get(accountId, mealId);
+                    var mealSelection = _mealSelectionRepository.Get(accountId, mealId, mealSelectionRequestModel.IsFavourite);
                         
                     if (mealSelection == null)
                     {
@@ -53,7 +53,7 @@ namespace Services.Service
                             MealId = mealId
                         });
                     }
-                    if (mealSelection != null && mealSelection.IsFavourite == true)
+                    if (mealSelection != null)
                     {
                         _mealSelectionRepository.Delete(mealSelection);
                     }
@@ -88,7 +88,8 @@ namespace Services.Service
                 Data = new List<MealResponseModel.Meal>(),
                 metaData = new()
                 {
-                    TotalPage = "0"
+                    TotalPage = 0,
+                    CurrentPage = pageNumber
                 }
             };
             if (Guid.TryParse(customerId, out Guid accountId))
@@ -96,7 +97,7 @@ namespace Services.Service
                 var mealSelections = _mealSelectionRepository.Get(accountId, isFavourite, pageNumber, pageSize, out int totalPage);
                 var calories = _nutritionRepository.GetByName("Calories");
                 result.Data = _customMapper.Map(mealSelections, calories, isFavourite);
-                result.metaData.TotalPage = totalPage.ToString();
+                result.metaData.TotalPage = totalPage;
             }
 
             
