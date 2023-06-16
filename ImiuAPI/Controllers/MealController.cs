@@ -1,4 +1,5 @@
 ﻿using DAL.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.CustomeMapper.Interface;
 using Services.Service.Interface;
@@ -20,7 +21,7 @@ public class MealController
     }
 
     [HttpPost]
-    //[ResponseCache(Duration = 3600)]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult GetMeals([FromBody] MealRequestModel mealRequestModel)
     {
         var result = _mealService.GetMeal(mealRequestModel);
@@ -29,8 +30,8 @@ public class MealController
         return jsonResult;
     }
 
-    [HttpGet]
-    //[ResponseCache(Duration = 3600)]
+    [HttpGet, Authorize]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult GetMeals(string? accountId, int pageNumber, int pageSize)
     {
         var result = _mealService.GetMeal(accountId, pageNumber, pageSize);

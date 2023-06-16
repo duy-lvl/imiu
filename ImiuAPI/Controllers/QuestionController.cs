@@ -15,6 +15,7 @@ namespace ImiuAPI.Controllers
             _questionService = questionService;
         }
         [HttpGet]
+        [Authorize(Roles = "CUSTOMER, ADMIN")]
         public IActionResult GetQuestions()
         {
             var questions = _questionService.GetQuestions();

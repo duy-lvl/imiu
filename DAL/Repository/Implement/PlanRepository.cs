@@ -25,7 +25,7 @@ public class PlanRepository : IPlanRepository
     {
         return _dbSet.Include(p => p.Subcription)
             .Include(p => p.Account)
-            .FirstOrDefault(p => (p.EndDate == null || ( p.EndDate >= DateTime.Today))
+            .FirstOrDefault(p => (p.EndDate == null || ( p.EndDate >= DateTime.Now))
                                  && p.AccountId == id
                                  && p.Status != PlanStatus.INACTIVE);
     }

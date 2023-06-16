@@ -3,6 +3,7 @@ using Services.Service.Interface;
 using DAL.UnitOfWork;
 using Services.Service;
 using Services.ServiceModel;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImiuAPI.Controllers;
 
@@ -23,6 +24,7 @@ public class AccountsController
 
     [HttpPut]
     [Route("{accountId}/meal-selections")]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult Select([FromBody] MealSelectionRequestModel mealSelection, string accountId)
     {
         var result = _mealSelectionService.UpdateMealSelection(mealSelection, accountId);
@@ -34,6 +36,7 @@ public class AccountsController
 
     [HttpGet]
     [Route("{accountId}/meal-selections")]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult Select(string accountId, int pageNumber, int pageSize, bool isFavourite)
     {
         var result = _mealSelectionService.GetSelectedMeals(accountId, isFavourite, pageNumber, pageSize);

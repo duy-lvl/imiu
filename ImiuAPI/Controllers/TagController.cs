@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Services.JsonResult;
 using Services.Service.Interface;
 
@@ -15,6 +16,7 @@ public class TagController
     }
 
     [HttpGet]
+    [Authorize(Roles = "CUSTOMER, ADMIN")]
     public IActionResult GetAllTag()
     {
         var result = _tagService.GetTag();
