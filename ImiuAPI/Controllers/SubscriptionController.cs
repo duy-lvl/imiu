@@ -18,7 +18,7 @@ public class SubscriptionController
     }
 
     [HttpGet]
-    [Authorize(Roles = "CUSTOMER, ADMIN")]
+    [AllowAnonymous]
     public IActionResult GetAll()
     {
         var result = _subscriptionService.GetAll();

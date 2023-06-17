@@ -16,7 +16,7 @@ public class TagController
     }
 
     [HttpGet]
-    [Authorize(Roles = "CUSTOMER, ADMIN")]
+    [AllowAnonymous]
     public IActionResult GetAllTag()
     {
         var result = _tagService.GetTag();

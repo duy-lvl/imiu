@@ -21,7 +21,7 @@ public class MealController
     }
 
     [HttpPost]
-    [Authorize(Roles = "CUSTOMER")]
+    [AllowAnonymous]
     public IActionResult GetMeals([FromBody] MealRequestModel mealRequestModel)
     {
         var result = _mealService.GetMeal(mealRequestModel);
@@ -30,8 +30,8 @@ public class MealController
         return jsonResult;
     }
 
-    [HttpGet, Authorize]
-    [Authorize(Roles = "CUSTOMER")]
+    [HttpGet]
+    [AllowAnonymous]
     public IActionResult GetMeals(string? accountId, int pageNumber, int pageSize)
     {
         var result = _mealService.GetMeal(accountId, pageNumber, pageSize);
