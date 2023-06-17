@@ -14,8 +14,8 @@ public class Answer
     public Guid QuestionId { get; set; }
     
     [ForeignKey(nameof(Tag))]
-    public Guid TagId { get; set; }
+    public Guid? TagId { get; set; }
     
     public Question Question { get; set; }
-    public Tag Tag { get; set; }
+    public Tag? Tag { get; set; }
 }

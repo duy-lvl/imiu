@@ -34,14 +34,16 @@ namespace DAL.Repository.Implement
             return _dbSet.Include(ca=>ca.Answer).Include(ca=>ca.Answer.Tag).Where(cs => cs.AccountId == id).ToList();
         }
 
-        public List<Guid> GetCustomerAnswerTagsByCustomerId(Guid id)
+        public List<Guid?> GetCustomerAnswerTagsByCustomerId(Guid id)
         {
             var answers = _dbSet.Include(ca => ca.Answer)
                 .Where(ca => ca.AccountId == id).ToList();
-            var tags = new List<Guid>();
+            var tags = new List<Guid?>();
             foreach (var answer in answers)
             {
+               
                 tags.Add(answer.Answer.TagId);
+                
             }
 
             return tags;

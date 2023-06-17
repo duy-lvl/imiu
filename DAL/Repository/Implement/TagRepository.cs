@@ -19,7 +19,7 @@ namespace DAL.Repository.Implement
             _dbSet = context.Set<Tag>();
         }
 
-        public Tag GetTagByAnswerID(Guid answerID)
+        public Tag GetTagByAnswerID(Guid? answerID)
         {
             return _dbSet.FirstOrDefault(t => t.Id == answerID);
         }

@@ -37,10 +37,6 @@ public class MealService : IMealService
         _mealSelectionRepository = mealSelectionRepository;
     }
 
-
-    
-
-
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
         List<CustomerAnswer> customerAnswers;

@@ -72,7 +72,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagId")
+                    b.Property<Guid?>("TagId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -477,9 +477,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Tag", "Tag")
                         .WithMany("Answers")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TagId");
 
                     b.Navigation("Question");
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ImiuDbContext))]
-    [Migration("20230615090508_initialMigration")]
+    [Migration("20230617083506_initialMigration")]
     partial class initialMigration
     {
         /// <inheritdoc />
@@ -75,7 +75,7 @@ namespace DAL.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagId")
+                    b.Property<Guid?>("TagId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -480,9 +480,7 @@ namespace DAL.Migrations
 
                     b.HasOne("DAL.Entities.Tag", "Tag")
                         .WithMany("Answers")
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TagId");
 
                     b.Navigation("Question");
 
