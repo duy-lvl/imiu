@@ -184,8 +184,7 @@ namespace Services.CustomeMapper.Implement
 			return new TagModel
 			{
 				Id = tag.Id,
-				Name = tag.Name,
-				Code = tag.Code
+				Name = tag.Name
 			};
 		}
 		
@@ -453,7 +452,7 @@ namespace Services.CustomeMapper.Implement
         #region Meal Tag
         public MealTagModel Map(MealTag mealTag)
         {
-            var tagModel = Map(_tagRepository.GetTagBaseOnMealTag(mealTag.TagId));
+            var tagModel = _tagRepository.GetTagBaseOnMealTag(mealTag.TagId);
             return new MealTagModel
             {
                 Id = tagModel.Id,
