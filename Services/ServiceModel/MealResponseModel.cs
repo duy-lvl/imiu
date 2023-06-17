@@ -9,8 +9,6 @@ public class MealResponseModel
     public string Tag { get; set; }
     public List<Meal> Data { get; set; }
 
-    
-
     public class Meal
     {
         public Guid Id { get; set; }
@@ -19,6 +17,7 @@ public class MealResponseModel
         public int CookingTime { get; set; }
         public string Calories { get; set; }
         public string ImageUrl { get; set; }
+        public bool IsFavourite { get; set; }
 
     }
 }

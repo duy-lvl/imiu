@@ -7,5 +7,5 @@ public interface ITransactionService
 {
     ResponseObject CreateTransaction(TransactionRequestModel transactionRequestModel);
     List<TransactionRequestModel> GetTransactions();
-    void UpdateStatus(Guid accountID,int status);
+    void UpdateStatus(Guid transactionId,int status);
 }

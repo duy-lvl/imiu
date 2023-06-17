@@ -26,4 +26,5 @@ public class Meal
     public List<Direction> Directions { get; set; }
     public List<MealIngredient> MealIngredients { get; set; }
     public List<Tag> Tags { get; set; }
+    public List<MealSelection> MealSelections { get; set; }
 }

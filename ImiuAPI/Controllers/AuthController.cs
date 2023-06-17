@@ -61,7 +61,7 @@ public class AuthController : Controller
     /// <returns></returns>
     [HttpPost]
     [Route("email")]
-    [AllowAnonymous]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult SendEmail([FromBody] EmailSendingModel emailSendingModel)
     {
     	var result = _accountService.SendEmail(emailSendingModel.Email);

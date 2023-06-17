@@ -23,6 +23,7 @@ public class PaymentController
 
     [HttpPost]
     [Route("qr-code")]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult GetQrCode([FromBody] QrRequestModel qrRequestModel)
     {
         var result = _paymentService.GetQrCode(qrRequestModel);
@@ -33,6 +34,7 @@ public class PaymentController
     
     [HttpPost]
     [Route("plans")]
+    [Authorize(Roles = "CUSTOMER")]
     public IActionResult AddPlan(CreatePlanModel createPlanModel)
     {
         var result = _planService.CreatePlan(createPlanModel);

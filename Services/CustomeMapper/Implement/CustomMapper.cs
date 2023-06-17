@@ -10,8 +10,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Enum;
 using Services.Service.Interface;
-using DAL.Repository.Implement;
 using Microsoft.Extensions.Caching.Memory;
+using static Services.ServiceModel.MealResponseModel;
 
 namespace Services.CustomeMapper.Implement
 {
@@ -19,32 +19,18 @@ namespace Services.CustomeMapper.Implement
 	{
 		private IAnswerRepository _answerRepository;
 		private ITagRepository _tagRepository;
-        private INutritionRepository _nutritionRepository;
-        private INutritionFactRepository _nutritionfactRepository;
-        private IDirectionRepository _directionRepository;
-        private IMealTagRepository _mealTagRepository;
-        private IIngredientRepository _ingredientRepository;
-        private IMealIngredientRepository _mealIngredientRepository;
         private readonly IMemoryCache _cache;
-        public CustomMapper(IAnswerRepository answerRepository, ITagRepository tagRepository, INutritionRepository nutritionRepository, 
-			INutritionFactRepository nutritionFactRepository, IDirectionRepository directionRepository, IMealTagRepository mealTagRepository, 
-			IIngredientRepository ingredientRepository, IMealIngredientRepository mealIngredientRepository, IMemoryCache memoryCache)
-		{
-			_cache = memoryCache;
-			_answerRepository = answerRepository;
-			_tagRepository = tagRepository;
-			_mealTagRepository = mealTagRepository;
-			_directionRepository = directionRepository;
-			_ingredientRepository = ingredientRepository;
-			_mealIngredientRepository = mealIngredientRepository;
-			_nutritionRepository = nutritionRepository;
-			_nutritionfactRepository = nutritionFactRepository;
-			
-			
-		}
 
-		#region Account
-		public Account Map(AccountModel accountModel)
+        public CustomMapper(IAnswerRepository answerRepository, ITagRepository tagRepository, IMemoryCache cache)
+        {
+            _answerRepository = answerRepository;
+            _tagRepository = tagRepository;
+            _cache = cache;
+        }
+
+
+        #region Account
+        public Account Map(AccountModel accountModel)
 		{
 			return new Account
 			{
@@ -180,9 +166,9 @@ namespace Services.CustomeMapper.Implement
 		#endregion
 
 		#region Tag
-		public TagModel Map(Tag tag)
+		public TagAnswerModel Map(Tag tag)
 		{
-			return new TagModel
+			return new TagAnswerModel
 			{
 				Id = tag.Id,
 				Name = tag.Name,
@@ -225,92 +211,21 @@ namespace Services.CustomeMapper.Implement
         #endregion
 
         #region Meal
-        public MealDetailModel Map(Meal meal)
-        {
-            var nutritionFactList = _nutritionfactRepository.GetNutritionFactsByMealID(meal.Id);
-            List<NutritionFactModel> nutritionfactModelList = new List<NutritionFactModel>();
-            foreach (var nutritionFact in nutritionFactList)
-            {
-                nutritionfactModelList.Add(Map(nutritionFact));
-            }
-
-            var directionList = _directionRepository.GetDirectionsByMealID(meal.Id);
-            List<DirectionModel> directionModelList = new List<DirectionModel>();
-            foreach (var direction in directionList)
-            {
-                directionModelList.Add(Map(direction));
-            }
-
-            var mealTagList = _mealTagRepository.GetMealTagsByMealID(meal.Id);
-            List<MealTagModel> mealTagModelList = new List<MealTagModel>();
-            foreach (var mealTag in mealTagList)
-            {
-                mealTagModelList.Add(Map(mealTag));
-            }
-
-            var mealIngredientList = _mealIngredientRepository.GetMealIngredientsByMealID(meal.Id);
-            List<MealIngredientModel> mealIngredientModelList = new List<MealIngredientModel>();
-            foreach (var mealIngredient in mealIngredientList)
-            {
-                mealIngredientModelList.Add(Map(mealIngredient));
-            }
-            return new MealDetailModel
-            {
-                Id = meal.Id,
-                Name = meal.Name,
-                Summary = meal.Summary,
-                CookingTime = meal.CookingTime,
-                Difficulty = meal.Difficulty,
-                ImageUrl = meal.ImageUrl,
-                NutritionFacts = nutritionfactModelList,
-                Directions = directionModelList,
-                MealTags = mealTagModelList,
-                MealIngredients = mealIngredientModelList
-            };
-        }
-
-        public List<MealResponseModel.Meal> Map(List<Meal> meals, Nutrition calories)
-        {
-            var mealResponseModels = new List<MealResponseModel.Meal>();
-
-
-            foreach (var meal in meals)
-            {
-
-                string calo = "0 kcal";
-                var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
-                if (nutritionFact != null)
-                {
-                    calo = $"{(int)nutritionFact.Value} {calories.Unit}";
-                }
-                mealResponseModels.Add(new()
-                {
-                    Name = meal.Name,
-                    CookingTime = meal.CookingTime,
-                    Difficulty = meal.Difficulty,
-                    Id = meal.Id,
-                    Calories = calo,
-                    ImageUrl = meal.ImageUrl
-                });
-
-            }
-            return mealResponseModels.ToList();
-        }
-        public List<MealResponseModel> Map(List<Meal> meals, List<Tag> tags, Nutrition calories, int pageSize, int pageNumber)
-
+        public List<MealResponseModel> Map(List<MealSelection> favouriteMeals, List<DAL.Entities.Meal> meals, List<Tag> tags, 
+			Nutrition calories, int pageSize, int pageNumber, out int totalPage)
         {
             Random rng = new Random();
             string cacheKey = $"randomizedList_{pageSize}";
             bool hasValue = _cache.TryGetValue(cacheKey, out List<int> orders);
-            if (!hasValue)
-            {
-                orders = orders ?? new List<int>();
-                for (int i = 0; i < meals.Count; i++)
-                {
-                    orders.Add(rng.Next());
-                }
+			if (!hasValue)
+			{
+				orders = orders ?? new List<int>();
+				for (int i = 0; i < meals.Count; i++)
+				{
+					orders.Add(rng.Next());
+				}
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600)); // Expire after 60 minutes
+					.SetAbsoluteExpiration(TimeSpan.FromSeconds(3600)); // Expire after 60 minutes
                 _cache.Set(cacheKey, orders, cacheEntryOptions);
             }
             var mealResponseModels = new List<MealResponseModel>();
@@ -333,112 +248,90 @@ namespace Services.CustomeMapper.Implement
                         {
                             calo = $"{(int)nutritionFact.Value} {calories.Unit}";
                         }
-                        mealResponseModels.Last().Data.Add(new()
-                        {
-                            Name = meal.Name,
-                            CookingTime = meal.CookingTime,
-                            Difficulty = meal.Difficulty,
-                            Id = meal.Id,
-                            Calories = calo,
-                            ImageUrl = meal.ImageUrl
-                        });
+						mealResponseModels.Last().Data.Add(new()
+						{
+							Name = meal.Name,
+							CookingTime = meal.CookingTime,
+							Difficulty = meal.Difficulty,
+							Id = meal.Id,
+							Calories = calo,
+							ImageUrl = meal.ImageUrl,
+							IsFavourite = favouriteMeals.FirstOrDefault(ms => ms.MealId == meal.Id && ms.IsFavourite) != null
+						});
                     }
                 }
             }
-            int j = 0;
+			int j = 0;
+			totalPage = (int)(Math.Ceiling(mealResponseModels.OrderBy(m=>m.Data.Count).Last().Data.Count * 1.0 / pageSize));
             foreach (var mealResponse in mealResponseModels)
             {
                 mealResponse.Data = mealResponse.Data.OrderBy(m => orders[j++]).ToList();
                 mealResponse.Data = mealResponse.Data
                     .Skip((pageNumber - 1) * pageSize)
                     .Take(pageSize).ToList();
-
+				j = 0;
             }
+
             mealResponseModels.RemoveAll(x => x.Data.Count == 0);
             return mealResponseModels;
         }
-        #endregion
 
-        #region Nutrition Fact
-        public NutritionFactModel Map(NutritionFact nutritionFact)
+        public List<MealResponseModel.Meal> Map(List<MealSelection> favouriteMeals, List<DAL.Entities.Meal> meals, Nutrition calories)
         {
-            var nutritionModel = Map(_nutritionRepository.GetNutritionBaseOnNutritionFact(nutritionFact.NutritionId));
-            return new NutritionFactModel
-            {
-                Id = nutritionFact.Id,
-                NutritionId = nutritionFact.NutritionId,
-                Name = nutritionModel.Name,
-                Value = nutritionFact.Value,
-                Unit = nutritionModel.Unit
-            };
-        }
-        #endregion
+            var mealResponseModels = new List<MealResponseModel.Meal>();
 
-        #region Nutrition
-        public NutritionModel Map(Nutrition nutrition)
-        {
-            return new NutritionModel
+            
+            foreach (var meal in meals)
             {
-                Id = nutrition.Id,
-                Unit = nutrition.Unit,
-                Name = nutrition.Name
-            };
+                
+                string calo = "0 kcal";
+                var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+                if (nutritionFact != null)
+                {
+                    calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+                }
+                mealResponseModels.Add(new()
+                {
+                    Name = meal.Name,
+                    CookingTime = meal.CookingTime,
+                    Difficulty = meal.Difficulty,
+                    Id = meal.Id,
+                    Calories = calo,
+                    ImageUrl = meal.ImageUrl,
+                    IsFavourite = favouriteMeals.FirstOrDefault(ms => ms.MealId == meal.Id && ms.IsFavourite) != null
+                });
+                
+            }
+            return mealResponseModels.ToList();
         }
-        #endregion
 
-        #region Direction
-        public DirectionModel Map(Direction direction)
+        public List<MealResponseModel.Meal> Map(List<MealSelection> mealSelections, Nutrition calories, bool isFavourite)
         {
-            return new DirectionModel
-            {
-                Id = direction.Id,
-                StepNumber = direction.StepNumber,
-                Instruction = direction.Instruction,
-                ImgUrl = direction.ImgUrl
-            };
+            var mealModels = new List<MealResponseModel.Meal>();
+			
+            foreach (var mealSelection in mealSelections)
+			{
+				var meal = mealSelection.Meal;
+                string calo = "0 kcal";
+                var nutritionFact = meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == calories.Id);
+                if (nutritionFact != null)
+                {
+                    calo = $"{(int)nutritionFact.Value} {calories.Unit}";
+                }
+                mealModels.Add(new()
+				{
+					Calories = calo, 
+					CookingTime = meal.CookingTime,
+					Difficulty = meal.Difficulty,
+					Id = meal.Id,
+					ImageUrl = meal.ImageUrl,
+					IsFavourite	= isFavourite, 
+					Name = meal.Name 
+				});
+			}
+			return mealModels;
         }
-        #endregion
 
-        #region Meal Tag
-        public MealTagModel Map(MealTag mealTag)
-        {
-            var tagModel = Map(_tagRepository.GetTagBaseOnMealTag(mealTag.TagId));
-            return new MealTagModel
-            {
-                Id = tagModel.Id,
-                Name = tagModel.Name,
-                Code = tagModel.Code
-            };
-        }
-        #endregion
-
-        #region Ingredient
-        public IngredientModel Map(Ingredient ingredient)
-        {
-            return new IngredientModel
-            {
-                Id = ingredient.Id,
-                Name = ingredient.Name,
-                Unit = ingredient.Unit,
-                ImgUrl = ingredient.ImgUrl
-            };
-        }
-        #endregion
-
-        #region Meal Ingredient
-        public MealIngredientModel Map(MealIngredient mealIngredient)
-        {
-            var ingredientModel = Map(_ingredientRepository.GetIngredientBaseOnMealIngredient(mealIngredient.IngredidentId));
-            return new MealIngredientModel
-            {
-                Id = mealIngredient.Id,
-                Name = ingredientModel.Name,
-                Unit = ingredientModel.Unit,
-                Quantity = mealIngredient.Quantity,
-                Description = mealIngredient.Description,
-                ImgUrl = ingredientModel.ImgUrl
-            };
-        }
         #endregion
 
         #region Transaction
@@ -456,6 +349,5 @@ namespace Services.CustomeMapper.Implement
         }
         #endregion
     }
-
 
 }

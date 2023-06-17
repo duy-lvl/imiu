@@ -100,7 +100,7 @@ public class PlanService : IPlanService
         _planRepository.InactivatePlan(currentPlan);
         Plan newPlan = new Plan()
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             AccountId = accountId,
             StartDate = DateTime.Now,
             EndDate = null,
@@ -119,7 +119,7 @@ public class PlanService : IPlanService
     {
         var newPlan = new Plan()
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             AccountId = accountId,
             StartDate = currentPlan.EndDate.Value,
             EndDate = currentPlan.EndDate.Value.AddDays(30),
@@ -138,7 +138,7 @@ public class PlanService : IPlanService
     {
         var newPlan = new Plan()
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             AccountId = accountId,
             StartDate = DateTime.Now,
             EndDate = DateTime.Now.AddDays(30),
@@ -158,7 +158,7 @@ public class PlanService : IPlanService
     {
         var newPlan = new Plan()
         {
-            Id = new Guid(),
+            Id = Guid.NewGuid(),
             AccountId = accountId,
             StartDate = DateTime.Now,
             EndDate = subscription.Duration == Duration.MONTHLY ? DateTime.Now.AddDays(30) : null,

@@ -32,8 +32,8 @@ public class TransactionService : ITransactionService
          return transactionModelList;
     }
 
-    public void UpdateStatus(Guid accountID, int status)
+    public void UpdateStatus(Guid transactionId, int status)
     {
-        _transactionRepository.UpdateTransactionStatus(accountID,status);
+        _transactionRepository.UpdateTransactionStatus(transactionId,status);
     }
 }

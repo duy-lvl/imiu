@@ -235,7 +235,7 @@ namespace DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -249,6 +249,29 @@ namespace DAL.Migrations
                     table.ForeignKey(
                         name: "FK_Answers_Tags_TagId",
                         column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MealTag",
+                columns: table => new
+                {
+                    MealsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MealTag", x => new { x.MealsId, x.TagsId });
+                    table.ForeignKey(
+                        name: "FK_MealTag_Meals_MealsId",
+                        column: x => x.MealsId,
+                        principalTable: "Meals",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MealTag_Tags_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -284,7 +307,9 @@ namespace DAL.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SelectDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MealId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsFavourite = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -293,6 +318,12 @@ namespace DAL.Migrations
                         name: "FK_MealSelections_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MealSelections_Meals_MealId",
+                        column: x => x.MealId,
+                        principalTable: "Meals",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -352,31 +383,6 @@ namespace DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "MealSelectionItems",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MealSelectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MealId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MealSelectionItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MealSelectionItems_MealSelections_MealSelectionId",
-                        column: x => x.MealSelectionId,
-                        principalTable: "MealSelections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MealSelectionItems_Meals_MealId",
-                        column: x => x.MealId,
-                        principalTable: "Meals",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_SubscriptionId",
                 table: "Accounts",
@@ -418,19 +424,19 @@ namespace DAL.Migrations
                 column: "MealId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MealSelectionItems_MealId",
-                table: "MealSelectionItems",
-                column: "MealId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MealSelectionItems_MealSelectionId",
-                table: "MealSelectionItems",
-                column: "MealSelectionId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MealSelections_AccountId",
                 table: "MealSelections",
                 column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealSelections_MealId",
+                table: "MealSelections",
+                column: "MealId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MealTag_TagsId",
+                table: "MealTag",
+                column: "TagsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MealTags_TagId",
@@ -476,7 +482,10 @@ namespace DAL.Migrations
                 name: "MealIngredients");
 
             migrationBuilder.DropTable(
-                name: "MealSelectionItems");
+                name: "MealSelections");
+
+            migrationBuilder.DropTable(
+                name: "MealTag");
 
             migrationBuilder.DropTable(
                 name: "MealTags");
@@ -500,22 +509,19 @@ namespace DAL.Migrations
                 name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "MealSelections");
-
-            migrationBuilder.DropTable(
                 name: "Meals");
 
             migrationBuilder.DropTable(
                 name: "Nutritions");
 
             migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
                 name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "Tags");
-
-            migrationBuilder.DropTable(
-                name: "Accounts");
 
             migrationBuilder.DropTable(
                 name: "Subscriptions");

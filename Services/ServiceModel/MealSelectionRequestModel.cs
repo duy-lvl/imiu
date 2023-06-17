@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Services.ServiceModel
 {
-    public class MealTagModel
+    public class MealSelectionRequestModel
     {
-        public MealModel Meal { get; set; }
-        public TagAnswerModel Tag { get; set; }
+        public string MealId { get; set; }
+        public bool IsFavourite { get; set; }
+
     }
 }

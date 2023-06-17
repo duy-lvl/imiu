@@ -31,9 +31,9 @@ public class TransactionRepository : ITransactionRepository
         _dbSet.Update(transaction);
     }
 
-    public void UpdateTransactionStatus(Guid accountID,int status)
+    public void UpdateTransactionStatus(Guid transactionId,int status)
     {
-        var transaction = _dbSet.FirstOrDefault(t => t.AccountId == accountID);
+        var transaction = _dbSet.FirstOrDefault(t => t.Id == transactionId);
         if(transaction != null)
         {
             transaction.Status = (TransactionStatus)status;

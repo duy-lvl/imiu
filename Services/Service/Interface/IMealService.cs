@@ -6,7 +6,6 @@ namespace Services.Service.Interface;
 public interface IMealService
 {
     ResponseObject GetMeal(MealRequestModel mealRequestModel);
-    MealDetailModel GetMealByMealID(Guid mealID);
-    ResponseObject GetMeal(int pageNumber, int pageSize);
-
+    ResponseObject GetMeal(string accountId, int pageNumber, int pageSize);
+    
 }

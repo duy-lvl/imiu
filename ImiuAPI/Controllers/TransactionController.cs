@@ -1,4 +1,5 @@
 ﻿using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.Interface;
 
@@ -17,6 +18,7 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "ADMIN")]
         public IActionResult GetAllTransactions()
         {
             var list = _transactionService.GetTransactions();
@@ -36,11 +38,11 @@ namespace ImiuAPI.Controllers
             });
         }
 
-        [HttpPost]
-        [Route("update")]
-        public IActionResult UpdateTransactionStatus(Guid accountID, int status)
+        [HttpPut]
+        [Authorize(Roles = "ADMIN")]
+        public IActionResult UpdateTransactionStatus(Guid transactionId, int status)
         {
-            _transactionService.UpdateStatus(accountID, status);
+            _transactionService.UpdateStatus(transactionId, status);
             bool success = _unitOfWork.Commit();
             if(success)
             {

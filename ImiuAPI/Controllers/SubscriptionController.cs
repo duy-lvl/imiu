@@ -1,4 +1,5 @@
 ﻿using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.Interface;
 
@@ -17,6 +18,7 @@ public class SubscriptionController
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult GetAll()
     {
         var result = _subscriptionService.GetAll();

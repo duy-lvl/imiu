@@ -66,10 +66,10 @@ public class AuthService : IAuthService
             new(ClaimTypes.Name, accountModel.Name),
             new(ClaimTypes.Email, accountModel.Email),
             new("AccountID", accountModel.Id.ToString()),
-            new("Role", accountModel.Role.ToString())
+            new(ClaimTypes.Role, accountModel.Role.ToString())
         };
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
         var token = new JwtSecurityToken(_configuration["Jwt:Issuer"], _configuration["Jwt:Audience"],
             claims, null, DateTime.Now.AddMinutes(30), credentials);
         var jwt = new JwtSecurityTokenHandler().WriteToken(token);

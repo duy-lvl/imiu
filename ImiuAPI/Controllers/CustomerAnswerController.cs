@@ -1,4 +1,5 @@
 ﻿using DAL.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Service.Interface;
 using Services.ServiceModel;
@@ -7,7 +8,7 @@ namespace ImiuAPI.Controllers
 {
     [ApiController]
     [Route("/api/v1/customer-answers")]
-    public class CustomerAnswerController : Controller
+    public class CustomerAnswerController
     {
         private readonly ICustomerAnswerService _customerAnswerService;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,6 +19,7 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "CUSTOMER")]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
             foreach (var customerAnswer in customerAnswers)
@@ -42,7 +44,7 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpGet]
-        
+        [Authorize(Roles = "CUSTOMER")]
         public IActionResult GetCustomerAnswersByCustomerID(Guid id)
         {
             var list = _customerAnswerService.GetCustomerAnswersByCustomerID(id);
@@ -63,9 +65,10 @@ namespace ImiuAPI.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "CUSTOMER")]
         public IActionResult UpdateCustomerAnswers(Guid accountID, List<CustomerAnswerModel> customerAnswers)
         {
-                _customerAnswerService.UpdateCustomerAnswers(accountID, customerAnswers);
+            _customerAnswerService.UpdateCustomerAnswers(accountID, customerAnswers);
             bool success = _unitOfWork.Commit();
             if (success)
             {

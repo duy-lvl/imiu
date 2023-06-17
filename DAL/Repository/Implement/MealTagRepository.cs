@@ -19,10 +19,7 @@ public class MealTagRepository : IMealTagRepository
         _dbSet = _context.Set<MealTag>();
         _configuration = configuration;
     }
-    public List<MealTag> GetMealTagsByMealID(Guid mealID)
-    {
-        return _dbSet.Where(mt => mt.MealId == mealID).ToList();
-    }
+
     public List<MealTag> GetMealTag(Guid mealId)
     {
         return _dbSet.Include(mt => mt.Meal)
@@ -36,7 +33,7 @@ public class MealTagRepository : IMealTagRepository
     public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
         string filterValue, List<int> difficulties)
     {
-
+        
         
         var isBreakfast = filterTags.FirstOrDefault(t => t.Code == "Breakfast") != null;
 
@@ -126,6 +123,7 @@ public class MealTagRepository : IMealTagRepository
                 .Include(m => m.NutritionFacts)
 
                 .Where(m => mealIds.Contains(m.Id))
+                
                 .ToList();
             return result;
         }

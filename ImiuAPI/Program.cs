@@ -12,6 +12,7 @@ using Services.CustomeMapper.Interface;
 using Services.Service;
 using Services.Service.Implement;
 using Services.Service.Interface;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace ImiuAPI
 {
@@ -27,32 +28,7 @@ namespace ImiuAPI
 				options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen(options =>
-			{
-				options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-				{
-					Type = SecuritySchemeType.Http,
-					Scheme = "bearer",
-					BearerFormat = "JWT",
-					In = ParameterLocation.Header,
-					Description = "Enter the JWT token obtained from the login endpoint",
-					Name = "Authorization"
-				});
-				options.AddSecurityRequirement(new OpenApiSecurityRequirement
-				{
-					{
-						new OpenApiSecurityScheme
-						{
-							Reference = new OpenApiReference
-							{
-								Type = ReferenceType.SecurityScheme,
-								Id = "Bearer"
-							}
-						},
-						Array.Empty<string>()
-					}
-				});
-			});
+			
 
 			// Add services to the container.
 			builder.Services.AddDbContext<ImiuDbContext>();
@@ -66,8 +42,7 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IAnswerService, AnswerService>();
 			builder.Services.AddScoped<ICustomerAnswerRepository, CustomerAnswerRepository>();
 			builder.Services.AddScoped<ICustomerAnswerService, CustomerAnswerService>();
-
-			builder.Services.AddScoped<IPlanRepository, PlanRepository>();	
+			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 			builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 			builder.Services.AddScoped<IPaymentService, PaymentService>();
 			builder.Services.AddScoped<IPlanService, PlanService>();
@@ -82,13 +57,10 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IMealRepository, MealRepository>();
 			builder.Services.AddScoped<INutritionFactRepository, NutritionFactRepository>();
 			builder.Services.AddScoped<INutritionRepository, NutritionRepository>();
-            builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
-            builder.Services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
-            builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+            builder.Services.AddScoped<IMealSelectionRepository, MealSelectionRepository>();
+            builder.Services.AddScoped<IMealSelectionService, MealSelectionService>();
             builder.Services.AddScoped<ITagRepository, TagRepository>();
-			builder.Services.AddScoped<IPlanRepository, PlanRepository>();
             builder.Services.AddMemoryCache();
-
 
             builder.Services.AddCors(options =>
 			{
@@ -97,22 +69,35 @@ namespace ImiuAPI
 						.AllowAnyMethod()
 						.AllowAnyHeader());
 			});
-			builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.ApiKey,
+                    //Scheme = "bearer",
+                    //BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter the JWT token obtained from the login endpoint (\"{token}\")",
+                    Name = "Authorization"
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+               
+            });
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{
-				options.RequireHttpsMetadata = false;
-				options.SaveToken = true;
+				
 				options.TokenValidationParameters = new TokenValidationParameters()
 				{
-					ValidateIssuer = true,
-					ValidateAudience = true,
-					ValidateLifetime = true,
-					ValidAudience = builder.Configuration["Jwt:Audience"],
-					ValidIssuer = builder.Configuration["Jwt:Issuer"],
-					IssuerSigningKey =
-						new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+					ValidateIssuerSigningKey = true, 
+					ValidateIssuer = false,
+					ValidateAudience = false,
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 				};
 			});
-			var app = builder.Build();
+
+            
+            var app = builder.Build();
 			app.UseCors("MyPolicy");
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
@@ -123,8 +108,9 @@ namespace ImiuAPI
 
 			app.UseHttpsRedirection();
 
-			app.UseAuthorization();
-			app.UseAuthentication();
+            app.UseAuthentication();
+            app.UseAuthorization();
+			
 
 			app.MapControllers();
 
