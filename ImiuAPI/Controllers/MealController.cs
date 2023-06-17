@@ -1,4 +1,4 @@
-﻿using DAL.Repository.Interface;
+using DAL.Repository.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.CustomeMapper.Interface;
@@ -40,5 +40,24 @@ public class MealController
         return jsonResult;
     }
 
-    
+    [HttpGet]
+    [Route("{mealId}")]
+    public IActionResult GetMeal(Guid mealId)
+    {
+        var meal = _mealService.GetMealByMealID(mealId);
+        if(meal != null)
+        {
+            return new JsonResult(new
+            {
+                Status = "Success",
+                Message = "OK",
+                Data = meal
+            });
+        }
+        return new JsonResult(new
+        {
+            Status = "Fail",
+            Message = "This meal does not exist!"
+        });
+    }
 }

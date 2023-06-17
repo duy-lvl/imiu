@@ -61,6 +61,14 @@ namespace ImiuAPI
             builder.Services.AddScoped<IMealSelectionService, MealSelectionService>();
             builder.Services.AddScoped<ITagRepository, TagRepository>();
             builder.Services.AddMemoryCache();
+			builder.Services.AddScoped<IMealRepository, MealRepository>();
+			builder.Services.AddScoped<IMealService, MealService>();
+			builder.Services.AddScoped<INutritionFactRepository, NutritionFactRepository>();
+			builder.Services.AddScoped<INutritionRepository, NutritionRepository>();
+			builder.Services.AddScoped<IDirectionRepository, DirectionRepository>();
+			builder.Services.AddScoped<IMealTagRepository, MealTagRepository>();
+			builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
+			builder.Services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
 
             builder.Services.AddCors(options =>
 			{

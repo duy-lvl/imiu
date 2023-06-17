@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Text.Json;
 using DAL.Entities;
 using DAL.Enum;
@@ -160,5 +160,10 @@ public class MealService : IMealService
             catch { }
         }
         return limit;
+    }
+    
+    public MealModel GetMealByMealID(Guid mealID)
+    {
+        return _customMapper.Map(_mealRepository.GetMealByMealID(mealID));
     }
 }

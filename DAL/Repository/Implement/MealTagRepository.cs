@@ -28,7 +28,10 @@ public class MealTagRepository : IMealTagRepository
             .ToList();
     }
 
-    
+    public List<MealTag> GetMealTagsByMealID(Guid mealID)
+    {
+        return _dbSet.Where(mt => mt.MealId == mealID).ToList();
+    }
 
     public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
         string filterValue, List<int> difficulties)

@@ -29,4 +29,9 @@ public class NutritionFactRepository : INutritionFactRepository
         
         return source;
     }
+    
+    public List<NutritionFact> GetNutritionFactsByMealID(Guid mealID)
+    {
+        return _dbSet.Where(nf => nf.MealId == mealID).ToList();
+    }
 }

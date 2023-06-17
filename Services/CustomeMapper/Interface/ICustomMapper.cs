@@ -13,7 +13,7 @@ namespace Services.CustomeMapper.Interface
 		LoginResponseModel.SubcriptionModel Map(Subscription subcription);
 		public CustomerAnswerModel Map(CustomerAnswer customerAnswer);
 		public CustomerAnswer Map(CustomerAnswerModel customerAnswer);
-		public TagAnswerModel Map(Tag tag);
+		public TagModel Map(Tag tag);
 
 		List<SubscriptionModel> Map(List<Subscription> subscriptions);
 		List<SubscriptionModel.SubscriptionDetailModel> Map(List<SubscriptionDetail> subscriptionDetails);
@@ -28,5 +28,14 @@ namespace Services.CustomeMapper.Interface
 		List<MealResponseModel.Meal> Map(List<MealSelection> meals, Nutrition calories, bool isFavourite);
 		
 		public TransactionRequestModel Map(Transaction transaction);
-    }
+    
+		
+		public MealModel Map(Meal meal);
+		public NutritionFactModel Map(NutritionFact nutritionFact);
+		public NutritionModel Map(Nutrition nutrition);
+		public DirectionModel Map(Direction direction);
+		public MealTagModel Map(MealTag mealTag);
+		public IngredientModel Map(Ingredient ingredient);
+		public MealIngredientModel Map(MealIngredient mealIngredient);
+	}
 }

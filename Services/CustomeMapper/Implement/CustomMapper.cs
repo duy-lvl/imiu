@@ -12,82 +12,95 @@ using DAL.Enum;
 using Services.Service.Interface;
 using Microsoft.Extensions.Caching.Memory;
 using static Services.ServiceModel.MealResponseModel;
+using Meal = DAL.Entities.Meal;
 
 namespace Services.CustomeMapper.Implement
 {
-	public class CustomMapper : ICustomMapper
-	{
-		private IAnswerRepository _answerRepository;
-		private ITagRepository _tagRepository;
+    public class CustomMapper : ICustomMapper
+    {
+        private readonly IAnswerRepository _answerRepository;
+        private readonly INutritionRepository _nutritionRepository;
+        private readonly INutritionFactRepository _nutritionFactRepository;
+        private readonly IDirectionRepository _directionRepository;
+        private readonly ITagRepository _tagRepository;
+        private readonly IMealTagRepository _mealTagRepository;
+        private readonly IIngredientRepository _ingredientRepository;
+        private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IMemoryCache _cache;
-
-        public CustomMapper(IAnswerRepository answerRepository, ITagRepository tagRepository, IMemoryCache cache)
+        public CustomMapper(IAnswerRepository answerRepository, INutritionRepository nutritionRepository,
+            INutritionFactRepository nutritionFactRepository, IDirectionRepository directionRepository,
+            ITagRepository tagRepository, IMealTagRepository  mealTagRepository, IIngredientRepository ingredientRepository,
+            IMealIngredientRepository mealIngredientRepository,IMemoryCache cache)
         {
+	        _cache = cache;
             _answerRepository = answerRepository;
+            _nutritionRepository = nutritionRepository;
+            _nutritionFactRepository = nutritionFactRepository;
+            _directionRepository = directionRepository;
             _tagRepository = tagRepository;
-            _cache = cache;
+            _mealTagRepository = mealTagRepository;
+            _ingredientRepository = ingredientRepository;
+            _mealIngredientRepository = mealIngredientRepository;
         }
-
-
         #region Account
         public Account Map(AccountModel accountModel)
-		{
-			return new Account
-			{
-				Id = accountModel.Id,
-				Name = accountModel.Name,
-				Email = accountModel.Email,
-				Password = accountModel.Password,
-				Dob = accountModel.Dob,
-				Role = accountModel.Role,
-				Status = accountModel.Status,
-								
-			};
-		}
+        {
+            return new Account
+            {
+                Id = accountModel.Id,
+                Name = accountModel.Name,
+                Email = accountModel.Email,
+                Password = accountModel.Password,
+                Dob = accountModel.Dob,
+                Role = accountModel.Role,
+                Status = accountModel.Status,
 
-		public AccountModel Map(Account account)
-		{
-			return new AccountModel
-			{
-				Id = account.Id,
-				Name = account.Name,
-				Email = account.Email,
-				Password = account.Password,
-				Dob = account.Dob,
-				Role = account.Role,
-				Status = account.Status,
+            };
+        }
 
-			};
-		}
-		#endregion
+        public AccountModel Map(Account account)
+        {
+            return new AccountModel
+            {
+                Id = account.Id,
+                Name = account.Name,
+                Email = account.Email,
+                Password = account.Password,
+                Dob = account.Dob,
+                Role = account.Role,
+                Status = account.Status,
+
+            };
+        }
+        #endregion
         #region Question
         public QuestionModel Map(Question question)
         {
-			var list = _answerRepository.GetAnswersByQuestionID(question.id);
-			List<AnswerModel> answerList = new List<AnswerModel>();
-			foreach (Answer answer in list)
+            var list = _answerRepository.GetAnswersByQuestionID(question.id);
+            List<AnswerModel> answerList = new List<AnswerModel>();
+            foreach (Answer answer in list)
             {
-				answerList.Add(Map(answer));
+                answerList.Add(Map(answer));
             }
-			return new QuestionModel
-			{
-				id = question.id,
-				Content = question.Content,
-				Index = question.Index,
-				Answers = answerList
-			};
+            return new QuestionModel
+            {
+                id = question.id,
+                Content = question.Content,
+                Index = question.Index,
+                Answers = answerList
+            };
         }
         #endregion
 
         #region Answer
-		public AnswerModel Map(Answer answer)
+        public AnswerModel Map(Answer answer)
         {
-			return new AnswerModel
-			{
-				Id = answer.Id,
-				Content = answer.Content,
+            return new AnswerModel
+            {
+                Id = answer.Id,
+                Content = answer.Content,
                 Tag = answer.Tag != null ? Map(answer.Tag) : null
-			};
+            };
         }
         #endregion
 
@@ -95,11 +108,11 @@ namespace Services.CustomeMapper.Implement
 
         public LoginResponseModel.SubcriptionModel Map(Subscription subcription)
         {
-	        return new LoginResponseModel.SubcriptionModel()
-	        {
-		        Code = subcription.Code,
-		        Name = subcription.Name
-	        };
+            return new LoginResponseModel.SubcriptionModel()
+            {
+                Code = subcription.Code,
+                Name = subcription.Name
+            };
         }
 		public List<SubscriptionModel> Map(List<Subscription> subscriptions)
 		{
@@ -139,36 +152,36 @@ namespace Services.CustomeMapper.Implement
 
 		
 
-		#endregion
+        #endregion
 
-		#region Customer Answer
-		public CustomerAnswerModel Map(CustomerAnswer customerAnswer)
-		{
-			return new CustomerAnswerModel
-			{
-				Id = customerAnswer.Id,
-				Value = customerAnswer.Value,
-				AnswerId = customerAnswer.AnswerId,
-				AccountId = customerAnswer.AccountId
-			};
-		}
+        #region Customer Answer
+        public CustomerAnswerModel Map(CustomerAnswer customerAnswer)
+        {
+            return new CustomerAnswerModel
+            {
+                Id = customerAnswer.Id,
+                Value = customerAnswer.Value,
+                AnswerId = customerAnswer.AnswerId,
+                AccountId = customerAnswer.AccountId
+            };
+        }
 
-		public CustomerAnswer Map(CustomerAnswerModel customerAnswer)
-		{
-			return new CustomerAnswer
-			{
-				Id = customerAnswer.Id,
-				Value = customerAnswer.Value,
-				AnswerId = customerAnswer.AnswerId,
-				AccountId = customerAnswer.AccountId
-			};
-		}
-		#endregion
+        public CustomerAnswer Map(CustomerAnswerModel customerAnswer)
+        {
+            return new CustomerAnswer
+            {
+                Id = customerAnswer.Id,
+                Value = customerAnswer.Value,
+                AnswerId = customerAnswer.AnswerId,
+                AccountId = customerAnswer.AccountId
+            };
+        }
+        #endregion
 
 		#region Tag
-		public TagAnswerModel Map(Tag tag)
+		public TagModel Map(Tag tag)
 		{
-			return new TagAnswerModel
+			return new TagModel
 			{
 				Id = tag.Id,
 				Name = tag.Name,
@@ -341,10 +354,140 @@ namespace Services.CustomeMapper.Implement
             {
                 Id = transaction.Id,
                 AccountId = transaction.AccountId,
-                DateTime = transaction.DateTime,
+                DateTime = transaction.DateTime.ToString("dd-MM-yyyy hh:mm:ss"),
                 Value = transaction.Value,
                 TransactionCode = transaction.TransactionCode,
                 Status = transaction.Status.ToString()
+            };
+        }
+        #endregion
+
+        #region Meal
+        public MealModel Map(Meal meal)
+        {
+            var nutritionFactList = _nutritionFactRepository.GetNutritionFactsByMealID(meal.Id);
+            List<NutritionFactModel> nutritionfactModelList = new List<NutritionFactModel>();
+            foreach (var nutritionFact in nutritionFactList)
+            {
+                nutritionfactModelList.Add(Map(nutritionFact));
+            }
+
+            var directionList = _directionRepository.GetDirectionsByMealID(meal.Id);
+            List<DirectionModel> directionModelList = new List<DirectionModel>();
+            foreach(var direction in directionList)
+            {
+                directionModelList.Add(Map(direction));
+            }
+
+            var mealTagList = _mealTagRepository.GetMealTagsByMealID(meal.Id);
+            List<MealTagModel> mealTagModelList = new List<MealTagModel>();
+            foreach (var mealTag in mealTagList)
+            {
+                mealTagModelList.Add(Map(mealTag));
+            }
+
+            var mealIngredientList = _mealIngredientRepository.GetMealIngredientsByMealID(meal.Id);
+            List<MealIngredientModel> mealIngredientModelList = new List<MealIngredientModel>();
+            foreach(var mealIngredient in mealIngredientList)
+            {
+                mealIngredientModelList.Add(Map(mealIngredient));
+            }
+
+            return new MealModel
+            {
+                Id = meal.Id,
+                Name = meal.Name,
+                Summary = meal.Summary,
+                CookingTime = meal.CookingTime,
+                Difficulty = meal.Difficulty,
+                ImageUrl = meal.ImageUrl,
+                NutritionFacts = nutritionfactModelList,
+                Directions = directionModelList,
+                MealTags = mealTagModelList,
+                MealIngredients = mealIngredientModelList
+            };
+        }
+
+        #endregion
+
+        #region Nutrition Fact
+        public NutritionFactModel Map(NutritionFact nutritionFact)
+        {
+            var nutritionModel = Map(_nutritionRepository.GetNutritionBaseOnNutritionFact(nutritionFact.NutritionId));
+            return new NutritionFactModel
+            {
+                Id = nutritionFact.Id,
+                NutritionId = nutritionFact.NutritionId,
+                Name = nutritionModel.Name,
+                Value = nutritionFact.Value,
+                Code = nutritionModel.Code
+            };
+        }
+        #endregion
+
+        #region Nutrition
+        public NutritionModel Map(Nutrition nutrition)
+        {
+            return new NutritionModel
+            {
+                Id = nutrition.Id,
+                Code = nutrition.Unit,
+                Name = nutrition.Name
+            };
+        }
+        #endregion
+
+        #region Direction
+        public DirectionModel Map(Direction direction)
+        {
+            return new DirectionModel
+            {
+                Id = direction.Id,
+                StepNumber = direction.StepNumber,
+                Instruction = direction.Instruction,
+                ImgUrl = direction.ImgUrl
+            };
+        }
+        #endregion
+
+        #region Meal Tag
+        public MealTagModel Map(MealTag mealTag)
+        {
+            var tagModel = Map(_tagRepository.GetTagBaseOnMealTag(mealTag.TagId));
+            return new MealTagModel
+            {
+                Id = tagModel.Id,
+                Name = tagModel.Name,
+                Code = tagModel.Code
+            };
+        }
+        #endregion
+
+        #region Ingredient
+        public IngredientModel Map(Ingredient ingredient)
+        {
+            return new IngredientModel
+            {
+                Id = ingredient.Id,
+                Name = ingredient.Name,
+                Unit = ingredient.Unit,
+                ImgUrl= ingredient.ImgUrl
+            };
+        }
+        #endregion
+
+        #region Meal Ingredient
+        public MealIngredientModel Map(MealIngredient mealIngredient)
+        {
+            var ingredientModel = Map(_ingredientRepository.GetIngredientBaseOnMealIngredient(mealIngredient.IngredidentId));
+            return new MealIngredientModel
+            {
+                Id = mealIngredient.Id,
+                Name = ingredientModel.Name,
+                Unit = ingredientModel.Unit,
+                Quantity = mealIngredient.Quantity,
+                Description = mealIngredient.Description,
+                ImgUrl = ingredientModel.ImgUrl
             };
         }
         #endregion

@@ -4,7 +4,10 @@ using DAL.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Xml.Linq;
-
+using System.Text;
+using System.Threading.Tasks;
+using System;
+using System.Collections.Generic;
 namespace DAL.Repository.Implement;
 
 public class MealRepository : IMealRepository
@@ -51,5 +54,11 @@ public class MealRepository : IMealRepository
         return meals.Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToList();
+    }
+    
+    public Meal GetMealByMealID(Guid mealID)
+    {
+        var meal = _dbSet.FirstOrDefault(m => m.Id == mealID);
+        return _dbSet.FirstOrDefault(m => m.Id == mealID);
     }
 }
