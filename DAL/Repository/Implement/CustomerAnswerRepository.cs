@@ -31,7 +31,9 @@ namespace DAL.Repository.Implement
 
         public List<CustomerAnswer> GetCustomerAnswersByCustomerID(Guid id)
         {
-            return _dbSet.Include(ca=>ca.Answer).Include(ca=>ca.Answer.Tag).Where(cs => cs.AccountId == id).ToList();
+            return _dbSet.Include(ca=>ca.Answer)
+                .Include(ca=>ca.Answer.Tag)
+                .Where(cs => cs.AccountId == id).ToList();
         }
 
         public List<Guid?> GetCustomerAnswerTagsByCustomerId(Guid id)

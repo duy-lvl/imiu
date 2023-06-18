@@ -10,14 +10,14 @@ namespace ImiuAPI.Controllers;
 public class AuthController : Controller
 {
     private readonly IAccountService _accountService;
-    private readonly IAuthService _authService;
+    
     private readonly IUnitOfWork _unitOfWork;
 
-    public AuthController(IAccountService accountService,IUnitOfWork unitOfWork, IAuthService _authService)
+    public AuthController(IAccountService accountService,IUnitOfWork unitOfWork)
     {
         _accountService = accountService;
         _unitOfWork = unitOfWork;
-        _accountService = _accountService;
+        
     }
     /// <summary>
     /// Register

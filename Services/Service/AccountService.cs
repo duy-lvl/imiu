@@ -24,12 +24,11 @@ public class AccountService : IAccountService
 	private readonly IAccountRepository _accountRepository;
 	private readonly ICustomMapper _customMapper;
 	private readonly IPlanRepository _planRepository;
-	private readonly IAuthService _authService;
     private readonly IConfiguration _configuration;
     private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
 	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
-
+	/*
 	#region Mail trap
 
 	/// <summary>
@@ -41,22 +40,21 @@ public class AccountService : IAccountService
 	private readonly string CREDENTIAL_USERNAME = "1c8c65b8e2d6bb";
 	private readonly string CREDENTIAL_PASSWORD = "06defe71cc802a";
 	#endregion
+	*/
 	
-	
-	/* Real SMTP server
+	// Real SMTP server
 	private readonly int MAIL_PORT = 587;
-	private readonly string MAIL_SMTP_CLIENT = "sandbox.smtp.mailtrap.io";
+	private readonly string MAIL_SMTP_CLIENT = "smtp.gmail.com";
 	private readonly string SENDER = "imiu.exe201@gmail.com";
 	private readonly string CREDENTIAL_USERNAME = "imiu.exe201@gmail.com";
 	private readonly string CREDENTIAL_PASSWORD = "zmhyhkvvikhxabuc";
-	*/
+	
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository, 
-		IAuthService authService, IConfiguration configuration)
+		 IConfiguration configuration)
 	{
 		_accountRepository = accountRepository;
 		_customMapper = customMapper;
 		_planRepository = planRepository;
-		_authService = authService;
         _configuration = configuration;
     }
 	

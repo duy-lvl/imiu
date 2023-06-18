@@ -49,7 +49,6 @@ namespace ImiuAPI
 			builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 			builder.Services.AddScoped<ITransactionService, TransactionService>();
 			builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
-			builder.Services.AddScoped<IAuthService, AuthService>();
 			builder.Services.AddScoped<ITagService, TagService>();
 			builder.Services.AddScoped<ITagRepository, TagRepository>();
 			builder.Services.AddScoped<IMealService, MealService>();
