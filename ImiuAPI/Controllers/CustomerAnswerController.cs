@@ -22,10 +22,6 @@ namespace ImiuAPI.Controllers
         [Authorize(Roles = "CUSTOMER")]
         public IActionResult CreateCustomerAnswers(List<CustomerAnswerModel> customerAnswers)
         {
-            foreach (var customerAnswer in customerAnswers)
-            {
-                customerAnswer.Id = new Guid();
-            }
             _customerAnswerService.CreateCustomerAnswers(customerAnswers);
             bool success = _unitOfWork.Commit();
             if(success)
