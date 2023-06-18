@@ -27,10 +27,11 @@ namespace Services.CustomeMapper.Implement
         private readonly IIngredientRepository _ingredientRepository;
         private readonly IMealIngredientRepository _mealIngredientRepository;
         private readonly IMemoryCache _cache;
+        private readonly IAccountRepository _accountRepository;
         public CustomMapper(IAnswerRepository answerRepository, INutritionRepository nutritionRepository,
             INutritionFactRepository nutritionFactRepository, IDirectionRepository directionRepository,
             ITagRepository tagRepository, IMealTagRepository  mealTagRepository, IIngredientRepository ingredientRepository,
-            IMealIngredientRepository mealIngredientRepository,IMemoryCache cache)
+            IMealIngredientRepository mealIngredientRepository,IMemoryCache cache, IAccountRepository accountRepository)
         {
 	        _cache = cache;
             _answerRepository = answerRepository;
@@ -41,6 +42,7 @@ namespace Services.CustomeMapper.Implement
             _mealTagRepository = mealTagRepository;
             _ingredientRepository = ingredientRepository;
             _mealIngredientRepository = mealIngredientRepository;
+            _accountRepository = accountRepository;
         }
         #region Account
         public Account Map(AccountModel accountModel)
@@ -159,7 +161,6 @@ namespace Services.CustomeMapper.Implement
         {
             return new CustomerAnswerModel
             {
-                Id = customerAnswer.Id,
                 Value = customerAnswer.Value,
                 AnswerId = customerAnswer.AnswerId,
                 AccountId = customerAnswer.AccountId
@@ -170,7 +171,6 @@ namespace Services.CustomeMapper.Implement
         {
             return new CustomerAnswer
             {
-                Id = customerAnswer.Id,
                 Value = customerAnswer.Value,
                 AnswerId = customerAnswer.AnswerId,
                 AccountId = customerAnswer.AccountId
@@ -349,14 +349,15 @@ namespace Services.CustomeMapper.Implement
         #region Transaction
         public TransactionRequestModel Map(Transaction transaction)
         {
+            var account = _accountRepository.GetByID(transaction.AccountId);
             return new TransactionRequestModel
             {
                 Id = transaction.Id,
-                AccountId = transaction.AccountId,
-                DateTime = transaction.DateTime.ToString("dd-MM-yyyy hh:mm:ss"),
+                AccountName = account.Name,
+                DateTime = transaction.DateTime.ToString("dd-MM-yyyy"),
                 Value = transaction.Value,
                 TransactionCode = transaction.TransactionCode,
-                Status = transaction.Status.ToString()
+                Status = transaction.Status
             };
         }
         #endregion

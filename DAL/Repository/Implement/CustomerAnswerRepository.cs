@@ -21,6 +21,7 @@ namespace DAL.Repository.Implement
 
         public void CreateCustomerAnswer(CustomerAnswer customerAnswer)
         {
+            customerAnswer.Id = new Guid();
             _dbSet.Add(customerAnswer);
         }
 

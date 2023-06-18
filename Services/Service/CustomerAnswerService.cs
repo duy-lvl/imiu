@@ -25,7 +25,6 @@ namespace Services.Service.Implement
         {
             foreach (var customerAnswer in customerAnswers)
             {
-                customerAnswer.Id = new Guid();
                 _customerAnswerRepository.CreateCustomerAnswer(_mapper.Map(customerAnswer));
             }
             
