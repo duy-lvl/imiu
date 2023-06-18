@@ -84,7 +84,7 @@ namespace ImiuAPI
                     //Scheme = "bearer",
                     //BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Enter the JWT token obtained from the login endpoint (\"{token}\")",
+                    Description = "Enter the JWT token obtained from the login endpoint (\"bearer {token}\")",
                     Name = "Authorization"
                 });
                 options.OperationFilter<SecurityRequirementsOperationFilter>();

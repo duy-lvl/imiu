@@ -36,105 +36,61 @@ public class MealTagRepository : IMealTagRepository
     public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer>? customerAnswers, 
         string filterValue, List<int> difficulties)
     {
-        
-        
         var isBreakfast = filterTags.FirstOrDefault(t => t.Code == "Breakfast") != null;
-
+        List<Meal> unselectMeals = new();
         
-        string connectionString = _configuration["ConnectionStrings:Local"];
-        SqlConnection conn = new SqlConnection(connectionString);
-        conn.Open();
-        string query =
-            "select m.Id " +
-            "from MealTags mt join Meals m on mt.MealId = m.Id join Tags t on t.Id = mt.TagId where ";
-        
+        var isVegie = false;
+        var result = _dbSet.Select(mt => mt.Meal)
+            .Where(m=>m.Name.Contains(filterValue) 
+                      && (difficulties.Count == 0 || difficulties.Contains((int)m.Difficulty)))
+            .ToList();
         if (customerAnswers != null)
         {
             var customerAnswerDiseases = customerAnswers
                 .Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code.StartsWith("D-")).ToList();
         
-            bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
+            isVegie = customerAnswers
+                .Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code == "Vegie")
+                .ToList().Count > 0;
             
             var diseaseTags = customerAnswerDiseases.Select(ca => ca.Answer.Tag).ToList();
-            
-            for (int i = 0; i < diseaseTags.Count; i++)
-
+            if (diseaseTags != null)
             {
-                query += "t.Code = N'" + diseaseTags[i].Code + "' ";
-                if (i < diseaseTags.Count - 1)
-                {
-                    query += " or ";
-                }
+                unselectMeals = _dbSet.Where(mt => diseaseTags.Contains(mt.Tag))
+                    .Select(mt => mt.Meal).ToList();
             }
-
-            if (isVegie)
-            {
-                query += "and t.Code = N'Vegie' ";
-            }
-
-            if (diseaseTags.Count > 0 || isVegie)
-            {
-                query += " and ";
-            }
-        }
         
+        }
+
+        if (unselectMeals.Count > 0)
+        {
+            result = result
+                .Where(m => !unselectMeals.Contains(m))
+                .ToList();
+        }
+        if (isVegie)
+        {
+            var vegieMeals = _dbSet.Where(mt => mt.Tag.Code == "Vegie").Select(mt => mt.Meal).ToList();
+            result = result.Intersect(vegieMeals).ToList();
+        }
+
         if (isBreakfast)
         {
-            query += " t.Code = N'Breakfast' ";
-        }
-        else
-        {
-            query += " t.Code <> N'Breakfast' ";
-        }
-
-        if (!string.IsNullOrEmpty(filterValue))
-        {
-            query += " and m.Name like N'%" + filterValue + "%' ";
-        }
-
-        if (difficulties.Count > 0)
-        {
-            query += " and (";
-        }
-        for (int i = 0; i < difficulties.Count; i++)
-        {
-            query += " m.Difficulty = " + difficulties[i];
-            if (i == difficulties.Count - 1)
-            {
-                query += ") ";
-            }
-
-            if (i>=0 && i < difficulties.Count -1)
-            {
-                query += " or ";
-            }
+            var breakfasts = _dbSet.Where(mt => mt.Tag.Code == "Breakfast").Select(mt => mt.Meal).ToList();
+            result = result.Intersect(breakfasts).ToList();
         }
        
-        query += " group by m.id";
-        SqlCommand sqlCommand = new SqlCommand(query, conn);
-        try
-        {
-            SqlDataReader reader = sqlCommand.ExecuteReader();
-            var mealIds = new List<Guid>();
-            while (reader.Read())
-            {
-                mealIds.Add(Guid.Parse(reader["Id"].ToString()));
-            }
+       
+        result = _context.Set<Meal>()
+            .Include(m => m.MealTags)
+            .Include(m => m.NutritionFacts)
 
-            var result = _context.Set<Meal>()
-                .Include(m => m.MealTags)
-                .Include(m => m.NutritionFacts)
-
-                .Where(m => mealIds.Contains(m.Id))
-                
-                .ToList();
-            return result;
-        }
-        catch
-        {
-            return new List<Meal>();
-        }
+            .Where(m => result.Contains(m))
             
+            .ToList();
+        return result;
+    
+    
         
     }
 }

@@ -25,7 +25,8 @@ public class AccountService : IAccountService
 	private readonly ICustomMapper _customMapper;
 	private readonly IPlanRepository _planRepository;
     private readonly IConfiguration _configuration;
-    private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
+    //private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
+    private readonly string VERIFY_EMAIL_END_POINT = "https://imiu-web.vercel.app/verify/";
 	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
 
 	/*
