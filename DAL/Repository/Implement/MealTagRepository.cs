@@ -53,7 +53,7 @@ public class MealTagRepository : IMealTagRepository
             var customerAnswerDiseases = customerAnswers
                 .Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code.StartsWith("D-")).ToList();
         
-            bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
+            bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
             
             var diseaseTags = customerAnswerDiseases.Select(ca => ca.Answer.Tag).ToList();
             
