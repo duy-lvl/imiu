@@ -33,7 +33,7 @@ public class MealTagRepository : IMealTagRepository
         return _dbSet.Where(mt => mt.MealId == mealID).ToList();
     }
 
-    public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers, 
+    public List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer>? customerAnswers, 
         string filterValue, List<int> difficulties)
     {
         
@@ -51,7 +51,7 @@ public class MealTagRepository : IMealTagRepository
         if (customerAnswers != null)
         {
             var customerAnswerDiseases = customerAnswers
-                .Where(ca => ca.Answer.Tag.Code.StartsWith("D-")).ToList();
+                .Where(ca => ca.Answer.Tag != null && ca.Answer.Tag.Code.StartsWith("D-")).ToList();
         
             bool isVegie = customerAnswers.Where(ca => ca.Answer.Tag.Code == "Vegie").ToList().Count > 0;
             

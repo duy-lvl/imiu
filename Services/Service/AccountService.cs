@@ -56,7 +56,7 @@ public class AccountService : IAccountService
 		_customMapper = customMapper;
 		_planRepository = planRepository;
         _configuration = configuration;
-    }
+	}
 	
 
 	#region Register

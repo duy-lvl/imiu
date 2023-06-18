@@ -11,6 +11,6 @@ public interface IMealTagRepository
     List<MealTag> GetMealTag(Guid mealId);
 
     List<MealTag> GetMealTagsByMealID(Guid mealID);
-    List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer> customerAnswers,
+    List<Meal> GetMeal(List<Tag> filterTags, List<CustomerAnswer>? customerAnswers,
         string filterValue, List<int> difficulty);
 }

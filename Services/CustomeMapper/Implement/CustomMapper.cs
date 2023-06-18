@@ -354,7 +354,7 @@ namespace Services.CustomeMapper.Implement
             {
                 Id = transaction.Id,
                 AccountName = account.Name,
-                DateTime = transaction.DateTime.ToString("dd-MM-yyyy"),
+                DateTime = transaction.DateTime.ToString("dd-MM-yyyy hh:mm:ss"),
                 Value = transaction.Value,
                 TransactionCode = transaction.TransactionCode,
                 Status = transaction.Status
