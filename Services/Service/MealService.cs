@@ -97,7 +97,7 @@ public class MealService : IMealService
         return new GetPaginatedResponse<List<MealResponseModel>>()
         {
             Data = _customMapper.Map(favouriteMeals, meals, filterTags, calories, mealRequestModel.PageSize, 
-                mealRequestModel.PageNumber,out int totalPage),
+                mealRequestModel.PageNumber, out int totalPage),
             Message = "Thành công",
             Status = 200,
             metaData = new()
@@ -115,13 +115,10 @@ public class MealService : IMealService
         if (Guid.TryParse(accountId, out Guid customerId))
         {
             favouriteMeals = _mealSelectionRepository.Get(customerId);
-            
             limit = GetLimit(customerId);
         }
         var meals = _mealRepository.GetMeal(pageNumber, pageSize, limit, out int totalPage);
         var calories = _nutritionRepository.GetByName("Calories");
-        
-        
         var data = _customMapper.Map(favouriteMeals, meals, calories);
         return new GetPaginatedResponse<List<MealResponseModel.Meal>>()
         {

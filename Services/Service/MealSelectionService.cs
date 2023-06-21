@@ -103,5 +103,34 @@ namespace Services.Service
             
             return result;
         }
+
+        public ResponseObject GetNutrition(string customerId, DateTime dateFrom, DateTime dateTo)
+        {
+            if (Guid.TryParse(customerId, out Guid accountId))
+            {
+                var nutritions = _nutritionRepository.GetAll();
+                var nutritionModels = _customMapper.Map(nutritions);
+                var meals = _mealSelectionRepository.Get(accountId, dateFrom, dateTo);
+
+                for (int i = 0; i < nutritionModels.Count; i++)
+                {
+                    nutritionModels[i].Quantity = (int)meals.Sum(ms =>
+                        ms.Meal.NutritionFacts.FirstOrDefault(nf => nf.NutritionId == nutritions[i].Id).Value);
+                }
+
+                return new GetRequestResponse<List<NutritionDashboardModel>>()
+                {
+                    Message = "Thành công",
+                    Status = 200,
+                    Data = nutritionModels
+                };
+            }
+            return new GetRequestResponse<object>()
+            {
+                Message = "Thành công",
+                Status = 200,
+                Data = new List<NutritionDashboardModel>()
+            };
+        }
     }
 }

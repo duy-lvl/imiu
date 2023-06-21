@@ -1,9 +1,6 @@
 ﻿using DAL.Entities;
-using DAL.Enum;
 using DAL.Repository.Interface;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace DAL.Repository.Implement;
 
@@ -11,13 +8,11 @@ public class MealTagRepository : IMealTagRepository
 {
     private readonly DbSet<MealTag> _dbSet;
     private readonly ImiuDbContext _context;
-    private readonly IConfiguration _configuration;
 
-    public MealTagRepository(ImiuDbContext context, IConfiguration configuration)
+    public MealTagRepository(ImiuDbContext context)
     {
         _context = context;
         _dbSet = _context.Set<MealTag>();
-        _configuration = configuration;
     }
 
     public List<MealTag> GetMealTag(Guid mealId)
@@ -40,7 +35,8 @@ public class MealTagRepository : IMealTagRepository
         List<Meal> unselectMeals = new();
         
         var isVegie = false;
-        var result = _dbSet.Select(mt => mt.Meal)
+        var result = _dbSet
+            .Select(mt => mt.Meal)
             .Where(m=>m.Name.Contains(filterValue) 
                       && (difficulties.Count == 0 || difficulties.Contains((int)m.Difficulty)))
             .ToList();
@@ -79,18 +75,12 @@ public class MealTagRepository : IMealTagRepository
             var breakfasts = _dbSet.Where(mt => mt.Tag.Code == "Breakfast").Select(mt => mt.Meal).ToList();
             result = result.Intersect(breakfasts).ToList();
         }
-       
-       
+
         result = _context.Set<Meal>()
+            .Where(m => result.Contains(m))
             .Include(m => m.MealTags)
             .Include(m => m.NutritionFacts)
-
-            .Where(m => result.Contains(m))
-            
             .ToList();
         return result;
-    
-    
-        
     }
 }

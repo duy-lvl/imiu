@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.Enum;
 
 namespace DAL.Repository.Interface
 {
@@ -22,6 +23,6 @@ namespace DAL.Repository.Interface
         void ActivateAccount(Guid accountId);
         
         Account GetLocalByEmail(string email);
-
+        List<Account> GetAll(AccountStatus status);
     }
 }

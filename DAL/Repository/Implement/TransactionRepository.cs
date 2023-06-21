@@ -23,7 +23,7 @@ public class TransactionRepository : ITransactionRepository
 
     public List<Transaction> GetAll()
     {
-        return _dbSet.ToList();
+        return _dbSet.OrderByDescending(t=>t.DateTime).ToList();
     }
 
     public void Update(Transaction transaction)
@@ -39,5 +39,35 @@ public class TransactionRepository : ITransactionRepository
             transaction.Status = (TransactionStatus)status;
             _dbSet.Update(transaction);
         }
+    }
+
+    public List<Transaction> GetTransactions(int? month, int? year, TransactionStatus status)
+    {
+        if (month != null && year != null)
+        {
+            return _dbSet
+                .Where(t => t.DateTime.Month == month
+                                     && t.DateTime.Year == year
+                                     && t.Status == status)
+                .ToList();
+        }
+
+        if (year != null)
+        {
+            return _dbSet
+                .Where(t => t.DateTime.Year == year
+                            && t.Status == status)
+                .OrderBy(t => t.DateTime.Month)
+                .ToList();
+        }
+        return _dbSet.Where(t => t.Status == status).ToList();
+    }
+    
+    public List<Transaction> GetMonthlyTransactions(int year)
+    {
+        return _dbSet
+            .Where(t => t.DateTime.Year == year)
+            .OrderBy(t => t.DateTime.Month)
+            .ToList();
     }
 }

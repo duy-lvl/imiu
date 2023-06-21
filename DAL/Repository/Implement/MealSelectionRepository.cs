@@ -45,6 +45,16 @@ namespace DAL.Repository.Implement
                                             && ms.IsFavourite == isFavourite);
         }
 
+        public List<MealSelection> Get(Guid accountId, DateTime dateFrom, DateTime dateTo)
+        {
+            return _dbSet.Where(ms=>ms.AccountId == accountId 
+                                    && ms.SelectDate >= dateFrom
+                                    && ms.SelectDate <= dateTo
+                                    && !ms.IsFavourite)
+                .Include(ms => ms.Meal.NutritionFacts)
+                .ToList();
+        }
+
         public List<MealSelection> Get(Guid accountId, bool isFavourite, int pageNumber, int pageSize, out int totalPage)
         {
             var mealSelections = _dbSet.Include(ms => ms.Meal)

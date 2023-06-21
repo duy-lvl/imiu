@@ -15,5 +15,6 @@ public interface IAccountService
     ResponseObject SendEmail(string email);
 
     Task<ResponseObject> LoginGoogle(string accessToken);
+    
 
 }

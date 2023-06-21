@@ -11,17 +11,28 @@ namespace ImiuAPI.Controllers;
 [Route("/api/v1/accounts")]
 public class AccountsController
 {
-    private readonly IAccountService _accountService;
     private readonly IMealSelectionService _mealSelectionService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public AccountsController(IAccountService accountService, IMealSelectionService mealSelectionService, IUnitOfWork unitOfWork)
+    public AccountsController(IMealSelectionService mealSelectionService, IUnitOfWork unitOfWork)
     {
-        _accountService = accountService;
         _mealSelectionService = mealSelectionService;
         _unitOfWork = unitOfWork;
     }
 
+    [HttpGet]
+    [Route("{accountId}/nutritions")]
+    [Authorize(Roles = "CUSTOMER")]
+    public IActionResult GetNutrition(string accountId)
+    {
+        var result = _mealSelectionService.GetNutrition(accountId, DateTime.Now.AddDays(-7), DateTime.Now);
+        var jsonResult = new JsonResult(result)
+        {
+            StatusCode = result.Status,
+        };
+        return jsonResult;
+    }
+    
     [HttpPut]
     [Route("{accountId}/meal-selections")]
     [Authorize(Roles = "CUSTOMER")]

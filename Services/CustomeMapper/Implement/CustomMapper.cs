@@ -435,6 +435,22 @@ namespace Services.CustomeMapper.Implement
                 Name = nutrition.Name
             };
         }
+
+        public List<NutritionDashboardModel> Map(List<Nutrition> nutritions)
+        {
+	        var result = new List<NutritionDashboardModel>();
+	        foreach (var nutrition in nutritions)
+	        {
+		        result.Add(new()
+		        {
+			        Name = nutrition.Name,
+			        Unit = nutrition.Unit,
+		        });
+	        }
+
+	        return result;
+        }
+
         #endregion
 
         #region Direction

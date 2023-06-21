@@ -21,6 +21,11 @@ public class NutritionRepository : INutritionRepository
     {
         return _dbSet.FirstOrDefault(n => n.Id == nutritionID);
     }
+
+    public List<Nutrition> GetAll()
+    {
+        return _dbSet.ToList();
+    }
 }
 
         

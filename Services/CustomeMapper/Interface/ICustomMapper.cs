@@ -37,5 +37,7 @@ namespace Services.CustomeMapper.Interface
 		public MealTagModel Map(MealTag mealTag);
 		public IngredientModel Map(Ingredient ingredient);
 		public MealIngredientModel Map(MealIngredient mealIngredient);
+
+		public List<NutritionDashboardModel> Map(List<Nutrition> nutrition);
 	}
 }

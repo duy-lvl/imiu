@@ -68,7 +68,8 @@ namespace ImiuAPI
 			builder.Services.AddScoped<IMealTagRepository, MealTagRepository>();
 			builder.Services.AddScoped<IIngredientRepository, IngredientRepository>();
 			builder.Services.AddScoped<IMealIngredientRepository, MealIngredientRepository>();
-
+			builder.Services.AddScoped<IDashboardService, DashboardService>();
+			
             builder.Services.AddCors(options =>
 			{
 				options.AddPolicy("MyPolicy",

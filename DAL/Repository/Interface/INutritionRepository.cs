@@ -10,4 +10,5 @@ public interface INutritionRepository
 {
     Nutrition? GetByName(string name);
     Nutrition GetNutritionBaseOnNutritionFact(Guid nutritionID);
+    List<Nutrition> GetAll();
 }

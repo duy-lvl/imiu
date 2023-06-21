@@ -11,6 +11,7 @@ namespace Services.Service.Interface
     public interface IMealSelectionService
     {
         ResponseObject UpdateMealSelection(MealSelectionRequestModel mealSelectionRequestModel, string customerId);
-        public ResponseObject GetSelectedMeals(string customerId, bool isFavourite, int pageNumber, int pageSize);
+        ResponseObject GetSelectedMeals(string customerId, bool isFavourite, int pageNumber, int pageSize);
+        ResponseObject GetNutrition(string customerId, DateTime dateFrom, DateTime dateTo);
     }
 }
