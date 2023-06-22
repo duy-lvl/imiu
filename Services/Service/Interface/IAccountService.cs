@@ -15,6 +15,8 @@ public interface IAccountService
     ResponseObject SendEmail(string email);
 
     Task<ResponseObject> LoginGoogle(string accessToken);
-    
 
+    void Update(UpdateAccountModel accountModel);
+
+    void Update(UpdatePasswordModel passwordModel);
 }

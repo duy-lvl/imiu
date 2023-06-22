@@ -46,9 +46,9 @@ namespace DAL.Repository
 			return _dbSet.Local.FirstOrDefault(a => a.Email == email);
 		}
 
-		public List<Account> GetAll(AccountStatus status)
+		public List<Account> GetAll(AccountStatus status, Role role)
 		{
-			return _dbSet.Where(a => a.Status == status).ToList();
+			return _dbSet.Where(a => a.Status == status && a.Role == role).ToList();
 		}
 
 		public Account GetByEmail(string email)

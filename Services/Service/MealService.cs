@@ -40,34 +40,12 @@ public class MealService : IMealService
     public ResponseObject GetMeal(MealRequestModel mealRequestModel)
     {
         List<CustomerAnswer> customerAnswers;
-        var diseaseTags = new List<Tag>();
         int minCalo = 667, maxCalo = 776;
-        bool isVegie = false;
         Guid customerId = new();
         if (!string.IsNullOrEmpty(mealRequestModel.CustomerId))
         {
             customerId = Guid.Parse(mealRequestModel.CustomerId);
             customerAnswers = _customerAnswerRepository.GetCustomerAnswersByCustomerID(customerId);
-            
-            foreach (var answer in customerAnswers)
-            {
-                if (answer.Answer != null)
-                {
-                    if (answer.Answer.Tag != null)
-                    {
-                        diseaseTags.Add(answer.Answer.Tag);
-                        if (answer.Answer.Tag.Code == "Vegie")
-                        {
-                            isVegie = true;
-                        }
-                    }
-                    if (answer.Value > 0)
-                    {
-                        if (answer.Answer.Content.ToUpper() == "MIN") minCalo = answer.Value;
-                        if (answer.Answer.Content.ToUpper() == "MAX") maxCalo = answer.Value;
-                    }
-                }
-            }
         }
         else
         {
@@ -94,7 +72,7 @@ public class MealService : IMealService
             customerAnswers, mealRequestModel.Name, mealRequestModel.Difficulty).Take(limit).ToList();
 
         var favouriteMeals = _mealSelectionRepository.Get(customerId);
-        return new GetPaginatedResponse<List<MealResponseModel>>()
+        return new GetPaginatedResponse<List<MealResponseModel>>
         {
             Data = _customMapper.Map(favouriteMeals, meals, filterTags, calories, mealRequestModel.PageSize, 
                 mealRequestModel.PageNumber, out int totalPage),

@@ -42,6 +42,7 @@ public class MealController
 
     [HttpGet]
     [Route("{mealId}")]
+    [AllowAnonymous]
     public IActionResult GetMeal(Guid mealId)
     {
         var meal = _mealService.GetMealByMealID(mealId);

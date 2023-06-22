@@ -23,6 +23,8 @@ namespace DAL.Repository.Interface
         void ActivateAccount(Guid accountId);
         
         Account GetLocalByEmail(string email);
-        List<Account> GetAll(AccountStatus status);
+        List<Account> GetAll(AccountStatus status, Role role);
+        
+        
     }
 }

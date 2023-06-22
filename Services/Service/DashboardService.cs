@@ -96,8 +96,8 @@ public class DashboardService : IDashboardService
         {
             Data = new
             {
-                Active = _accountRepository.GetAll(AccountStatus.ACTIVE).Count,
-                Inactive = _accountRepository.GetAll(AccountStatus.INACTIVE).Count
+                Active = _accountRepository.GetAll(AccountStatus.ACTIVE, Role.CUSTOMER).Count,
+                Inactive = _accountRepository.GetAll(AccountStatus.INACTIVE, Role.CUSTOMER).Count
             },
             Message = "Thành công",
             Status = 200

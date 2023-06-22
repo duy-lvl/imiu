@@ -5890,3 +5890,27 @@ INSERT [dbo].[Answers] ([Id], [Content], [QuestionId], [TagId]) VALUES (N'54b225
 INSERT [dbo].[Answers] ([Id], [Content], [QuestionId], [TagId]) VALUES (N'5a22d58a-5af9-4395-aac8-f730abdc0db2', N'Dạ dày', N'2d2d9f32-f571-4b47-b41b-bf42e1576c88', N'00017b26-b9ef-4bfe-9eb1-f058d786b695')
 INSERT [dbo].[Answers] ([Id], [Content], [QuestionId], [TagId]) VALUES (N'434b08e0-2e79-422d-84cc-66f6bad58bee', N'Béo phì', N'2d2d9f32-f571-4b47-b41b-bf42e1576c88', N'16f19919-ff34-4c41-8d4f-33842e3348fc')
 
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('166f4fab-adb8-4cab-a476-e890294ba391', N'Tôm', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('de879c6c-784c-4bdf-bf79-85bd3a252053', N'Cua', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('fff07398-eb97-4d2c-a455-17d387696083', N'Trứng', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('aee06e96-8c87-4a63-b737-16e668cf6a9a', N'Sữa bò', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('ef8695ac-c498-4cf0-b55a-27d62d9adbee', N'Đậu phộng', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('eef90592-7877-4c97-8c6d-e70849af8674', N'Quả óc chó', 'e52a5fdf-5c4f-43bb-a3b9-2c9b4000158b', null)
+
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('a64d5118-1614-44f2-b5f9-1406553957f2', 'Có', '19e999f4-5394-47f6-8703-d43a065f4237', 'c7557e8c-3575-4ec6-9851-47966f2ab424')
+
+insert into answers(Id, Content, QuestionId, TagId) 
+values ('68a86082-b294-4ec6-96af-1e94c3743e99', 'Không', '19e999f4-5394-47f6-8703-d43a065f4237', null)

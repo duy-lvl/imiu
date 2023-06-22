@@ -58,7 +58,31 @@ public class AccountService : IAccountService
 		_planRepository = planRepository;
         _configuration = configuration;
 	}
-	
+
+	#region Update Account
+
+	public void Update(UpdateAccountModel accountModel)
+	{
+		var account = _accountRepository.GetByID(accountModel.Id);
+		if (account != null)
+		{
+			account.Dob = accountModel.Dob;
+			account.Name = accountModel.Name;
+			_accountRepository.Update(account);
+		}
+	}
+
+	public void Update(UpdatePasswordModel passwordModel)
+	{
+		var account = _accountRepository.GetByID(passwordModel.Id);
+		if (account != null)
+		{
+			account.Password = SHAEncryption.Encrypt(passwordModel.Password);
+			_accountRepository.Update(account);
+		}
+	}
+
+	#endregion
 
 	#region Register
 	public ResponseObject RegisterAccount(RegisterAccountModel registerAccountModel, bool isLoginWithGoogle)
@@ -193,8 +217,6 @@ public class AccountService : IAccountService
 			};
 		}
 	}
-
-	
 
 	#endregion
 
