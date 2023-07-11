@@ -1,12 +1,14 @@
 {
   "dependencies": {
-    "mssql1": {
+    "mssql2": {
       "secretStore": "AzureAppSettings",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/imiudbserver/databases/IMiu",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/imiudb/databases/ImiuAPI_db",
       "type": "mssql.azure",
-      "connectionId": "Azure"
+      "connectionId": "ConnectionStrings:Azure",
+      "dynamicId": null
     },
     "apis1": {
+      "apiEndpoint": "https://imiuapiapi.azure-api.net/imiuweb",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/ImiuAPIapi/apis/ImiuWebAPI",
       "type": "apis.azure"
     }

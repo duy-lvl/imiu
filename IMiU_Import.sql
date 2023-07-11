@@ -5830,9 +5830,9 @@ INSERT INTO [dbo].[MealTags] ([TagId] ,[MealId])
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
      VALUES('8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56',N'Free',0,0,'FREE');
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
-     VALUES('C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6',N'Classic',69000,1,'CLASSIC');
+     VALUES('C04E75D0-3365-4D4A-9A4A-5A09D1C0F8C6',N'Classic',29000,1,'CLASSIC');
 INSERT INTO [dbo].[Subscriptions]([Id] ,[Name],[Value],[Duration],[Code])
-     VALUES('014D1CDA-C01D-4F39-98C9-866703C74766',N'Premium',250000,0,'PREMIUM');
+     VALUES('014D1CDA-C01D-4F39-98C9-866703C74766',N'Premium',79000,0,'PREMIUM');
 
 INSERT INTO [dbo].[SubscriptionDetails]([Id],[Detail],[Status],[SubscriptionId])
      VALUES('5D7F43FB-BEA9-4EA0-B165-004F6E14BE92',N'10 món',1,'8F7F076B-F663-4C9C-A3A6-1D4CCDD65F56');

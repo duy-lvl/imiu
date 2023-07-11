@@ -37,7 +37,7 @@ namespace DAL
 		{
 			IConfiguration config = new ConfigurationBuilder()
 				.SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
-			string connectionString = config.GetConnectionString("Local");
+			string connectionString = config.GetConnectionString("Azure");
 			optionsBuilder.UseSqlServer(connectionString);
 		}
 
