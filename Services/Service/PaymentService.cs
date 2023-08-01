@@ -11,8 +11,7 @@ public class PaymentService : IPaymentService
     private readonly ISubscriptionRepository _subscriptionRepository;
     private readonly IAccountRepository _accountRepository;
     private static readonly string QR_CODE =
-        "https://api.vietqr.io/image/970416-13929187-YUP6WeY.jpg?accountName=LE%20VU%20LAM%20DUY";
-
+        "https://api.vietqr.io/image/970416-19462487-PMIYlzk.jpg?accountName=VU%20THE%20PHONG";
     public PaymentService(ISubscriptionRepository subscriptionRepository, IAccountRepository accountRepository)
     {
         _subscriptionRepository = subscriptionRepository;

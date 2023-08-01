@@ -38,6 +38,7 @@ public class TransactionRepository : ITransactionRepository
         {
             transaction.Status = (TransactionStatus)status;
             _dbSet.Update(transaction);
+            
         }
     }
 
@@ -69,5 +70,10 @@ public class TransactionRepository : ITransactionRepository
             .Where(t => t.DateTime.Year == year)
             .OrderBy(t => t.DateTime.Month)
             .ToList();
+    }
+
+    public Transaction? GetById(Guid id)
+    {
+        return _dbSet.Find(id);
     }
 }

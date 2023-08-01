@@ -29,15 +29,23 @@ public class PlanRepository : IPlanRepository
                                  && p.AccountId == id
                                  && p.Status != PlanStatus.INACTIVE);
     }
+    public Plan? GetLatestPlanByCustomerId(Guid id)
+    {
+        return _dbSet.Include(p => p.Subcription)
+            .Include(p => p.Account)
+            .FirstOrDefault(p => (p.EndDate == null || ( p.EndDate >= DateTime.Now))
+                                 && p.AccountId == id);
+    }
 
     public void CreatePlan(Plan plan)
     {
         _dbSet.Add(plan);
     }
 
-    public void InactivatePlan(Plan plan)
+    public void UpdatePlan(Plan plan)
     {
         _dbSet.Update(plan);
+        _context.SaveChanges();
     }
 
     public void ExtendPlan(Plan plan)

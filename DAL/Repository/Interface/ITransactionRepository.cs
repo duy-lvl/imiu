@@ -12,4 +12,6 @@ public interface ITransactionRepository
 
     List<Transaction> GetTransactions(int? month, int? year, TransactionStatus status);
     List<Transaction> GetMonthlyTransactions(int year);
+
+    Transaction? GetById(Guid id);
 }

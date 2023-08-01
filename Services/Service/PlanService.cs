@@ -32,12 +32,13 @@ public class PlanService : IPlanService
         try
         {
             var currentPlan = _planRepository.GetCurrentPlanByCustomerId(accountId);
-            
+            TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            DateTime currentTimeUtcPlus7 = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
             var transaction = new Transaction()
             {
                 Id = Guid.NewGuid(),
                 AccountId = accountId,
-                DateTime = DateTime.Now,
+                DateTime = currentTimeUtcPlus7,
                 Status = TransactionStatus.PENDING,
                 TransactionCode = createPlanModel.TransactionCode
             };
@@ -97,7 +98,8 @@ public class PlanService : IPlanService
 
     private void UpgradePremium(Plan currentPlan, Guid accountId, Subscription subscription, Transaction transaction, ResponseObject response)
     {
-        _planRepository.InactivatePlan(currentPlan);
+        currentPlan.Status = PlanStatus.INACTIVE;
+        _planRepository.UpdatePlan(currentPlan);
         Plan newPlan = new Plan()
         {
             Id = Guid.NewGuid(),
@@ -146,7 +148,8 @@ public class PlanService : IPlanService
             SubcriptionId = subscription.Id,
             Total = subscription.Value
         };
-        _planRepository.InactivatePlan(currentPlan);
+        currentPlan.Status = PlanStatus.INACTIVE;
+        _planRepository.UpdatePlan(currentPlan);
         _planRepository.CreatePlan(newPlan);
         transaction.Value = subscription.Value;
         _transactionRepository.Create(transaction);

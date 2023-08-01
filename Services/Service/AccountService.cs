@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
+using System.Reflection;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
@@ -25,9 +26,8 @@ public class AccountService : IAccountService
 	private readonly ICustomMapper _customMapper;
 	private readonly IPlanRepository _planRepository;
     private readonly IConfiguration _configuration;
-    //private readonly string VERIFY_EMAIL_END_POINT = "http://localhost:5173/verify/";
-    private readonly string VERIFY_EMAIL_END_POINT = "https://imiu-web.vercel.app/verify/";
-	private readonly string GOOGLE_VERIFY_ACCESS_TOKEN_API = "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=";
+    private string VERIFY_EMAIL_END_POINT;
+	private string GOOGLE_VERIFY_ACCESS_TOKEN_API;
 
 	/*
 	#region Mail trap
@@ -44,11 +44,11 @@ public class AccountService : IAccountService
 	*/
 	
 	// Real SMTP server
-	private readonly int MAIL_PORT = 587;
-	private readonly string MAIL_SMTP_CLIENT = "smtp.gmail.com";
-	private readonly string SENDER = "imiu.exe201@gmail.com";
-	private readonly string CREDENTIAL_USERNAME = "imiu.exe201@gmail.com";
-	private readonly string CREDENTIAL_PASSWORD = "zmhyhkvvikhxabuc";
+	private int MAIL_PORT;
+	private string MAIL_SMTP_CLIENT;
+	private string SENDER;
+	private string CREDENTIAL_USERNAME;
+	private string CREDENTIAL_PASSWORD;
 	
 	public AccountService(IAccountRepository accountRepository, ICustomMapper customMapper, IPlanRepository planRepository, 
 		 IConfiguration configuration)
@@ -57,7 +57,14 @@ public class AccountService : IAccountService
 		_customMapper = customMapper;
 		_planRepository = planRepository;
         _configuration = configuration;
-	}
+		MAIL_PORT = int.Parse(_configuration["SMTP:Port"]);
+		MAIL_SMTP_CLIENT = _configuration["SMTP:Client"];
+		SENDER = _configuration["SMTP:Sender"];
+		CREDENTIAL_USERNAME = _configuration["SMTP:Username"];
+		CREDENTIAL_PASSWORD = _configuration["SMTP:Password"];
+		VERIFY_EMAIL_END_POINT = _configuration["Endpoints:VerifyEmail"];
+		GOOGLE_VERIFY_ACCESS_TOKEN_API = _configuration["Endpoints:VerifyGoogleAccountAccessToken"];
+    }
 
 	#region Update Account
 
@@ -99,7 +106,7 @@ public class AccountService : IAccountService
 			account = new Account()
 			{
 				Id = new Guid(),
-				Name = "",
+				Name = registerAccountModel.Email,
 				Email = registerAccountModel.Email,
 				Dob = DateTime.Today,
 				Password = SHAEncryption.Encrypt(registerAccountModel.Password),

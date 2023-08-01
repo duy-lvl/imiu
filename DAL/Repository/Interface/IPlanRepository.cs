@@ -9,7 +9,8 @@ public interface IPlanRepository
 
     void CreatePlan(Plan plan);
 
-    void InactivatePlan(Plan plan);
+    void UpdatePlan(Plan plan);
 
     void ExtendPlan(Plan plan);
+    Plan? GetLatestPlanByCustomerId(Guid id);
 }

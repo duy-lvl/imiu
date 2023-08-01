@@ -102,7 +102,19 @@ namespace ImiuAPI
 					ValidateAudience = false,
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
 				};
-			});
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = ctx => {
+                        if (ctx.Request.Headers.ContainsKey("Authorization"))
+                        {
+                            var bearerToken = ctx.Request.Headers["Authorization"].ElementAt(0);
+                            var token = bearerToken.StartsWith("Bearer ") ? bearerToken.Substring(7) : bearerToken;
+                            ctx.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+            });
 
             
             var app = builder.Build();

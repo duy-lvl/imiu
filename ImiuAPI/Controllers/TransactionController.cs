@@ -26,7 +26,7 @@ namespace ImiuAPI.Controllers
             {
                 return new JsonResult(new
                 {
-                    Status = "Status",
+                    Status = "Success",
                     Message = "Ok",
                     Data = list
                 });
@@ -43,20 +43,27 @@ namespace ImiuAPI.Controllers
         public IActionResult UpdateTransactionStatus(Guid transactionId, int status)
         {
             _transactionService.UpdateStatus(transactionId, status);
-            bool success = _unitOfWork.Commit();
-            if(success)
+            var jsonResult = new JsonResult(new
             {
-                return new JsonResult(new
-                {
-                    Status = "Ok",
-                    Message = "Update successfully!"
-                });
-            }
-            return new JsonResult(new
-            {
-                Status = "Fail",
-                Message = "Fail to Update!"
+                Status = "Updated",
+                Message = "Update successfully!"
             });
+            jsonResult.StatusCode = 201;
+            return jsonResult;
+            //bool success = _unitOfWork.Commit();
+            //if(success)
+            //{
+            //    return new JsonResult(new
+            //    {
+            //        Status = "Ok",
+            //        Message = "Update successfully!"
+            //    });
+            //}
+            //return new JsonResult(new
+            //{
+            //    Status = "Fail",
+            //    Message = "Fail to Update!"
+            //});
         }
     }
 }
